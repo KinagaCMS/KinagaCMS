@@ -44,7 +44,8 @@ To install kinaga, copy the contents to a web accessible folder.
 4. See the directory tree.
 
 
-	contents
+
+		contents
 		│
 		├── CATEGORY NAME
 		│			│

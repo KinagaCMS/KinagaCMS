@@ -1,8 +1,6 @@
-Simplest, Easyest and Litest CMS. http://xn--5rwx17a.xn--v8jtdudb.com/
-
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=plastic)](LICENSE)
-![Made in Japan](https://img.shields.io/badge/Made%20in-Japan-red.svg?colorA=ff0000&amp;colorB=ff0000&amp;style=plastic)
+![Made in Japan](https://img.shields.io/badge/Made%20in-Japan-red.svg?colorA=ff0000&colorB=ff0000&style=plastic)
 
 Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
 

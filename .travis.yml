@@ -15,3 +15,11 @@ matrix:
     - php: nightly
 
 sudo: false
+
+install:
+  - composer self-update
+  - travis_retry composer install --no-interaction --prefer-source
+
+before_script: git reset --hard HEAD
+
+script: vendor/bin/phpunit

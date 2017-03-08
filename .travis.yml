@@ -14,12 +14,11 @@ matrix:
     - php: 7.1
     - php: nightly
 
-sudo: false
+before_install:
+    - composer self-update
 
 install:
-  - composer self-update
-  - travis_retry composer install --no-interaction --prefer-source
+    - composer install --prefer-source
 
-before_script: git reset --hard HEAD
-
-script: vendor/bin/phpunit
+script:
+    - php app/vendor/bin/phpunit

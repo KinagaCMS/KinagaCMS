@@ -1,8 +1,0 @@
-{
-	"name": "KinagaCMS/kinaga",
-	"description": "Simplest, Easyest and Litest PHP CMS.",
-	"keywords": ["NFS","NoDB","NoAdmin"],
-	"type": "CMS",
-	"homepage": "https://github.com/KinagaCMS/kinaga",
-	"license": "GPL-3.0"
-}

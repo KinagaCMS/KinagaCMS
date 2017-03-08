@@ -14,11 +14,5 @@ matrix:
     - php: 7.1
     - php: nightly
 
-before_install:
-    - composer self-update
+before_script: composer install
 
-install:
-    - composer install --prefer-source
-
-script:
-    - php app/vendor/bin/phpunit

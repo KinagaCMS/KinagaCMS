@@ -1,6 +1,4 @@
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
-[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=plastic)](LICENSE)
-![Made in Japan](https://img.shields.io/badge/Made%20in-Japan-red.svg?colorA=ff0000&colorB=ff0000&style=plastic)
 
 Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
 
@@ -10,7 +8,7 @@ Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your
 # Requirements
 
 - PHP 5.6 or higher
-- Apache 2.4 or higher
+- Apache 2.2 or higher
 
 
 # Installation

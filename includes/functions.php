@@ -422,7 +422,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			for( $i = 0, $c = count( $dl_files ); $i < $c; ++$i ) {
 
-				$dls_sort[] = ! is_link( $dl_files[$i] ) && ( $di_filesize = filesize( $dl_files[$i] ) ) > 0 ? filemtime( $dl_files[$i] ) . '–' . $dl_files[$i] . '–' . size_unit( $di_filesize ) : '';
+				$dls_sort[] = ! is_link( $dl_files[$i] ) && ( $di_filesize = filesize( $dl_files[$i] ) ) > 0 ? filemtime( $dl_files[$i] ) . '-~-' . $dl_files[$i] . '-~-' . size_unit( $di_filesize ) : '';
 
 			}
 
@@ -440,7 +440,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			for( $i = 0, $c = count( $dls_in_page ); $i < $c; ++$i ) {
 
-				$dl_uri = explode( '–', $dls_in_page[$i] );
+				$dl_uri = explode( '-~-', $dls_in_page[$i] );
 
 				$article .=
 
@@ -559,7 +559,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 				$articles_sort[] = is_file( $article_files = $current_categ . $s . $categ_contents[$i] . $s . 'index.html' ) && ! is_link( $article_files ) ?
 
-				filemtime( $article_files ) . '–' . $article_files : '';
+				filemtime( $article_files ) . '-~-' . $article_files : '';
 
 			}
 
@@ -571,7 +571,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			for( $i = 0, $c = count( $sections_in_categ_page ); $i < $c; ++$i ) {
 
-				$articles = explode( '–', $sections_in_categ_page[$i] );
+				$articles = explode( '-~-', $sections_in_categ_page[$i] );
 
 				$section =
 
@@ -596,7 +596,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 				$comments = $use_comment && is_dir( $comments_dir = $article_dir . $s . 'comments' ) && ! is_link( $comments_dir ) ?
 
 				'<span class=separator></span><a href="' . $url . $categ_link . $s . $title_link . '#form">' . $n .
-				'<span class="glyphicon glyphicon-comment"></span> ' . sprintf( $comment_counts, count( glob( $comments_dir . $s . '*–*.txt', GLOB_NOSORT ) ) ) .
+				'<span class="glyphicon glyphicon-comment"></span> ' . sprintf( $comment_counts, count( glob( $comments_dir . $s . '*-~-*.txt', GLOB_NOSORT ) ) ) .
 				'</a>' : '';
 
 
@@ -797,7 +797,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			$comments_end = is_file( $comment_dir . $s . 'end.txt' ) ? true : false;
 
-			$glob_comment_files = ! is_link( $comment_dir ) ? glob( $comment_dir . $s . '*–*.txt', GLOB_NOSORT ) : '';
+			$glob_comment_files = ! is_link( $comment_dir ) ? glob( $comment_dir . $s . '*-~-*.txt', GLOB_NOSORT ) : '';
 
 			if ( $glob_comment_files ) {
 
@@ -969,11 +969,11 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 					$per = round( $percent );
 
-					if ( $per < 100 && $per >= 20 ) $similar_article[] = $per . '–' . $similar_titles;
+					if ( $per < 100 && $per >= 20 ) $similar_article[] = $per . '-~-' . $similar_titles;
 
 					if ( ! is_link( $prev_next ) && ! is_link( dirname( $prev_next ) ) && ! is_link( dirname( dirname( $prev_next ) ) ) ) {
 
-						$sort_prev_next[] = filemtime( $prev_next ) . '–' . $prev_next;
+						$sort_prev_next[] = filemtime( $prev_next ) . '-~-' . $prev_next;
 
 					}
 
@@ -991,7 +991,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 						for( $i = 0; $i < $similar_counts && $i < $number_of_similars; ++$i ) {
 
-							$similar = explode( '–', $similar_article[$i] );
+							$similar = explode( '-~-', $similar_article[$i] );
 
 							$article .=
 
@@ -1017,7 +1017,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			for( $i = 0, $c = count( $sort_prev_next ); $i < $c; ++$i ) {
 
-				$prev_next_parts = explode( '–', $sort_prev_next[$i] . '–' . $i );
+				$prev_next_parts = explode( '-~-', $sort_prev_next[$i] . '-~-' . $i );
 
 				$prev_next_title = title( $prev_next_parts[1] );
 
@@ -1104,11 +1104,11 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 					if ( ! is_link( $comment_files ) ) {
 
-						$pos_comment_files = stripos( $comment_files, '–' );
+						$pos_comment_files = stripos( $comment_files, '-~-' );
 
 						if ( $pos_comment_files !== false ) {
 
-							$comment_file = explode( '–', $comment_files );
+							$comment_file = explode( '-~-', $comment_files );
 
 							$comment_time = basename( $comment_file[0] );
 
@@ -1425,7 +1425,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			foreach( $glob_files as $all_files ) {
 
-				$all_sort[] = ! is_link( $all_files ) && ! is_link( dirname( $all_files ) ) && ! is_link( dirname( dirname( $all_files ) ) ) ? filemtime( $all_files ) . '–' . $all_files :'';
+				$all_sort[] = ! is_link( $all_files ) && ! is_link( dirname( $all_files ) ) && ! is_link( dirname( dirname( $all_files ) ) ) ? filemtime( $all_files ) . '-~-' . $all_files :'';
 
 			}
 
@@ -1439,7 +1439,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			for( $i = 0, $c = count( $sections_in_default_page ); $i < $c; ++$i ) {
 
-				$all_articles = explode( '–', $sections_in_default_page[$i] );
+				$all_articles = explode( '-~-', $sections_in_default_page[$i] );
 
 				$section =
 
@@ -1461,7 +1461,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 				$comments = is_dir( $comments_dir = $article_dir . $s . 'comments' ) && ! is_link( $comments_dir ) && $use_comment ?
 
-				'<span class=separator></span><a href="' . $url . $categ_link . $s . $title_link . '#form"><span class="glyphicon glyphicon-comment"></span> ' . sprintf( $comment_counts, count( glob( $comments_dir . $s . '*–*.txt' ), GLOB_NOSORT ) ) . '</a>' : '';
+				'<span class=separator></span><a href="' . $url . $categ_link . $s . $title_link . '#form"><span class="glyphicon glyphicon-comment"></span> ' . sprintf( $comment_counts, count( glob( $comments_dir . $s . '*-~-*.txt' ), GLOB_NOSORT ) ) . '</a>' : '';
 
 
 				if ( is_dir( $default_imgs_dir = $article_dir . $s . 'images' ) && ! is_link( $default_imgs_dir ) ) {
@@ -1619,7 +1619,7 @@ if ( $use_recents && ! empty( $contents ) ) {
 
 			if ( is_file( $recents_index = $recents_name . $s . 'index.html' ) && ! is_link( $recents_index ) && ! is_link( dirname( $recents_index ) ) && ! is_link( dirname( $recents_name ) ) )
 
-			$recents_sort[] = filemtime( $recents_index ) . '–' . $recents_name;
+			$recents_sort[] = filemtime( $recents_index ) . '-~-' . $recents_name;
 
 		}
 
@@ -1629,7 +1629,7 @@ if ( $use_recents && ! empty( $contents ) ) {
 
 			for( $i = 0, $c = count( $recents_sort ); $i < $c && $i < $number_of_recents; ++$i ) {
 
-				$recent_name = explode( '–', $recents_sort[$i] );
+				$recent_name = explode( '-~-', $recents_sort[$i] );
 
 				$recent_basename = basename( $recent_name[1] );
 
@@ -1665,7 +1665,7 @@ if ( $glob_info_files || $dl || $use_contact ) {
 
 		foreach( $glob_info_files as $info_files ) {
 
-			$infos_sort[] = ! is_link( $info_files ) ? filemtime( $info_files ) . '–' . basename( $info_files, '.html' ) : '';
+			$infos_sort[] = ! is_link( $info_files ) ? filemtime( $info_files ) . '-~-' . basename( $info_files, '.html' ) : '';
 
 		}
 
@@ -1675,7 +1675,7 @@ if ( $glob_info_files || $dl || $use_contact ) {
 
 		for( $i = 0, $c = count( $infos_sort ); $i < $c; ++$i ) {
 
-			$infos_uri = explode( '–', $infos_sort[$i] );
+			$infos_uri = explode( '-~-', $infos_sort[$i] );
 
 			$aside .=
 
@@ -1764,7 +1764,7 @@ if ( $use_popular_articles && $number_of_popular_articles > 0 && ! empty( $conte
 
 if ( $use_comment && $number_of_new_comments > 0 && ! empty( $contents ) ) {
 
-	$glob_all_comment_files = glob( $glob_dir . 'comments' . $s . '*–*.txt', GLOB_NOSORT );
+	$glob_all_comment_files = glob( $glob_dir . 'comments' . $s . '*-~-*.txt', GLOB_NOSORT );
 
 	if ( $glob_all_comment_files ) {
 
@@ -1792,7 +1792,7 @@ if ( $use_comment && $number_of_new_comments > 0 && ! empty( $contents ) ) {
 
 			$comments_content = str_replace( $line_breaks, ' ', $comments_content );
 
-			$new_comments = explode( '–', $new_comments_sort[$i] );
+			$new_comments = explode( '-~-', $new_comments_sort[$i] );
 
 			$comment_link = explode( $s, $new_comments[0] );
 

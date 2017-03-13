@@ -30,7 +30,7 @@ if ( filter_has_var( INPUT_POST, 'preview' ) ) {
 
 	$filtered_previews = filter_input_array( INPUT_POST, $previews );
 
-	$filtered_preview_name = str_replace( '–', '-', $filtered_previews['name'] );
+	$filtered_preview_name = $filtered_previews['name'];
 
 	$filtered_preview_email = $filtered_previews['email'];
 
@@ -141,7 +141,7 @@ if ( !isset( $_COOKIE[$session_name] ) ) { echo
 
 		$boundary = md5( uniqid( rand() ) );
 
-		$filename = $now . '–' . $filtered_sending_name . '.txt';
+		$filename = $now . '-~-' . $filtered_sending_name . '.txt';
 
 		$headers .= 'Content-Type: multipart/mixed;' . $n . ' boundary="' . $boundary . '"' . $n;
 

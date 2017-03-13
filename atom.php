@@ -29,7 +29,7 @@ if ( $atom_files ) {
 
 	foreach( $atom_files as $atoms ) {
 
-		$sort[] = !is_link( $atoms ) && !is_link( dirname( $atoms ) ) && !is_link( dirname( dirname( $atoms ) ) ) ? filemtime( $atoms ) . '–' . $atoms : '';
+		$sort[] = !is_link( $atoms ) && !is_link( dirname( $atoms ) ) && !is_link( dirname( dirname( $atoms ) ) ) ? filemtime( $atoms ) . '-~-' . $atoms : '';
 
 	}
 
@@ -39,7 +39,7 @@ if ( $atom_files ) {
 
 	for( $i = 0, $c = count( $sort ); $i < $c && $i < $number_of_feeds; ++$i ) {
 
-		$atom_articles = explode( '–', $sort[$i] );
+		$atom_articles = explode( '-~-', $sort[$i] );
 
 		$atom_title = title( $atom_articles[1] );
 

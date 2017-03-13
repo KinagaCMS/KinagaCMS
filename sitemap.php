@@ -14,7 +14,7 @@ if ( $glob ) {
 
 	foreach( $glob as $files ) {
 
-		$sort[] = !is_link( $files ) && !is_link( dirname( $files ) ) && !is_link( dirname( dirname( $files ) ) ) ? filemtime( $files ) . '–' . $files : '';
+		$sort[] = !is_link( $files ) && !is_link( dirname( $files ) ) && !is_link( dirname( dirname( $files ) ) ) ? filemtime( $files ) . '-~-' . $files : '';
 
 	}
 
@@ -24,7 +24,7 @@ if ( $glob ) {
 
 	for( $i = 0, $c = count( $sort ); $i < $c; ++$i ) {
 
-		$part = explode( '–', $sort[$i] );
+		$part = explode( '-~-', $sort[$i] );
 
 		$categ = basename( dirname( dirname( $part[1] ) ) );
 

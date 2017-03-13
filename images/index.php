@@ -58,7 +58,7 @@ foreach( $files as $images ) {
 
 	if ( !$images -> isFile() ) continue;
 
-	$sort[] = strpos( $images, '.php' ) == false && !is_link( $images ) ? $images -> getMTime() . '–' . trim( $images, '.' . $s ) : '';
+	$sort[] = strpos( $images, '.php' ) == false && !is_link( $images ) ? $images -> getMTime() . '-~-' . trim( $images, '.' . $s ) : '';
 
 }
 
@@ -70,7 +70,7 @@ $sort = array_filter( $sort );
 
 	foreach( $sort as $image ) {
 
-		$img = explode( '–', $image );
+		$img = explode( '-~-', $image );
 
 		$info = pathinfo( $img[1] );
 

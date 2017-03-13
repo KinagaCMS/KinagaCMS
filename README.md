@@ -2,7 +2,7 @@
 
 Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
 
-![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
+![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 
 
 # Requirements
@@ -30,6 +30,8 @@ To install kinaga, copy the contents to a web accessible folder.
 
 
 # Quick Start
+
+![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
 
 1. Create a new folder in the *contents* as a **category**.
 

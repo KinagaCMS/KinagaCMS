@@ -14,9 +14,7 @@ Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your
 
 # Installation
 
-copy the contents to a web accessible folder.
-or
-clone from GitHub
+copy the contents to a web accessible folder or clone from GitHub
 
 
 # Setting Up

@@ -7,13 +7,16 @@ Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your
 
 # Requirements
 
-- PHP 5.6 or higher
+- PHP 5.5 or higher
 - Apache 2.2 or higher
+- .htaccess support
 
 
 # Installation
 
-To install kinaga, copy the contents to a web accessible folder.
+copy the contents to a web accessible folder.
+or
+clone from GitHub
 
 
 # Setting Up

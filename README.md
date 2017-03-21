@@ -47,18 +47,18 @@ copy the contents to a web accessible folder or clone from GitHub
 		contents
 		│
 		├── CATEGORY NAME
-		│			│
-		│			├── ARTICLE TITLE
-		│			│			│
-		│			│			├── comments ( Provide a contact form. Not required )
-		│			│			│
-		│			│			├── counter.txt ( As a popular article. Not required )
-		│			│			│
-		│			│			├── images ( or background-images. Not required )
-		│			│			│
-		│			│			└── index.html ( Publish your article here )
-		│			│
-		│			└── index.html ( Category Subtitle. Not required )
+		│	│
+		│	├── ARTICLE TITLE
+		│	│	│
+		│	│	├── comments ( Provide a contact form. Not required )
+		│	│	│
+		│	│	├── counter.txt ( As a popular article. Not required )
+		│	│	│
+		│	│	├── images ( or background-images. Not required )
+		│	│	│
+		│	│	└── index.html ( Publish your article here )
+		│	│
+		│	└── index.html ( Category Subtitle. Not required )
 		│
 		├── ASIDE PAGE.html ( Belong to "Informations" of the Sidebox. Not required )
 		│

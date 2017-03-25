@@ -14,7 +14,7 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and you
 
 # Installation
 
-git clone https://github.com/KinagaCMS/KinagaCMS.git
+	git clone https://github.com/KinagaCMS/KinagaCMS.git
 
 
 # Setting Up

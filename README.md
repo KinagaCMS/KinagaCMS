@@ -1,6 +1,6 @@
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 
-Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
+Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
 
 ![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 
@@ -14,16 +14,16 @@ Kinaga is **the simplest CMS**. It has NoDB and NoAdmin, so use **NFS** and your
 
 # Installation
 
-copy the contents to a web accessible folder or clone from GitHub
+git clone https://github.com/KinagaCMS/KinagaCMS.git
 
 
 # Setting Up
 
-1. /includes/config.php
+1.  /includes/config.php
 
 	You can set your language, encoding, and template.
 
-2. /includes/lang/YOUR_LANGUAGE.php
+2.  /includes/lang/YOUR_LANGUAGE.php
 
 	Edit or create your language file (ex: en.php).
 
@@ -34,16 +34,13 @@ copy the contents to a web accessible folder or clone from GitHub
 
 ![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
 
-0. Connect NFS or WinSCP to your server.
+1.  Connect NFS or [WinSCP](https://winscp.net/) to your server.
 
-1. Create a new folder in the *contents* as a **category**.
+2.  Create a new folder in the *contents* as a **category**.
 
-2. Create a new folder in the *category* as a **article title**.
+3.  Create a new folder in the *category* as a **article title**.
 
-3. Create a *index.html* in the **article folder** and publish your article.
-
-4. See the directory tree.
-
+4.  Create a *index.html* in the **article folder** and publish your article.
 
 
 		contents

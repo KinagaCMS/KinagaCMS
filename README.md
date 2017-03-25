@@ -34,6 +34,8 @@ copy the contents to a web accessible folder or clone from GitHub
 
 ![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
 
+0. Connect NFS or WinSCP to your server.
+
 1. Create a new folder in the *contents* as a **category**.
 
 2. Create a new folder in the *category* as a **article title**.

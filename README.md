@@ -34,7 +34,7 @@ git clone https://github.com/KinagaCMS/KinagaCMS.git
 
 ![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
 
-1.  Connect NFS or [WinSCP](https://winscp.net/) to your server.
+1.  Connect with NFS or [WinSCP](https://winscp.net/) to your server.
 
 2.  Create a new folder in the *contents* as a **category**.
 

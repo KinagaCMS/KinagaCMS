@@ -6,7 +6,7 @@
 
 また外部機能として、既存サイトからの移行に役立つ変換システムや、HTMLタグの入力補助機能を備えつつ動的にレイアウトを確認することが出来るシステムの他、HTMLタグの入力補助を目的としたテキストエディタのプラグインも提供しています。
 
-[デモサイト](http://xn--5rwx17a.xn--v8jtdudb.com/)、[紀永起草](http://xn--vl1al2s.xn--v8jtdudb.com)、[kinagani（変換）](http://xn--5rwx17a.xn--v8jtdudb.com/%E6%97%A2%E5%AD%98%E3%82%B5%E3%82%A4%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)、[Pluma-Bootstrap-Snippet](https://github.com/KinagaCMS/Pluma-Bootstrap-Snippet)、[Pluma-Bootstrap-Taglist](https://github.com/KinagaCMS/Pluma-Bootstrap-Taglist)
+[デモサイト](http://xn--5rwx17a.xn--v8jtdudb.com/)、[紀永起草](http://xn--vl1al2s.xn--v8jtdudb.com)、[既存サイトからの移行について](http://xn--5rwx17a.xn--v8jtdudb.com/%E6%97%A2%E5%AD%98%E3%82%B5%E3%82%A4%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)、[Pluma-Bootstrap-Snippet](https://github.com/KinagaCMS/Pluma-Bootstrap-Snippet)、[Pluma-Bootstrap-Taglist](https://github.com/KinagaCMS/Pluma-Bootstrap-Taglist)
 
 
 

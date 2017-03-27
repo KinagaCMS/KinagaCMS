@@ -1,4 +1,4 @@
-<p align="right"><a href="README.ja.md">日本語版 README はこちら</a></p>
+<p align="right"><a href="README.ja.md">【日本語版 README はこちら】</a></p>
 
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 

@@ -72,5 +72,5 @@
 
 ## ライセンス
 
-- 紀永には GPL v3 かそれ以上のライセンスが適用されています。 詳しくは、LICENSE をご一読下さい。
+- 紀永には GPL v3 かそれ以上のライセンスが適用されています。 詳しくは、[LICENSE](LICENSE) をご一読下さい。
 - 紀永に使用した [Bootstrap](http://getbootstrap.com/)、[jQuery](http://jquery.com/)、[Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/) には MIT ライセンスが適用されています。

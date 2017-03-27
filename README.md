@@ -1,3 +1,5 @@
+<p align="right"><a href="README.ja.md">日本語版 README はこちら</a></p>
+
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 
 Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.

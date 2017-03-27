@@ -74,7 +74,7 @@ Any forms of contribution are welcome: translation into other languages, design 
 
 # Licenses
 
-- Kinaga is licensed under GPL v3 or higher. See the LICENSE file for details.
+- Kinaga is licensed under GPL v3 or higher. See the [LICENSE](LICENSE) file for details.
 
 - [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/) and [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/) are released under the MIT license.
 

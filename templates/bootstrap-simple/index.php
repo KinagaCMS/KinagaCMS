@@ -30,8 +30,8 @@
 <?=$breadcrumb?>
 </ol>
 <div class=row>
-<div class=col-md-9><?=$article?></div>
-<div class=col-md-3><?=$aside?></div>
+<div class="col-md-9 col-md-push-3"><?=$article?></div>
+<div class="col-md-3 col-md-pull-9"><?=$aside?></div>
 </div>
 <footer>
 <script src="<?=$js?>"></script>

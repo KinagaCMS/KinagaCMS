@@ -43,7 +43,7 @@
 1.  ファイルマネージャの NFS か [WinSCP](https://winscp.net/) でサーバーに接続します
 2.  「contents」フォルダの中に「カテゴリ名」のフォルダを作成して下さい
 3.  「カテゴリ名」フォルダの中に「記事名」のフォルダを作成して下さい
-4.  「記事名」フォルダの中に「index.html」ファイルを作成し、文章を入力して下さい
+4.  「記事名」フォルダの中に「index.html」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Pluma](https://github.com/mate-desktop/pluma)、[Geany](https://github.com/geany/geany/)などで開いて文章を入力して下さい
 
 		contents
 		│

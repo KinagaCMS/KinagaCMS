@@ -8,7 +8,7 @@
 
 　また外部機能として、既存サイトからの移行に役立つ変換システム（[既存サイトからの移行について](http://xn--5rwx17a.xn--v8jtdudb.com/%E6%97%A2%E5%AD%98%E3%82%B5%E3%82%A4%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)）や、HTMLタグの入力補助機能を備えつつ動的にレイアウトを確認することが出来るオンラインテキストエディタ（[紀永起草](http://xn--vl1al2s.xn--v8jtdudb.com)）の他、HTMLタグの入力補助を目的としたテキストエディタのプラグイン（[Pluma-Bootstrap-Snippet](https://github.com/KinagaCMS/Pluma-Bootstrap-Snippet)、[Pluma-Bootstrap-Taglist](https://github.com/KinagaCMS/Pluma-Bootstrap-Taglist)）も提供しています。
 
-[デモサイト](http://xn--5rwx17a.xn--v8jtdudb.com/)
+　動作確認や詳しい使用方法については、[デモサイト](http://xn--5rwx17a.xn--v8jtdudb.com/)をご覧下さい。
 
 
 ## 動作環境

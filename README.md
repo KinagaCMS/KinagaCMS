@@ -42,7 +42,7 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and you
 
 3.  Create a new folder in the *category* as a **article title**.
 
-4.  Create a *index.html* in the **article folder** and publish your article.
+4.  Create a *index.html* in the **article folder** and publish your article with text editor ( [ReText](https://github.com/retext-project/retext), [Pluma](https://github.com/mate-desktop/pluma), [Geany](https://github.com/geany/geany/) ).
 
 
 		contents

@@ -8,6 +8,7 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **T
  <dt>気長 (kinaga)</dt>
  <dd><a href="http://www.kanjijapanese.com/en/dictionary-japanese-english/kinaga">Japanese-English translation :: kinaga :: Dictionary</a></dd>
 </dl>
+
 ![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 
 

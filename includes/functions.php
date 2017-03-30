@@ -374,7 +374,7 @@ if ( filter_has_var( INPUT_GET, 'page' ) && ! is_numeric( $get_page ) ) {
 
 			header( 'Content-Type: ' . mime_content_type( $dl_file ) . '' );
 
-			if ( $lang !== 'en' || strpos( $user_agent, 'MSIE' ) !== false || strpos( $user_agent, 'rv:11.0' ) !== false ) {
+			if ( strpos( $user_agent_lang, 'ja' ) !== false && strpos( $user_agent, 'MSIE' ) !== false && strpos( $user_agent, 'rv:11.0' ) !== false ) {
 
 				header( 'X-Download-Options: noopen' );
 

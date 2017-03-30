@@ -2,7 +2,7 @@
 
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 
-Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and your favorite **Text Editor**, just like usual desktop work. Easy-to-use and easy-code, just like old school scripts.
+Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
 
 ![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 

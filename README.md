@@ -4,6 +4,7 @@
 
 Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
 
+[Japanese-English translation :: kinaga :: Dictionary](http://www.kanjijapanese.com/en/dictionary-japanese-english/kinaga)
 ![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 
 

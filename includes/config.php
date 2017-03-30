@@ -226,6 +226,8 @@ $line_breaks = array( "\n", "\r\n", "\r", '&#13;&#10;', '&#13;', '&#10;' );
 
 $user_agent = getenv( 'HTTP_USER_AGENT' );
 
+$user_agent_lang = getenv( 'HTTP_ACCEPT_LANGUAGE' );
+
 $glob_dir = 'contents' . $s . '*' . $s . '*' . $s;
 
 $tpl_dir = 'templates' . $s . $template . $s;

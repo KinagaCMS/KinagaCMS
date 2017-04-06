@@ -4,12 +4,6 @@
 
 Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
 
-<dl>
- <dt>気長 (kinaga)</dt>
- <dd><a href="http://www.kanjijapanese.com/en/dictionary-japanese-english/kinaga">Japanese-English translation :: kinaga :: Dictionary</a></dd>
-</dl>
-
-![](https://cloud.githubusercontent.com/assets/26238188/23820102/835ae602-0654-11e7-9d54-fbdf9f3f369f.png)
 
 
 # Requirements
@@ -39,8 +33,6 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **T
 
 # Quick Start
 
-![](https://cloud.githubusercontent.com/assets/26238188/23639374/a7f382e4-032a-11e7-81ed-86beb7cdafc0.gif)
-
 1.  Connect with NFS or [WinSCP](https://winscp.net/) to your server.
 
 2.  Create a new folder in the *contents* as a **category**.
@@ -49,6 +41,7 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **T
 
 4.  Create a *index.html* in the **article folder** and publish your article with text editor ( [ReText](https://github.com/retext-project/retext), [Pluma](https://github.com/mate-desktop/pluma), [Geany](https://github.com/geany/geany/) ).
 
+5. Create folders and texts as follows, each function can be added.
 
 		contents
 		│
@@ -68,12 +61,12 @@ Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **T
 		│
 		├── ASIDE PAGE.html ( Belong to "Informations" of the Sidebox. Not required )
 		│
-		└── index.html ( Not required )
+		└── index.html ( Top page. Not required )
 
 
 # Contributing
 
-Any forms of contribution are welcome: translation into other languages, design templates, bug fixes, or simple suggestions.
+Any forms of contribution are welcome: translation into other languages, bug fixes.
 
 
 
@@ -82,5 +75,3 @@ Any forms of contribution are welcome: translation into other languages, design 
 - Kinaga is licensed under GPL v3 or higher. See the [LICENSE](LICENSE) file for details.
 
 - [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/) and [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/) are released under the MIT license.
-
-

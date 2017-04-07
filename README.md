@@ -2,7 +2,7 @@
 
 # ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
 
-Kinaga is **the simplest CMS** that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
+Kinaga is a Directory Management CMS that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
 
 
 

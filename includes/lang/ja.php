@@ -6,9 +6,6 @@
 
 date_default_timezone_set( 'Asia/Tokyo' );
 
-setlocale( LC_ALL, 'C.' . $encoding );
-
-
 #サイト名：
 $site_name = 'kinaga';
 

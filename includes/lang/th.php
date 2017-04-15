@@ -7,8 +7,6 @@
 
 date_default_timezone_set('Asia/Bangkok');
 
-setlocale(LC_ALL, 'th_TH.'.$encoding);
-
 // Site Name
 $site_name = 'kinaga';
 

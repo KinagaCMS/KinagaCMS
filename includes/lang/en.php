@@ -6,7 +6,7 @@
 
 date_default_timezone_set( 'America/New_York' );
 
-setlocale( LC_ALL, 'en_US.' . $encoding );
+setlocale( LC_ALL, 'C.' . $encoding );
 
 
 #Site Name

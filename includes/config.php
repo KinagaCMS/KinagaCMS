@@ -15,7 +15,7 @@ $template = 'bootstrap-navbar';
 ##########################
 
 
-$encoding = 'utf-8';
+$encoding = 'UTF-8';
 
 #Download Multi-byte filename for Windows Internet Explorer Japanese language
 $encoding_win = 'SJIS-win';

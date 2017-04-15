@@ -6,9 +6,6 @@
 
 date_default_timezone_set( 'America/New_York' );
 
-setlocale( LC_ALL, 'C.' . $encoding );
-
-
 #Site Name
 $site_name = 'kinaga';
 

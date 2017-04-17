@@ -19,7 +19,7 @@ $encoding = 'UTF-8';
 
 setlocale( LC_ALL, 'C.' . $encoding );
 
-#Downloading Multi-byte filename for Windows Internet Explorer Japanese
+#Downloading Multi-byte filename on Windows Internet Explorer Japanese
 $encoding_win = 'SJIS-win';
 
 

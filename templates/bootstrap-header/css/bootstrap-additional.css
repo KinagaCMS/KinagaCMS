@@ -447,7 +447,7 @@ a.list-group-item-info, button.list-group-item-info, a:hover, a.text-primary:hov
 
 <?php }
 
-if ( file_exists( $header_jpg = '../../../images/header.jpg' ) && is_file( $header_jpg ) ) {
+if ( file_exists( $header_jpg = '..' . $s . '..' . $s . '..' . $s . 'images' . $s . 'header.jpg' ) && is_file( $header_jpg ) ) {
 
 if ( list( $width, $height ) = @getimagesize( $header_jpg ) ) {?>
 

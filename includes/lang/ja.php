@@ -1,13 +1,10 @@
-<?
+<?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
   * @license    GPL 3.0 or later; see LICENSE file for details.
   */
 
 date_default_timezone_set( 'Asia/Tokyo' );
-
-setlocale( LC_ALL, 'ja_JP.' . $encoding );
-
 
 #サイト名：
 $site_name = 'kinaga';

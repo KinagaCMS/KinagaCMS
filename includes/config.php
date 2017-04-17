@@ -1,4 +1,4 @@
-<?
+<?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
   * @license    GPL 3.0 or later; see LICENSE file for details.
@@ -15,9 +15,11 @@ $template = 'bootstrap-navbar';
 ##########################
 
 
-$encoding = 'utf-8';
+$encoding = 'UTF-8';
 
-#Download Multi-byte filename for Windows Internet Explorer Japanese language
+setlocale( LC_ALL, 'C.' . $encoding );
+
+#Downloading Multi-byte filename for Windows Internet Explorer Japanese
 $encoding_win = 'SJIS-win';
 
 

@@ -5,6 +5,8 @@
 Kinaga is a Directory Management CMS that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
 
 
+<small>Not translated yet</small>
+
 
 # Requirements
 

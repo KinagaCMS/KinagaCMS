@@ -386,7 +386,7 @@ a:hover, a:focus, a.list-group-item-info, button.list-group-item-info, a.text-pr
 .article .page-top {
   margin:0
 }
-<?php } if ( file_exists( $header_jpg = '../../../images/header.jpg' ) && is_file( $header_jpg ) ) {
+<?php } if ( file_exists( $header_jpg = '..' . $s . '..' . $s . '..' . $s . 'images' . $s . 'header.jpg' ) && is_file( $header_jpg ) ) {
 
 if ( list( $width, $height ) = @getimagesize( $header_jpg ) ) {
 

@@ -271,7 +271,7 @@ a[href]:after {
 
 }
 
-<? if ( $color ) {?>
+<?php if ( $color ) {?>
 
 .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
   background-color:<?=hsla( $color, 100, 90, .4 )?>
@@ -423,7 +423,7 @@ a, .text-primary, .navbar footer .top {
   color:<?=hsla( $color, 100, 30 )?>
 }
 
-<?} if ( $use_auto_wrap === true ) {?>
+<?php } if ( $use_auto_wrap === true ) {?>
 
 .article, .wrap, .mfp-title {
   word-wrap:break-word;
@@ -438,7 +438,7 @@ a, .text-primary, .navbar footer .top {
   margin:0
 }
 
-<?}
+<?php }
 
 if ( file_exists( $header_jpg = '../../../images/header.jpg' ) && is_file( $header_jpg ) ) {
 
@@ -458,6 +458,6 @@ header a {
   color:inherit;
   text-shadow:none
 }
-<?}
+<?php }
 
 }

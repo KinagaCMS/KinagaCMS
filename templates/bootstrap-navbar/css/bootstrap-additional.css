@@ -93,6 +93,10 @@ p {
   letter-spacing:0.3pt
 }
 
+dd {
+  padding:0.25em 1em 1.5em
+}
+
 a:hover img {
   opacity:0.8
 }

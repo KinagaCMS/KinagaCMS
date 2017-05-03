@@ -136,8 +136,9 @@ p {
   letter-spacing:0.3pt
 }
 
-dd {
-  padding:0.25em 1em 1.5em
+.article dd{
+  margin-left:1em;
+  margin-bottom:1em
 }
 
 a:hover img {

@@ -109,6 +109,11 @@ p {
   letter-spacing:0.3pt
 }
 
+.article li,.article dt{
+  padding-top:10px;
+  padding-bottom:10px
+}
+
 .article dd{
   margin-left:1em;
   margin-bottom:1em

@@ -129,11 +129,11 @@ if ( !isset( $_COOKIE[$session_name] ) ) { echo
 
 		$headers .= 'X-Date: ' . date( 'c' ) . $n;
 
-		$headers .= 'X-Host: ' . gethostbyaddr( getenv( 'REMOTE_ADDR' ) ) . $n;
+		$headers .= 'X-Host: ' . h( gethostbyaddr( getenv( 'REMOTE_ADDR' ) ) ) . $n;
 
-		$headers .= 'X-IP: ' . getenv( 'REMOTE_ADDR' ) . $n;
+		$headers .= 'X-IP: ' . h( getenv( 'REMOTE_ADDR' ) ) . $n;
 
-		$headers .= 'X-UA: ' . getenv( 'HTTP_USER_AGENT' ) . $n;
+		$headers .= 'X-UA: ' . h( getenv( 'HTTP_USER_AGENT' ) ) . $n;
 
 		$to = $site_name . ' <' . $mail_address . '>';
 

@@ -22,4 +22,4 @@ file_get_contents( 'bootstrap.min.js' ),
 
 file_get_contents( 'jquery.magnific-popup.min.js' ),
 
-'/* kinaga */$( document ).ready( function(){ $( "a[href=\"#TOP\"]" ).click( function(){ $( "body, html" ).animate( { scrollTop: 0 },100 ); return false } ); } ); $( ".gallery" ).each( function(){ $( this ).magnificPopup( { delegate: "a", type: "image", gallery: { enabled: true, preload: [1,1] } } ) } ); $( ".expand" ).magnificPopup( { type: "image" } ); $( ".discrete" ).magnificPopup( { type: "image" } ); $( ".nav-tabs a" ).click( function(e){ e.preventDefault(); $( this ).tab( "show" ) } )';
+'/* kinaga */$( document ).ready( function(){ $( "a[href=\"#TOP\"]" ).click( function(){ $( "body, html" ).animate( { scrollTop: 0 },100 ); return false } ); } ); $( ".gallery" ).each( function(){ $( this ).magnificPopup( { delegate: "a", type: "image", gallery: { enabled: true, preload: [1,1] } } ) } ); $( ".expand" ).magnificPopup( { type: "image" } ); $( ".discrete" ).magnificPopup( { type: "image" } ); $( ".nav-tabs a" ).click( function(e){ e.preventDefault(); $( this ).tab( "show" ) } );$( ".rider" ).tooltip();';

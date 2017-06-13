@@ -438,6 +438,22 @@ a, .text-primary, .navbar footer .top {
   color:<?=hsla( $color, 100, 30 )?>
 }
 
+.tooltip-inner {
+  background-color: <?=hsla( $color, 70, 40, .9 )?>
+}
+.tooltip.right .tooltip-arrow {
+  border-right-color: <?=hsla( $color, 70, 40, .9 )?>
+}
+.tooltip.left .tooltip-arrow {
+  border-left-color: <?=hsla( $color, 70, 40, .9 )?>
+}
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: <?=hsla( $color, 70, 40, .9 )?>
+}
+.tooltip.top .tooltip-arrow {
+  border-top-color: <?=hsla( $color, 70, 40, .9 )?>
+}
+
 <?php } if ( $use_auto_wrap === true ) {?>
 
 .article, .wrap, .mfp-title {

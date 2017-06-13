@@ -155,33 +155,45 @@ if ( ! function_exists( 'permalink' ) )
 
 if ( ! function_exists( 'a' ) )
 {
-	function a( $uri, $name = '', $class = '' )
+	function a( $uri = '', $name = '', $class = '', $title = '', $position = '' )
 	{
-		$parsed_url = parse_url( $uri );
+		if ( $uri )
+		{
+			$parsed_url = parse_url( $uri );
 
-		$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : '';
+			$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : '';
 
-		$host = isset( $parsed_url['host'] ) ? ( function_exists( 'idn_to_ascii' ) ? idn_to_ascii( $parsed_url['host'] ) : $parsed_url['host'] ) : '';
+			$host = isset( $parsed_url['host'] ) ? ( function_exists( 'idn_to_ascii' ) ? idn_to_ascii( $parsed_url['host'] ) : $parsed_url['host'] ) : '';
 
-		$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+			$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
 
-		$user = isset( $parsed_url['user'] ) ? r( $parsed_url['user'] ) : '';
+			$user = isset( $parsed_url['user'] ) ? r( $parsed_url['user'] ) : '';
 
-		$pass = isset( $parsed_url['pass'] ) ? ':' . r( $parsed_url['pass'] ) : '';
+			$pass = isset( $parsed_url['pass'] ) ? ':' . r( $parsed_url['pass'] ) : '';
 
-		$pass = $user || $pass ? "$pass@" : '';
+			$pass = $user || $pass ? "$pass@" : '';
 
-		$path = isset( $parsed_url['path'] ) ? r( $parsed_url['path'] ) : '';
+			$path = isset( $parsed_url['path'] ) ? r( $parsed_url['path'] ) : '';
 
-		$query = isset( $parsed_url['query'] ) ? '?' . r( $parsed_url['query'] ) : '';
+			$query = isset( $parsed_url['query'] ) ? '?' . r( $parsed_url['query'] ) : '';
 
-		$fragment = isset( $parsed_url['fragment'] ) ? '#' . r( $parsed_url['fragment'] ) : '';
+			$fragment = isset( $parsed_url['fragment'] ) ? '#' . r( $parsed_url['fragment'] ) : '';
 
-		$link = $scheme . $user . $pass . $host . $port . $path . $query . $fragment;
-
+			$link = ' href="' . $scheme . $user . $pass . $host . $port . $path . $query . $fragment . '" target="_blank" rel="noopener noreferrer"';
+		}
+		else
+		{
+			$link = '';
+		}
+		if ( $title )
+		{
+			$class .= ' rider';
+		}
 		return
-		'<a href="' . $link . '" target="_blank" rel="noopener noreferrer"' . ( $class ? ' class="' . $class . '"' : '' ) . '>' . ( ! $name ? h( $uri ) : h( $name ) ) .
-		' <sup><small class="glyphicon glyphicon-new-window"></small></sup></a>';
+		'<a' . $link . ( $title ? ' title="' . $title . '" data-html="true"' : '' ) . ( $class ? ' class="' . $class . '"' : '' ) . ( $position ? ' data-placement="' . $position . '"' : '' ) . '>' .
+		( ! $name ? h( $uri ) : h( $name ) ) .
+		( ! $uri && $title ? '' : ' <sup><small class="glyphicon glyphicon-new-window"></small></sup>' ) .
+		'</a>';
 	}
 }
 
@@ -529,16 +541,33 @@ elseif ( filter_has_var( INPUT_GET, 'categ' ) && ! filter_has_var( INPUT_GET, 't
 					{
 						$default_background_image = '';
 
-						$count_background_images = '';
+						$count_background_images = 0;
 					}
 				}
 				else
 				{
 					$default_background_image = '';
 
-					$count_background_images = '';
+					$count_background_images = 0;
 				}
-				$total_images = ( int )$count_images + ( int )$count_background_images;
+				if ( is_dir( $default_popup_dir = $article_dir . $s . 'popup-images' ) && ! is_link( $default_popup_dir ) )
+				{
+					$glob_default_popup_imgs = glob( $default_popup_dir . $s . '*', GLOB_NOSORT );
+
+					if ( $glob_default_popup_imgs )
+					{
+						$count_popup_images = count( $glob_default_popup_imgs );
+					}
+					else
+					{
+						$count_popup_images = 0;
+					}
+				}
+				else
+				{
+					$count_popup_images = 0;
+				}
+				$total_images = ( int )$count_images + ( int )$count_background_images + ( int )$count_popup_images;
 
 				$article .=
 				'<div class="panel panel-info">' . $n .
@@ -611,10 +640,33 @@ elseif ( filter_has_var( INPUT_GET, 'categ' ) && filter_has_var( INPUT_GET, 'tit
 
 						$aspect = round( $height / $width * 100, 1 );
 
-						$header.='@media(max-width:' . ( $width * 1.5 ) . 'px){' . $classname . '{' . ( $height > 400 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px' ) . '}}' . $classname . '{max-width:' . $width . 'px;background-image:url(' . $url . r( $background_images ) . ');background-size:100%;background-repeat:no-repeat;' . ( $height > 1000 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px' ) . '}';
+						$header .= '@media(max-width:' . ( $width * 1.5 ) . 'px){' . $classname . '{' . ( $height > 400 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px' ) . '}}' . $classname . '{max-width:' . $width . 'px;background-image:url(' . $url . r( $background_images ) . ');background-size:100%;background-repeat:no-repeat;' . ( $height > 1000 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px' ) . '}';
 					}
 				}
 				$header .= '</style>' . $n;
+			}
+		}
+		if ( is_dir( $popup_images_dir = $current_article_dir . $s . 'popup-images' ) && ! is_link( $popup_images_dir ) )
+		{
+			$glob_popup_images = glob( $popup_images_dir . $s . '*', GLOB_NOSORT );
+
+			if ( $glob_popup_images )
+			{
+				$header .= '<style>.tooltip-inner{max-width:inherit}</style>';
+				$footer .= '<script>';
+
+				foreach( $glob_popup_images as $popup_images )
+				{
+					if ( list( $width, $height ) = @getimagesize( $popup_images ) )
+					{
+						$info = pathinfo( $popup_images );
+
+						$classname = basename( $popup_images, '.' . $info['extension'] );
+
+						$footer .= '$( "#' . $classname . '" ).attr( "data-html", true ).attr( "title", "<img src=\"' . $url . r( $popup_images ) . '\" style=\"max-width:600px\">" ).tooltip();';
+					}
+				}
+				$footer .= '</script>' . $n;
 			}
 		}
 		$article_encode_title = h( $get_title );
@@ -1227,16 +1279,33 @@ elseif ( ! filter_has_var( INPUT_GET, 'categ' ) && ! filter_has_var( INPUT_GET, 
 					{
 						$default_background_image = '';
 
-						$count_background_images = '';
+						$count_background_images = 0;
 					}
 				}
 				else
 				{
 					$default_background_image = '';
 
-					$count_background_images = '';
+					$count_background_images = 0;
 				}
-				$total_images = ( int )$count_images + ( int )$count_background_images;
+				if ( is_dir( $default_popup_dir = $article_dir . $s . 'popup-images' ) && ! is_link( $default_popup_dir ) )
+				{
+					$glob_default_popup_imgs = glob( $default_popup_dir . $s . '*', GLOB_NOSORT );
+
+					if ( $glob_default_popup_imgs )
+					{
+						$count_popup_images = count( $glob_default_popup_imgs );
+					}
+					else
+					{
+						$count_popup_images = 0;
+					}
+				}
+				else
+				{
+					$count_popup_images = 0;
+				}
+				$total_images = ( int )$count_images + ( int )$count_background_images + ( int )$count_popup_images;
 
 				$article .=
 				'<div class="panel panel-info">' . $n .

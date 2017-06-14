@@ -1,10 +1,10 @@
 <?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
+  * @license  GPL 3.0 or later; see LICENSE file for details.
   */
 
-$lang = 'en';
+$lang = 'ja';
 
 $mail_address = '';
 
@@ -19,7 +19,7 @@ $encoding = 'UTF-8';
 
 setlocale( LC_ALL, 'C.' . $encoding );
 
-#Downloading Multi-byte filename on Windows Internet Explorer Japanese
+#Downloading Multi-byte filename on Windows Internet Explorer Japanese edition
 $encoding_win = 'SJIS-win';
 
 
@@ -61,57 +61,57 @@ $use_similars = true;
 
 
 #Sidebox
-$number_of_recents = '5';
+$number_of_recents = 5;
 
-$number_of_popular_articles = '5';
+$number_of_popular_articles = 5;
 
-$number_of_new_comments = '5';
+$number_of_new_comments = 5;
 
-$comment_length = '100';
+$comment_length = 100;
 
 
 #Top page
-$number_of_default_sections = '5';
+$number_of_default_sections = 5;
 
 
 #Category
-$number_of_categ_sections = '5';
+$number_of_categ_sections = 5;
 
 #Search
-$number_of_results = '5';
+$number_of_results = 5;
 
 #Atom
-$number_of_feeds = '10';
+$number_of_feeds = 10;
 
 
 #Article images
-$number_of_images = '10';
+$number_of_images = 10;
 
 #Comments
-$number_of_comments = '5';
+$number_of_comments = 5;
 
 
 #Category and Search results
-$summary_length = '300';
+$summary_length = 300;
 
 
 #META description and Atom
-$description_length = '150';
+$description_length = 150;
 
 
 #Prev Next link title length
-$prev_next_length = '50';
+$prev_next_length = 50;
 
 
 #Download files
-$number_of_downloads = '10';
+$number_of_downloads = 10;
 
 
 #Page Navigation
-$number_of_pager = '5';
+$number_of_pager = 5;
 
 #Similar articles
-$number_of_similars = '3';
+$number_of_similars = 3;
 
 
 ##########################
@@ -125,83 +125,67 @@ $n = PHP_EOL;
 ##########################
 
 
-if ( ! function_exists( 'r' ) ) {
-
-	function r( $path ) {
-
+if ( ! function_exists( 'r' ) )
+{
+	function r( $path )
+	{
 		global $s;
-
 		$entities = array( '%26', '%2F', '%5C' );
-
 		$replaces = array( '&amp;', $s, $s );
-
 		return str_replace( $entities, $replaces, rawurlencode( $path ) );
-
 	}
-
 }
 
 
-if ( ! function_exists( 'h' ) ) {
-
-	function h( $str ) {
-
+if ( ! function_exists( 'h' ) )
+{
+	function h( $str )
+	{
 		global $encoding;
-
 		return htmlspecialchars( $str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding );
-
 	}
-
 }
 
 
-if ( ! function_exists( 'size_unit' ) ) {
-
-	function size_unit( $size ) {
-
-		$unit = array( 'B', 'KB', 'MB', 'GB' );
-
-		if ( $size > 0 ) return round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
-
+if ( ! function_exists( 'size_unit' ) )
+{
+	function size_unit( $size )
+	{
+		if ( $size > 0 )
+		{
+			$unit = array( 'B', 'KB', 'MB', 'GB' );
+			return round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
+		}
 	}
-
 }
 
 
-if ( ! function_exists( 'timestamp' ) ) {
-
-	function timestamp( $file ) {
-
+if ( ! function_exists( 'timestamp' ) )
+{
+	function timestamp( $file )
+	{
 		return gmdate( 'D, d M Y H:i:s T', filemtime( $file ) );
-
 	}
-
 }
 
 
-if ( ! function_exists( 'sideless' ) ) {
-
-	function sideless() {
-
+if ( ! function_exists( 'sideless' ) )
+{
+	function sideless()
+	{
 		global $header;
-
 		return $header .= '<style>.col-md-9{width:100%}.col-md-3{display:none}</style>';
-
 	}
-
 }
 
 
-if ( ! function_exists( 'nowrap' ) ) {
-
-	function nowrap() {
-
+if ( ! function_exists( 'nowrap' ) )
+{
+	function nowrap()
+	{
 		global $header;
-
 		return $header .= '<style>.article{white-space:normal}</style>';
-
 	}
-
 }
 
 
@@ -222,7 +206,7 @@ $script = r( $dir ) . $addslash;
 
 $scheme = empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://';
 
-$url = ( $port == '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
+$url = ( $port === 80 ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 
 $line_breaks = array( "\n", "\r\n", "\r", '&#13;&#10;', '&#13;', '&#10;' );
 
@@ -242,5 +226,7 @@ $js = $url . $tpl_dir . 'js' . $s;
 ##########################
 
 
-if ( is_file( $lang_file = __DIR__ . $s . 'lang' . $s . $lang . '.php' ) && !is_link( $lang_file ) ) include_once $lang_file;
-
+if ( is_file( $lang_file = __DIR__ . $s . 'lang' . $s . $lang . '.php' ) && !is_link( $lang_file ) )
+{
+	include_once $lang_file;
+}

@@ -1,7 +1,7 @@
 <?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license  GPL 3.0 or later; see LICENSE file for details.
+  * @license    GPL 3.0 or later; see LICENSE file for details.
   */
 
 $lang = 'ja';
@@ -206,7 +206,7 @@ $script = r( $dir ) . $addslash;
 
 $scheme = empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://';
 
-$url = ( $port === 80 ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
+$url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 
 $line_breaks = array( "\n", "\r\n", "\r", '&#13;&#10;', '&#13;', '&#10;' );
 

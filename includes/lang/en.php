@@ -1,7 +1,7 @@
 <?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license  GPL 3.0 or later; see LICENSE file for details.
+  * @license    GPL 3.0 or later; see LICENSE file for details.
   */
 
 date_default_timezone_set( 'America/New_York' );
@@ -194,17 +194,17 @@ $imgs_next = 'Next';
 function hsla( $h, $s = 100, $l = 50, $a = 1 )
 {
 	$hue = array(
-		'red'           => 0,
-		'orange'     => 35,
-		'yellow'       => 50,
+		'red'       => 0,
+		'orange'    => 35,
+		'yellow'    => 50,
 		'liteGreen' => 65,
-		'green'       => 85,
-		'liteBlue'    => 170,
-		'blue'          => 195,
+		'green'     => 85,
+		'liteBlue'  => 170,
+		'blue'      => 195,
 		'darkBlue'  => 220,
-		'purple'      => 265,
-		'peach'       => 330,
-		'brown'       => 25
+		'purple'    => 265,
+		'peach'     => 330,
+		'brown'     => 25
 	);
 	if ( isset( $hue[$h] ) )
 	{

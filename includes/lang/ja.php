@@ -1,7 +1,7 @@
 <?php
 /*
   * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
+  * @license  GPL 3.0 or later; see LICENSE file for details.
   */
 
 date_default_timezone_set( 'Asia/Tokyo' );
@@ -184,7 +184,7 @@ $align_center = '中央寄せ';
 $align_right = '右寄せ';
 
 #1ページあたりの表示枚数
-$number_of_imgs = '3';
+$number_of_imgs = 3;
 
 $large_image = 'Large';
 
@@ -195,31 +195,32 @@ $imgs_prev = '前のページ';
 $imgs_next = '次のページ';
 
 
-function hsla( $h, $s = 100, $l = 50, $a = 1 ) {
-
+function hsla( $h, $s = 100, $l = 50, $a = 1 )
+{
 	$hue = array(
-		'赤' => '0',
-		'橙' => '35',
-		'黄' => '50',
-		'鶯' => '65',
-		'緑' => '85',
-		'碧' => '170',
-		'青' => '195',
-		'紺' => '220',
-		'紫' => '265',
-		'桃' => '330',
-		'茶' => '25'
+		'赤' => 0,
+		'橙' => 35,
+		'黄' => 50,
+		'鶯' => 65,
+		'緑' => 85,
+		'碧' => 170,
+		'青' => 195,
+		'紺' => 220,
+		'紫' => 265,
+		'桃' => 330,
+		'茶' => 25
 	);
-
-	if ( isset( $hue[$h] ) ) return "hsla( $hue[$h], $s%, $l%, $a )";
-
+	if ( isset( $hue[$h] ) )
+	{
+		return "hsla( $hue[$h], $s%, $l%, $a )";
+	}
 }
 
 
-function color2class( $colour ) {
-
-	switch ( true ) {
-
+function color2class( $colour )
+{
+	switch ( true )
+	{
 		case $colour == '緑' || $colour == '鶯': return 'success';
 
 		case $colour == '橙' || $colour == '黄' || $colour == '茶': return 'warning';
@@ -228,6 +229,4 @@ function color2class( $colour ) {
 
 		default: return 'info';
 	}
-
 }
-

@@ -110,8 +110,8 @@ p {
 }
 
 .article li,.article dt{
-	padding-top:10px;
-	padding-bottom:10px
+  padding-top:10px;
+  padding-bottom:10px
 }
 
 .article dd{
@@ -230,6 +230,10 @@ header a:hover {
 
 .margin-auto {
   margin:0 auto
+}
+
+.tooltip {
+  font-size:medium
 }
 
 @media(max-width:767px) {

@@ -229,6 +229,10 @@ a:hover img {
   margin:0 auto
 }
 
+.tooltip{
+  font-size:medium
+}
+
 @media (max-width:767px) {
 
 body {

@@ -179,7 +179,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 			{
 				$headers .= 'Content-Type: text/plain; charset=' . $encoding . $n;
 
-				$subject = sprintf( $contact_subject_suffix, $filtered_sending_name ) . $site_name . $n;
+				$subject = sprintf( $contact_subject_suffix, $filtered_sending_name ) . $site_name;
 
 				$body .= $n . $filtered_sending_message . $n;
 

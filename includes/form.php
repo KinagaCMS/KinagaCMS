@@ -123,7 +123,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 
 			$remote_addr = filter_var( getenv( 'REMOTE_ADDR' ), FILTER_VALIDATE_IP );
 
-			$headers .= 'From: ' . $filtered_sending_name . ' <' . $filtered_sending_email . '>' . $n;
+			$headers .= 'From: =?' . $encoding . '?B?' . base64_encode( $filtered_sending_name ) . '?= <' . $filtered_sending_email . '>' . $n;
 
 			$headers .= 'X-Mailer: kinaga' . $n;
 
@@ -135,7 +135,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 
 			$headers .= 'X-UA: ' . h( getenv( 'HTTP_USER_AGENT' ) ) . $n;
 
-			$to = $site_name . ' <' . $mail_address . '>';
+			$to = '=?' . $encoding . '?B?' . base64_encode( $site_name ) . '?= <' . $mail_address . '>';
 
 			if ( filter_has_var( INPUT_GET, 'categ' ) && filter_has_var( INPUT_GET, 'title' ) )
 			{
@@ -195,7 +195,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 				setcookie( session_name(), '', $now - 36000, $s );
 			}
 
-			if ( mail( $mail_address, $subject, $body, $headers ) )
+			if ( mail( $mail_address, '=?' . $encoding . '?B?' . base64_encode( $subject ) . '?=', $body, $headers ) )
 			{
 				echo
 				'<div id=form_result></div>' . $n .

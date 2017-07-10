@@ -102,8 +102,8 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 	if ( isset( $_SESSION['token'] ) && filter_has_var( INPUT_POST, 'token' ) && $_SESSION['token'] == $_POST['token'])
 	{
 		$sendings = array(
-			'preview_name' => FILTER_SANITIZE_STRIPPED,
-			'preview_email' => FILTER_VALIDATE_EMAIL,
+			'preview_name' => FILTER_SANITIZE_SPECIAL_CHARS,
+			'preview_email' => FILTER_SANITIZE_EMAIL,
 			'preview_message' => FILTER_SANITIZE_SPECIAL_CHARS
 		);
 

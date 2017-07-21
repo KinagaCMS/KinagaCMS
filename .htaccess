@@ -36,16 +36,15 @@ ExpiresDefault "access plus 1 weeks"
 </ifModule>
 
 <IfModule mod_headers.c>
-Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options SAMEORIGIN
 Header set X-Powered-By "kinaga/5.0"
+<FilesMatch "\.(html|php)$">
+Header append Author "Gari-Hari LLC."
+</FilesMatch>
 Header set X-XSS-Protection "1; mode=block"
 Header unset ETag
 <FilesMatch "\.(js|css|xml|gz|html)$">
 Header append Vary: Accept-Encoding
 </FilesMatch>
-</IfModule>
-
-<IfModule mod_php5.c>
-php_value short_open_tag 1
 </IfModule>

@@ -173,8 +173,9 @@ if ( ! function_exists( 'sideless' ) )
 {
 	function sideless()
 	{
-		global $header;
-		return $header .= '<style>.col-md-9{width:100%}.col-md-3{display:none}</style>';
+		global $header, $get_title;
+		if ( $get_title )
+			return $header .= '<style>.col-md-9{width:100%}.col-md-3{width:100%}</style>';
 	}
 }
 

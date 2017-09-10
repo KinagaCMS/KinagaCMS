@@ -1,23 +1,9 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license  GPL 3.0 or later; see LICENSE file for details.
-  */
-
-$filtered_preview_name = '';
-
-$filtered_preview_email = '';
-
-$filtered_preview_message = '';
-
+$filtered_preview_name = $filtered_preview_email = $filtered_preview_message = '';
 session_name( $session_name );
-
 session_set_cookie_params( '3600' );
-
 session_start();
-
 session_regenerate_id();
-
 $token = rtrim( base64_encode( openssl_random_pseudo_bytes( 32 ) ), '=' );
 
 if ( filter_has_var( INPUT_POST, 'preview' ) )
@@ -27,13 +13,9 @@ if ( filter_has_var( INPUT_POST, 'preview' ) )
 		'email' => FILTER_VALIDATE_EMAIL,
 		'message' => FILTER_SANITIZE_SPECIAL_CHARS
 	);
-
 	$filtered_previews = filter_input_array( INPUT_POST, $previews );
-
-	$filtered_preview_name = $filtered_previews['name'];
-
-	$filtered_preview_email = $filtered_previews['email'];
-
+	$filtered_preview_name = trim( $filtered_previews['name'] );
+	$filtered_preview_email = trim( $filtered_previews['email'] );
 	$filtered_preview_message = str_replace( $line_breaks, $n, $filtered_previews['message'] );
 
 	echo
@@ -108,85 +90,51 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 		);
 
 		$filtered_sendings = filter_input_array( INPUT_POST, $sendings );
-
 		$filtered_sending_name = $filtered_sendings['preview_name'];
-
 		$filtered_sending_email = $filtered_sendings['preview_email'];
-
 		$filtered_sending_message = str_replace( $line_breaks, $n, $filtered_sendings['preview_message'] );
 
 		if ( $filtered_sending_name && $filtered_sending_email && $filtered_sending_message )
 		{
 			$headers = 'MIME-Version: 1.0' . $n;
-
 			$body = '';
-
 			$remote_addr = filter_var( getenv( 'REMOTE_ADDR' ), FILTER_VALIDATE_IP );
-
 			$headers .= 'From: =?' . $encoding . '?B?' . base64_encode( $filtered_sending_name ) . '?= <' . $filtered_sending_email . '>' . $n;
-
 			$headers .= 'X-Mailer: kinaga' . $n;
-
 			$headers .= 'X-Date: ' . date( 'c' ) . $n;
-
 			$headers .= 'X-Host: ' . gethostbyaddr( $remote_addr ) . $n;
-
 			$headers .= 'X-IP: ' . $remote_addr . $n;
-
 			$headers .= 'X-UA: ' . h( getenv( 'HTTP_USER_AGENT' ) ) . $n;
-
 			$to = '=?' . $encoding . '?B?' . base64_encode( $site_name ) . '?= <' . $mail_address . '>';
 
 			if ( filter_has_var( INPUT_GET, 'categ' ) && filter_has_var( INPUT_GET, 'title' ) )
 			{
 				$boundary = md5( uniqid( rand() ) );
-
 				$filename = $now . '-~-' . $filtered_sending_name . '.txt';
-
 				$headers .= 'Content-Type: multipart/mixed;' . $n . ' boundary="' . $boundary . '"' . $n;
-
 				$headers .= 'Content-Transfer-Encoding: 8bit' . $n;
-
 				$subject = sprintf( $comment_subject, $get_categ, $get_title ) . $site_name;
-
 				$body .= '--' . $boundary . $n;
-
 				$body .= 'Content-Type: text/plain; charset=' . $encoding . $n;
-
 				$body .= 'Content-Transfer-Encoding: 8bit' . $n;
-
 				$body .= $n;
-
 				$body .= $separator . $n;
-
 				$body .= sprintf( $comment_acceptance, $filename, $get_categ, $get_title );
-
 				$body .= $n . $separator . $n;
-
 				$body .= '--' . $boundary . $n;
-
 				$body .= 'Content-Type: application/octet-stream; name="' . $filename . '"' . $n;
-
 				$body .= 'Content-Disposition: attachment; filename="' . $filename . '"' . $n;
-
 				$body .= 'Content-Transfer-Encoding: base64' . $n . $n;
-
 				$body .= chunk_split( base64_encode( $filtered_sending_message) ) . $n . $n;
-
 				$body .= '--' . $boundary . '--' . $n;
 			}
 			else
 			{
 				$headers .= 'Content-Type: text/plain; charset=' . $encoding . $n;
-
 				$subject = sprintf( $contact_subject_suffix, $filtered_sending_name ) . $site_name;
-
 				$body .= $n . $filtered_sending_message . $n;
-
 				$body .= $n . $separator . $n;
-
 				$body .= $site_name . $n;
-
 				$body .= $address . $n . $n;
 			}
 
@@ -214,9 +162,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 				'</div>';
 			}
 			session_unset();
-
 			session_destroy();
-
 			unset( $_SESSION['token'], $subject, $body, $headers );
 		}
 		else
@@ -226,9 +172,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 				setcookie( session_name(), '', $now - 36000, $s );
 			}
 			session_unset();
-
 			session_destroy();
-
 			unset( $_SESSION['token'], $subject, $body, $headers );
 
 			echo

@@ -205,7 +205,7 @@ $addslash = $dir != $s ? $s : '';
 
 $script = r( $dir ) . $addslash;
 
-$scheme = $_SERVER['HTTPS'] === 'off' ? 'http://' : 'https://';
+$scheme = !empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
 
 $url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 

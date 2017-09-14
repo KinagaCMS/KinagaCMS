@@ -201,7 +201,7 @@ $addslash = $dir != $s ? $s : '';
 
 $script = r( $dir ) . $addslash;
 
-$scheme = isset( $_SERVER['HTTP_X_SAKURA_FORWARDED_FOR'] ) || !empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+$scheme = isset( $_SERVER['HTTP_X_SAKURA_FORWARDED_FOR'] ) || !empty($_SERVER['HTTPS']) ? 'https://' : 'http://';
 
 $url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 

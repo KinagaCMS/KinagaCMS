@@ -1,14 +1,10 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
-  */
 
 $lang = 'ja';
 
 $mail_address = '';
 
-# bootstrap-header, bootstrap-narrow, bootstrap-navbar, bootstrap-simple, bootstrap-harlequin
+#bootstrap-header, bootstrap-narrow, bootstrap-navbar, bootstrap-simple, bootstrap-harlequin
 $template = 'bootstrap-navbar';
 
 
@@ -205,7 +201,7 @@ $addslash = $dir != $s ? $s : '';
 
 $script = r( $dir ) . $addslash;
 
-$scheme = !empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
+$scheme = !empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
 
 $url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 

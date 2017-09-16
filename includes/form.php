@@ -57,10 +57,10 @@ if ( filter_has_var( INPUT_POST, 'preview' ) )
 		'<td><a onclick="$(\'#preview\').hide()" href=#post-form class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
 		'<td>' . $n .
 		'<form method=post action="' . h( getenv( 'REQUEST_URI' ) ) . ( filter_has_var( INPUT_GET, 'categ' ) && filter_has_var(INPUT_GET, 'title' ) ? '#form_result' : '' ) . '">' . $n .
-		'<input type=hidden name=preview_name value="' . $filtered_preview_name . '">' . $n .
-		'<input type=hidden name=preview_email value="' . $filtered_preview_email . '">' . $n .
+		'<input type=hidden name=preview_name value="' . base64_encode( $filtered_preview_name ) . '">' . $n .
+		'<input type=hidden name=preview_email value="' . base64_encode( $filtered_preview_email ) . '">' . $n .
 		'<input type=hidden name=token value="' . $token . '">' . $n .
-		'<input type=hidden name=preview_message value="' . str_replace( $n, '&#10;', $filtered_preview_message ) . '">' . $n .
+		'<input type=hidden name=preview_message value="' . base64_encode( $filtered_preview_message ) . '">' . $n .
 		'<button name=send type=submit class="btn btn-success btn-lg btn-block" tabindex=7 accesskey=z>' . $contact_send . '</button>' . $n .
 		'</form>' . $n .
 		'</td>' . $n .
@@ -84,22 +84,22 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 	if ( isset( $_SESSION['token'] ) && filter_has_var( INPUT_POST, 'token' ) && $_SESSION['token'] == $_POST['token'])
 	{
 		$sendings = array(
-			'preview_name' => FILTER_SANITIZE_SPECIAL_CHARS,
-			'preview_email' => FILTER_SANITIZE_EMAIL,
-			'preview_message' => FILTER_SANITIZE_SPECIAL_CHARS
+			'preview_name' => FILTER_SANITIZE_STRIPPED,
+			'preview_email' => FILTER_SANITIZE_STRIPPED,
+			'preview_message' => FILTER_SANITIZE_STRIPPED
 		);
 
 		$filtered_sendings = filter_input_array( INPUT_POST, $sendings );
 		$filtered_sending_name = $filtered_sendings['preview_name'];
-		$filtered_sending_email = $filtered_sendings['preview_email'];
-		$filtered_sending_message = str_replace( $line_breaks, $n, $filtered_sendings['preview_message'] );
+		$filtered_sending_email = base64_decode( $filtered_sendings['preview_email'] );
+		$filtered_sending_message = $filtered_sendings['preview_message'];
 
 		if ( $filtered_sending_name && $filtered_sending_email && $filtered_sending_message )
 		{
 			$headers = 'MIME-Version: 1.0' . $n;
 			$body = '';
 			$remote_addr = filter_var( getenv( 'REMOTE_ADDR' ), FILTER_VALIDATE_IP );
-			$headers .= 'From: =?' . $encoding . '?B?' . base64_encode( $filtered_sending_name ) . '?= <' . $filtered_sending_email . '>' . $n;
+			$headers .= 'From: =?' . $encoding . '?B?' . $filtered_sending_name . '?= <' . $filtered_sending_email . '>' . $n;
 			$headers .= 'X-Mailer: kinaga' . $n;
 			$headers .= 'X-Date: ' . date( 'c' ) . $n;
 			$headers .= 'X-Host: ' . gethostbyaddr( $remote_addr ) . $n;
@@ -110,7 +110,7 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 			if ( filter_has_var( INPUT_GET, 'categ' ) && filter_has_var( INPUT_GET, 'title' ) )
 			{
 				$boundary = md5( uniqid( rand() ) );
-				$filename = $now . '-~-' . $filtered_sending_name . '.txt';
+				$filename = $now . '-~-' . base64_decode( $filtered_sending_name ) . '.txt';
 				$headers .= 'Content-Type: multipart/mixed;' . $n . ' boundary="' . $boundary . '"' . $n;
 				$headers .= 'Content-Transfer-Encoding: 8bit' . $n;
 				$subject = sprintf( $comment_subject, $get_categ, $get_title ) . $site_name;
@@ -125,17 +125,15 @@ elseif ( filter_has_var( INPUT_POST, 'send' ) )
 				$body .= 'Content-Type: application/octet-stream; name="' . $filename . '"' . $n;
 				$body .= 'Content-Disposition: attachment; filename="' . $filename . '"' . $n;
 				$body .= 'Content-Transfer-Encoding: base64' . $n . $n;
-				$body .= chunk_split( base64_encode( $filtered_sending_message) ) . $n . $n;
+				$body .= chunk_split( $filtered_sending_message ) . $n . $n;
 				$body .= '--' . $boundary . '--' . $n;
 			}
 			else
 			{
 				$headers .= 'Content-Type: text/plain; charset=' . $encoding . $n;
-				$subject = sprintf( $contact_subject_suffix, $filtered_sending_name ) . $site_name;
-				$body .= $n . $filtered_sending_message . $n;
-				$body .= $n . $separator . $n;
-				$body .= $site_name . $n;
-				$body .= $address . $n . $n;
+				$headers .= 'Content-Transfer-Encoding: base64' . $n . $n;
+				$subject = sprintf( $contact_subject_suffix, base64_decode( $filtered_sending_name ) ) . $site_name;
+				$body .= chunk_split( $filtered_sending_message . base64_encode( $n . $separator . $n . $site_name . $n . $address . $n . $n ) ) . $n . $n;
 			}
 
 			if ( isset( $_COOKIE[$session_name] ) )

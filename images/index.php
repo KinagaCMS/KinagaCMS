@@ -1,9 +1,4 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license  GPL 3.0 or later; see LICENSE file for details.
-  */
-
 if ( is_file( $config = '..' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'config.php' ) && !is_link( $config ) )
 {
 	include_once $config;
@@ -54,7 +49,6 @@ echo
 '</div>' . $n;
 
 $img_array = [];
-
 $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( '.', FilesystemIterator::SKIP_DOTS ) );
 
 foreach( $files as $images )
@@ -67,9 +61,7 @@ foreach( $files as $images )
 }
 
 $sort = array_filter( $sort );
-
 rsort( $sort );
-
 $count_imgs = count( $sort );
 
 foreach( $sort as $image )
@@ -148,7 +140,6 @@ if ( $img_array )
 	'</div>' . $n .
 	'<hr>' . $n .
 	'<div class=row>' . $n;
-
 	$imgs_in_page = array_slice( $img_array, ( $page - 1 ) * $number_of_imgs, $number_of_imgs );
 
 	for( $i = 0, $c = count( $imgs_in_page ); $i < $c; ++$i )
@@ -185,5 +176,4 @@ echo
 '<script>function c(c){ $( ".form-control" ).val( function( index, value ){ return value.replace( /img-thumbnail(.*?)img-responsive/g,"img-thumbnail "+c+" img-responsive" ) } );$( ".input-group-lg" ).fadeIn( 100 ).fadeOut( 100 ).fadeIn( 100 ).fadeOut( 100 ).fadeIn( 100 )}$( "#left" ).click( function(){ c( "pull-left" ) } );$( "#center" ).click( function(){ c( "center-block" ) } );$( "#right" ).click( function(){ c( "pull-right" ) } )</script>' . $n .
 '</body>' . $n .
 '</html>';
-
 unset( $href, $img_array );

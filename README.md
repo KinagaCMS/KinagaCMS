@@ -19,9 +19,13 @@
 
 ## インストール
 
-	git clone https://github.com/KinagaCMS/KinagaCMS.git
+1. 　Clone
 
+		git clone https://github.com/KinagaCMS/KinagaCMS.git
 
+2. 　Download
+
+	.zip ファイルを展開し、フォルダ名とパーミッションを適宜変更して下さい
 
 ## 初期設定
 
@@ -69,7 +73,7 @@
 
 ## コントリビューション
 
-　ドキュメントを含む各国語対応、文言およびデザイン等修正、バグフィクスなどを歓迎します。
+　ドキュメントを含む各国語への対応、文言およびデザイン等修正、バグフィクスなどを歓迎します。
 
 
 

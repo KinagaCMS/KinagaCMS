@@ -1,9 +1,4 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
-  */
-
 date_default_timezone_set( 'America/New_York' );
 
 #Site Name

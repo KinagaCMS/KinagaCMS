@@ -1,17 +1,8 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license  GPL 3.0 or later; see LICENSE file for details.
-  */
-
 include_once 'includes' . DIRECTORY_SEPARATOR . 'config.php';
-
 header( 'Content-Type: application/atom+xml; charset=' . $encoding );
-
 include_once 'includes' . $s . 'functions.php';
-
 $xml = new DOMDocument( '1.0', $encoding );
-
 echo $xml -> saveXML() .
 '<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="' . $lang . '">' . $n .
 '<title type="text">' . $site_name . '</title>' . $n .
@@ -37,34 +28,27 @@ if ( $atom_files )
 	for( $i = 0, $c = count( $sort ); $i < $c && $i < $number_of_feeds; ++$i )
 	{
 		$atom_articles = explode( '-~-', $sort[$i] );
-
 		$atom_title = title( $atom_articles[1] );
-
 		$atom_article_dir = dirname( $atom_articles[1] );
-
 		$atom_section = file_get_contents( $atom_articles[1] );
 
 		if ( $atom_title == 'contents' )
 		{
 			$pagename = basename( $atom_articles[1], '.html' );
-
 			if ( $pagename == 'index' )
 			{
 				$atom_article_link_title = $home;
-
 				$id = $url;
 			}
 			else
 			{
 				$atom_article_link_title = h( $pagename );
-
 				$id = $url . rawurlencode( $pagename );
 			}
 		}
 		else
 		{
 			$atom_article_link_title = h( $atom_title );
-
 			$id = $url . rawurlencode( categ( $atom_articles[1] ) ) . $s . rawurlencode( $atom_title );
 		}
 		if ( file_exists( $atom_imgs_dir = $atom_article_dir . $s . 'images' ) && is_dir( $atom_imgs_dir ) && !is_link( $atom_imgs_dir ) )
@@ -74,7 +58,6 @@ if ( $atom_files )
 			if ( $glob_atom_imgs )
 			{
 				sort( $glob_atom_imgs );
-
 				$atom_image = ( $size = @getimagesize( $glob_atom_imgs[0] ) ) ?
 				'<a href="' . $id . '"><img src="' . $url . r( $glob_atom_imgs[0] ) . '" width="' . ( $size[0] > 500 ? 500 : $size[0] ) . '" alt="' . $atom_article_link_title . '" /></a>' : '';
 			}
@@ -94,7 +77,6 @@ if ( $atom_files )
 			if ( $glob_atom_background_imgs )
 			{
 				sort( $glob_atom_background_imgs );
-
 				$atom_background_image = ( $size = @getimagesize( $glob_atom_background_imgs[0] ) ) ?
 				'<a href="' . $id . '"><img src="' . $url . r( $glob_atom_background_imgs[0] ) . '" width="' . ( $size[0] > 500 ? 500 : $size[0] ) . '" alt="' . $atom_article_link_title . '" /></a>' : '';
 			}

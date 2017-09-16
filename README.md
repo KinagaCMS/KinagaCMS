@@ -19,11 +19,11 @@
 
 ## インストール
 
-1. 　Clone
+1. Clone
 
 		git clone https://github.com/KinagaCMS/KinagaCMS.git
 
-2. 　Download
+2. Download
 
 	.zip ファイルを展開し、フォルダ名とパーミッションを適宜変更して下さい
 

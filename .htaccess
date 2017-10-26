@@ -7,9 +7,14 @@ RewriteEngine on
 #Subdomain
 #RewriteBase /
 
-#HTTPS example
+#HTTPS 1
 #RewriteCond %{HTTP:X-Sakura-Forwarded-For} ^$
 #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+#HTTPS 2
+#SetEnvIf REDIRECT_HTTPS (.*) HTTPS=$1
+#RewriteCond %{ENV:HTTPS} !on
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -37,7 +42,7 @@ ExpiresDefault "access plus 1 weeks"
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/5.0.3"
+Header set X-Powered-By "kinaga/5.0.4"
 <FilesMatch "\.(html|php)$">
 Header append Author "Gari-Hari LLC."
 </FilesMatch>

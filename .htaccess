@@ -36,13 +36,13 @@ AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javasc
 
 <ifModule mod_expires.c>
 ExpiresActive On
-ExpiresDefault "access plus 1 weeks"
+ExpiresDefault "access plus 1 week"
 </ifModule>
 
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/5.0.4"
+Header set X-Powered-By "kinaga/5.0.5"
 <FilesMatch "\.(html|php)$">
 Header append Author "Gari-Hari LLC."
 </FilesMatch>

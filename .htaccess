@@ -9,25 +9,25 @@ RewriteEngine on
 
 #HTTPS 1
 #RewriteCond %{HTTP:X-Sakura-Forwarded-For} ^$
-#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
 #HTTPS 2
 #SetEnvIf REDIRECT_HTTPS (.*) HTTPS=$1
 #RewriteCond %{ENV:HTTPS} !on
-#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/(.*)/$ ?categ=$1&pages=$2 [L]
+RewriteRule ^(.*)/(.*)/$ ?categ=$1&pages=$2 [L,NE]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/$ ?categ=$1 [L]
+RewriteRule ^(.*)/$ ?categ=$1 [L,NE]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/(.*)$ ?categ=$1&title=$2 [L]
+RewriteRule ^(.*)/(.*)$ ?categ=$1&title=$2 [L,NE]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ ?page=$1 [L]
+RewriteRule ^(.*)$ ?page=$1 [L,NE]
 </IfModule>
 
 <ifModule mod_deflate.c>
@@ -42,7 +42,7 @@ ExpiresDefault "access plus 1 week"
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/5.0.5"
+Header set X-Powered-By "kinaga/5.0.6"
 <FilesMatch "\.(html|php)$">
 Header append Author "Gari-Hari LLC."
 </FilesMatch>

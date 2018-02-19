@@ -1,9 +1,13 @@
 <?php
 $filtered_preview_name = $filtered_preview_email = $filtered_preview_message = '';
 session_name( $session_name );
-session_set_cookie_params( '3600' );
-session_start();
-session_regenerate_id();
+session_set_cookie_params('3600', $dir === $s ? $s : $dir.$s, $server,  is_ssl(), true);
+
+if (!isset($_SESSION[$session_name]))
+{
+	session_start();
+	session_regenerate_id(true);
+}
 $token = rtrim( base64_encode( openssl_random_pseudo_bytes( 32 ) ), '=' );
 
 if ( filter_has_var( INPUT_POST, 'preview' ) )

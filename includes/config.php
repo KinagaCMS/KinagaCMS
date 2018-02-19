@@ -185,6 +185,13 @@ if ( ! function_exists( 'nowrap' ) )
 	}
 }
 
+function is_ssl()
+{
+	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
+		return true;
+	else
+		return false;
+}
 
 ##########################
 
@@ -195,13 +202,13 @@ $port = getenv( 'SERVER_PORT' );
 
 $server = getenv( 'SERVER_NAME' );
 
-$dir = dirname( getenv( 'SCRIPT_NAME' ) );
+$dir = r( dirname( getenv( 'SCRIPT_NAME' ) ) );
 
 $addslash = $dir != $s ? $s : '';
 
-$script = r( $dir ) . $addslash;
+$script = $dir . $addslash;
 
-$scheme = isset( $_SERVER['HTTP_X_SAKURA_FORWARDED_FOR'] ) || !empty($_SERVER['HTTPS']) ? 'https://' : 'http://';
+$scheme = is_ssl() ? 'https://' : 'http://';
 
 $url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
 

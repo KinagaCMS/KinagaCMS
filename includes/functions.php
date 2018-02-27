@@ -921,10 +921,11 @@ elseif ( ! filter_has_var( INPUT_GET, 'categ' ) && ! filter_has_var( INPUT_GET, 
 			if ( $outputs )
 			{
 				rsort( $outputs );
+				$results_number = count($outputs);
 				$results_calc = ( $pages - 1 ) * $number_of_results;
 				$results_in_page = array_slice( $outputs, $results_calc, $number_of_results );
 
-				for( $i = 0, $c = count( $results_in_page ), $results_number = count( $outputs ); $i < $c; ++$i )
+				for( $i = 0, $c = count( $results_in_page ); $i < $c; ++$i )
 				{
 					$output = $results_in_page[$i];
 					$title = title( $output[1] );

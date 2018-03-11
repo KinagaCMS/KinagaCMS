@@ -1,42 +1,33 @@
 <?php
-include_once 'includes' . DIRECTORY_SEPARATOR . 'config.php';
-header( 'Content-Type: text/plain; charset=' . $encoding );
-$glob = glob( '{' . $glob_dir . 'index.html,contents' . $s . '*.html}', GLOB_BRACE + GLOB_NOSORT );
+include_once 'includes/config.php';
+header('Content-Type: text/plain; charset=' . $encoding);
+$glob = glob('{' . $glob_dir . 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
 
-if ( $glob )
+if ($glob)
 {
-	foreach( $glob as $files )
-	{
-		$sort[] = !is_link( $files ) && !is_link( dirname( $files ) ) && !is_link( dirname( dirname( $files ) ) ) ? filemtime( $files ) . '-~-' . $files : '';
-	}
-	$sort = array_filter( $sort );
-	rsort( $sort );
-	for( $i = 0, $c = count( $sort ); $i < $c; ++$i )
-	{
-		$part = explode( '-~-', $sort[$i] );
-		$categ = basename( dirname( dirname( $part[1] ) ) );
-		$title = basename( dirname( $part[1] ) );
+	foreach($glob as $files)
+		$sort[] = filemtime($files) . '-~-' . $files;
 
-		if ( $title == 'contents' )
+	$sort = array_filter($sort);
+	rsort($sort);
+	for($i = 0, $c = count($sort); $i < $c; ++$i)
+	{
+		$part = explode('-~-', $sort[$i]);
+		$categ = basename(dirname(dirname($part[1])));
+		$title = basename(dirname($part[1]));
+
+		if ($title === 'contents')
 		{
-			$page = basename( $part[1], '.html' );
+			$page = basename($part[1], '.html');
 
-			if ( $page == 'index' )
-			{
+			if ($page == 'index')
 				echo $url . $n;
-			}
 			else
-			{
-				echo $url . rawurlencode( $page ) . $n;
-			}
+				echo $url . rawurlencode($page) . $n;
 		}
 		else
-		{
-			echo $url . rawurlencode( $categ ) . $s . rawurlencode( $title ) . $n;
-		}
+			echo $url . rawurlencode($categ) . '/' . rawurlencode($title) . $n;
 	}
 }
-if ( $use_contact === true )
-{
-	echo $url . rawurlencode( $contact_us );
-}
+if ($use_contact === true)
+	echo $url . rawurlencode($contact_us);

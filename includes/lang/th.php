@@ -10,8 +10,12 @@ date_default_timezone_set('Asia/Bangkok');
 // Site Name
 $site_name = 'kinaga';
 
-// Your home or office address: Sidebox and Mail footer
+// Your mail address
+$mail_address = '';
+
+// Your home or office address
 $address = '';
+$address_title = '';
 
 // Hue: red, orange, yellow, liteGreen, green, liteBlue, blue, darkBlue, purple, peach, brown or BLANK
 $color = 'green';
@@ -55,7 +59,9 @@ $download_subtitle = 'คลิกลิงค์ด้านล่าง';
 
 $page_prefix = 'หน้าที่ %s';
 
-$permalink = 'ลิงค์ถาวร <small>ก๊อปปี้ลิงค์ไปวางบนไซต์คุณ</small>';
+$social = 'หุ้น';
+
+$permalink = 'ลิงค์ถาวร';
 
 $for_html = 'HTML';
 
@@ -108,7 +114,7 @@ $separator = '_______________________________________________';
 $comment_acceptance = 'To post this comment,'.$n.
   'save the attached file: %s'.$n.
   'and upload it in the following folder'.$n.$n.
-  $s.'contents'.$s.'%s'.$s.'%s'.$s.'comments'.$s;
+  '/contents/%s/%s/comments/';
 
 $contact_name = 'ชื่อ';
 
@@ -154,9 +160,9 @@ $days_ago = ' วันก่อน';
 // /images/index.php
 $images_title = 'รูปภาพ - %s';
 
-$images_heading = 'รูปภาพ <small>สำเนา tag ของรูปภาพไปวางในบทความ</small>';
+$images_heading = 'รูปภาพ <small class=text-muted>สำเนา tag ของรูปภาพไปวางในบทความ</small>';
 
-$images_aligner = 'จัดเรียงรูปภาพ <small>คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
+$images_aligner = 'จัดเรียงรูปภาพ <small class=text-muted>คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
 
 $noscript = 'กรุณาเปิดการใช้งาน <strong>javascript</strong>.';
 
@@ -173,40 +179,81 @@ $large_image = 'ใหญ่';
 
 $small_image = 'เล็ก';
 
+$imgs_first= 'เป็นครั้งแรก';
 $imgs_prev = 'ก่อนหน้า';
 
 $imgs_next = 'ถัดไป';
+$imgs_last = 'ในที่สุด';
 
-function hsla($h, $s = 100, $l = 50, $a = 1)
+
+function hsla($h, $s=100, $l=50, $a=1)
 {
-  $hue = array(
-    'red' => '0',
-    'orange' => '35',
-    'yellow' => '50',
-    'liteGreen' => '65',
-    'green' => '85',
-    'liteBlue' => '170',
-    'blue' => '195',
-    'darkBlue' => '220',
-    'purple' => '265',
-    'peach' => '330',
-    'brown' => '25'
-  );
-  if (isset($hue[$h])) {
-    return "hsla($hue[$h], $s%, $l%, $a )";
-  }
+	$hue = array(
+		'white' => 0,
+		'black' => 0,
+		'gray' => 0,
+		'red' => 0,
+		'orange' => 20,
+		'yellow' => 53,
+		'liteGreen' => 70,
+		'green' => 85,
+		'liteBlue' => 170,
+		'blue' => 195,
+		'darkBlue' => 220,
+		'purple' => 265,
+		'peach' => 330,
+		'brown' => 25
+	);
+
+	if (isset($hue[$h]))
+	{
+		if ($h === 'green' || $h === 'liteGreen')
+			$s = 45;
+		if ($h === 'yellow')
+		{
+			$s = 95;
+			$l = 43;
+		}
+		if ($h === 'liteBlue')
+			$s = 65;
+		if ($h === 'darkBlue')
+		{
+			$s = 65;
+			$l = 40;
+		}
+		if ($h === 'brown')
+			$s = $l = 40;
+		if ($h === 'black')
+			$s = $l = 0;
+		if ($h === 'gray')
+		{
+			$s = 0;
+			$l = 55;
+		}
+		if ($h === 'white')
+		{
+			$s = 0;
+			$l = 65;
+		}
+		return "hsla($hue[$h], $s%, $l%, $a)";
+	}
 }
+
 
 function color2class($colour)
 {
-  switch (true) {
-    case $colour == 'green' || $colour == 'liteGreen':
-      return 'success';
-    case $colour == 'orange' || $colour == 'yellow' || $colour == 'brown':
-      return 'warning';
-    case $colour == 'red' || $colour == 'purple' || $colour == 'peach':
-      return 'danger';
-    default:
-      return 'info';
-  }
+	if ($colour === 'white')
+		return 'white';
+	elseif ($colour === 'gray')
+		return 'secondary';
+	elseif ($colour === 'black')
+		return 'dark';
+	elseif ($colour === 'green' || $colour === 'liteGreen')
+		return 'success';
+	elseif ($colour === 'orange' || $colour === 'yellow' || $colour === 'brown')
+		return 'warning';
+	elseif ($colour === 'red' || $colour === 'purple' || $colour === 'peach')
+		return 'danger';
+	else
+		return'primary';
 }

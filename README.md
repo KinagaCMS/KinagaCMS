@@ -1,5 +1,5 @@
 # kinaga
-<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" height="130" align="left">
+<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" height="120" align="left">
 
 紀永（kinaga）とは、気長の当て字で、「末永く書く」の意
 

@@ -1,12 +1,25 @@
 # kinaga
-<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" height="120" align="left">
+<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300" align="left">
+<br>
+
+<br>
 
 紀永（kinaga）とは、気長の当て字で、「末永く書く」の意
 
+<br>
+
 ロゴは、フォルダ管理とHTMLタグをイメージしました
+
+<br>
 
 イメージカラーは千歳緑（Millennial Green）です
 
+
+<br>
+
+<br>
+
+---
 
 
 ## 概要

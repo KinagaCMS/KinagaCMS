@@ -1,12 +1,11 @@
-<div style="text-align:center"><h1 style="color:#265A3C;letter-spacing:-1">kinaga</h1>
+# kinaga
 <img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300">
 
-</div>
 
 ___
 
 
-<h3 style="color:#265A3C;letter-spacing:2">概要</h3>
+### 概要
 
 Linux ユーザーに最適化されたCMS
 
@@ -21,7 +20,7 @@ Linux ユーザーに最適化されたCMS
 ___
 
 
-<h3 style="color:#265A3C;letter-spacing:2">動作環境</h3>
+### 動作環境
 
 - PHP 5.5 以上
 - Apache 2.2 以上
@@ -31,7 +30,7 @@ ___
 
 
 
-<h3 style="color:#265A3C">インストール</h3>
+### インストール
 
 - [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)
 
@@ -42,7 +41,7 @@ ___
 
 
 
-<h3 style="color:#265A3C;letter-spacing:2">初期設定</h3>
+### 初期設定
 
 1.  /includes/config.php
 
@@ -55,7 +54,7 @@ ___
 ___
 
 
-<h3 style="color:#265A3C;letter-spacing:2">簡単な使い方</h3>
+### 簡単な使い方
 
 1.  ファイルマネージャまたは [WinSCP](https://winscp.net/) でサーバーに接続します
 2.  「**contents**」フォルダの中に「**カテゴリ名**」のフォルダを作成して下さい
@@ -85,5 +84,5 @@ ___
 		└── index.html ( トップページ。必須ではありません )
 ___
 
-<h3 style="color:#265A3C">ライセンス</h3>
--  [GPL v3](LICENSE)
+### ライセンス
+-  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)

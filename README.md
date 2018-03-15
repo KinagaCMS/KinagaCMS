@@ -1,11 +1,15 @@
 # kinaga
-<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300">
+<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" height="130" align="left">
+
+紀永（kinaga）とは、気長の当て字で、「末永く書く」の意
+
+ロゴは、フォルダ管理とHTMLタグをイメージしました
+
+イメージカラーは千歳緑（Millennial Green）です
 
 
-___
 
-
-### 概要
+## 概要
 
 Linux ユーザーに最適化されたCMS
 
@@ -13,35 +17,25 @@ Linux ユーザーに最適化されたCMS
 
 簡単なルールに沿って、フォルダやファイルを配置するだけで、Webサイトが完成します
 
+---
 
-
-
-
-___
-
-
-### 動作環境
+## 動作環境
 
 - PHP 5.5 以上
 - Apache 2.2 以上
 - .htaccess 及び RewriteEngine が利用可能であること
 
-___
+---
 
-
-
-### インストール
+## インストール
 
 - [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)
 
 - パーミッションなどを適宜変更してから公開ディレクトリにアップロードして下さい
 
+---
 
-___
-
-
-
-### 初期設定
+## 初期設定
 
 1.  /includes/config.php
 
@@ -51,10 +45,9 @@ ___
 
 　　サイト名やメールアドレスなどを設定することができます
 
-___
+---
 
-
-### 簡単な使い方
+## 簡単な使い方
 
 1.  ファイルマネージャまたは [WinSCP](https://winscp.net/) でサーバーに接続します
 2.  「**contents**」フォルダの中に「**カテゴリ名**」のフォルダを作成して下さい
@@ -82,7 +75,7 @@ ___
 		├── サイドページ.html ( インフォメーションに表示されます。必須ではありません )
 		│
 		└── index.html ( トップページ。必須ではありません )
-___
+---
 
-### ライセンス
+## ライセンス
 -  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)

@@ -193,236 +193,228 @@ $imgs_prev = 'Prev';
 $imgs_next = 'Next';
 $imgs_last = 'Last';
 
-
-function hsla($h, $s=100, $l=50, $a=1)
+function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 {
-	if (is_numeric($h))
-		return "hsla($h, $s%, $l%, $a)";
-	else
+	if ($h === 'Red')
 	{
-		$hue = array(
-			'Red' => 354,
-			'Rose' => 351,
-			'Pink' => 333,
-			'DarkPink' => 340,
-			'Coral' => 9,
-			'Carrot' => 26,
-			'Orange' => 30,
-			'Topaz' => 48,
-			'DarkYellow' => 41,
-			'SpringGreen' => 85,
-			'MossGreen' => 75,
-			'MintGreen' => 131,
-			'DarkGreen' => 142,
-			'Turquoise' => 190,
-			'LapisLazuli' => 217,
-			'MidnightBlue' => 222,
-			'OrientalBlue' => 232,
-			'Violet' => 259,
-			'Grape' => 283,
-			'Sepia' => 16,
-			'RawUmber' => 39,
-			'Khaki' => 45,
-			'Coffee' => 39,
-			'White' => 0,
-			'MoonWhite' => 206,
-			'WistariaWhite' => 270,
-			'Gold' => 53,
-			'LimeWhite' => 75,
-			'Gray' => 0,
-			'GrayGreen' => 131,
-			'PinkGray' => 330,
-			'SandGray' => 50,
-			'Onyx' => 210,
-			'Black' => 0
-		);
-		if ($h === 'Red')
-		{
-			$s = 66;
-			$l = 44;
-		}
-		elseif ($h === 'Rose')
-		{
-			$s = 77;
-			$l = 62;
-		}
-		elseif ($h === 'Pink')
-		{
-			$s = 77;
-			$l = 62;
-		}
-		elseif ($h === 'DarkPink')
-		{
-			$s = 52;
-			$l = 55;
-		}
-		if ($h === 'Coral')
-		{
-			$s = 79;
-			$l = 68;
-		}
-		if ($h === 'Carrot')
-		{
-			$s = 100;
-			$l = 40;
-		}
-		if ($h === 'Orange')
-		{
-			$s = 100;
-			$l = 47;
-		}
-		if ($h === 'Topaz')
-		{
-			$s = 86;
-			$l = 43;
-		}
-		if ($h === 'DarkYellow')
-		{
-			$s = 60;
-			$l = 49;
-		}
-		if ($h === 'SpringGreen')
-		{
-			$s = 43;
-			$l = 48;
-		}
-		if ($h === 'MossGreen')
-		{
-			$s = 66;
-			$l = 31;
-		}
-		if ($h === 'MintGreen')
-		{
-			$s = 31;
-			$l = 55;
-		}
-		elseif ($h === 'DarkGreen')
-		{
-			$s = 36;
-			$l = 30;
-		}
-		elseif ($h === 'Turquoise')
-		{
-			$s = 40;
-			$l = 45;
-		}
-		elseif ($h === 'LapisLazuli')
-		{
-			$s = 69;
-			$l = 38;
-		}
-		elseif ($h === 'MidnightBlue')
-		{
-			$s = 68;
-			$l = 19;
-		}
-		if ($h === 'OrientalBlue')
-		{
-			$s = 39;
-			$l = 49;
-		}
-		if ($h === 'Violet')
-		{
-			$s = 30;
-			$l = 49;
-		}
-		elseif ($h === 'Grape')
-		{
-			$s = 34;
-			$l = 28;
-		}
-		elseif ($h === 'Sepia')
-		{
-			$s = 28;
-			$l = 34;
-		}
-		elseif ($h === 'RawUmber')
-		{
-			$s = 57;
-			$l = 37;
-		}
-		elseif ($h === 'Khaki')
-		{
-			$s = 27;
-			$l = 52;
-		}
-		elseif ($h === 'Coffee')
-		{
-			$s = 56;
-			$l = 26;
-		}
-		elseif ($h === 'White')
-		{
-			$s = 0;
-			$l = 60;
-		}
-		elseif ($h === 'MoonWhite')
-		{
-			$s = 12;
-			$l = 55;
-		}
-		elseif ($h === 'WistariaWhite')
-		{
-			$s = 16;
-			$l = 55;
-		}
-		elseif ($h === 'Gold')
-		{
-			$s = 95;
-			$l = 33;
-		}
-		elseif ($h === 'LimeWhite')
-		{
-			$s = 69;
-			$l = 30;
-		}
-		elseif ($h === 'Gray')
-		{
-			$s = 0;
-			$l = 55;
-		}
-		elseif ($h === 'GrayGreen')
-		{
-			$s = 7;
-			$l = 45;
-		}
-		elseif ($h === 'PinkGray')
-		{
-			$s = 3;
-			$l = 52;
-		}
-		elseif ($h === 'SandGray')
-		{
-			$s = 13;
-			$l = 40;
-		}
-		elseif ($h === 'Onyx')
-		{
-			$s = 4;
-			$l = 29;
-		}
-		elseif ($h === 'Black')
-		{
-			$s = 0;
-			$l = 0;
-		}
-		if (isset($hue[$h], $s, $l))
-			return "hsla($hue[$h], $s%, $l%, $a)";
+		$hue = 354;
+		$s = 66;
+		$l = 44;
 	}
+	elseif ($h === 'Rose')
+	{
+		$hue = 351;
+		$s = 77;
+		$l = 62;
+	}
+	elseif ($h === 'Pink')
+	{
+		$hue = 333;
+		$s = 77;
+		$l = 62;
+	}
+	elseif ($h === 'DarkPink')
+	{
+		$hue = 340;
+		$s = 52;
+		$l = 55;
+	}
+	if ($h === 'Coral')
+	{
+		$hue = 9;
+		$s = 79;
+		$l = 68;
+	}
+	if ($h === 'Carrot')
+	{
+		$hue = 26;
+		$s = 100;
+		$l = 40;
+	}
+	if ($h === 'Orange')
+	{
+		$hue = 30;
+		$s = 100;
+		$l = 47;
+	}
+	if ($h === 'Topaz')
+	{
+		$hue = 48;
+		$s = 86;
+		$l = 40;
+	}
+	if ($h === 'DarkYellow')
+	{
+		$hue = 41;
+		$s = 60;
+		$l = 49;
+	}
+	if ($h === 'SpringGreen')
+	{
+		$hue = 85;
+		$s = 43;
+		$l = 48;
+	}
+	if ($h === 'MossGreen')
+	{
+		$hue = 75;
+		$s = 66;
+		$l = 31;
+	}
+	if ($h === 'MintGreen')
+	{
+		$hue = 131;
+		$s = 31;
+		$l = 55;
+	}
+	elseif ($h === 'MillennialGreen')
+	{
+		$hue = 142;
+		$s = 36;
+		$l = 30;
+	}
+	elseif ($h === 'Turquoise')
+	{
+		$hue = 190;
+		$s = 40;
+		$l = 45;
+	}
+	elseif ($h === 'LapisLazuli')
+	{
+		$hue = 214;
+		$s = 69;
+		$l = 38;
+	}
+	elseif ($h === 'MidnightBlue')
+	{
+		$hue = 222;
+		$s = 68;
+		$l = 19;
+	}
+	if ($h === 'OrientalBlue')
+	{
+		$hue = 232;
+		$s = 39;
+		$l = 49;
+	}
+	if ($h === 'Violet')
+	{
+		$hue = 259;
+		$s = 30;
+		$l = 49;
+	}
+	elseif ($h === 'Grape')
+	{
+		$hue = 283;
+		$s = 34;
+		$l = 28;
+	}
+	elseif ($h === 'Chocolate')
+	{
+		$hue = 16;
+		$s = 28;
+		$l = 34;
+	}
+	elseif ($h === 'Soil')
+	{
+		$hue = 39;
+		$s = 57;
+		$l = 37;
+	}
+	elseif ($h === 'Khaki')
+	{
+		$hue = 45;
+		$s = 27;
+		$l = 52;
+	}
+	elseif ($h === 'Coffee')
+	{
+		$hue = 39;
+		$s = 56;
+		$l = 26;
+	}
+	elseif ($h === 'White')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 60;
+	}
+	elseif ($h === 'Moonlight')
+	{
+		$hue = 206;
+		$s = 12;
+		$l = 55;
+	}
+	elseif ($h === 'WistariaWhite')
+	{
+		$hue = 270;
+		$s = 16;
+		$l = 55;
+	}
+	elseif ($h === 'Gold')
+	{
+		$hue = 53;
+		$s = 95;
+		$l = 33;
+	}
+	elseif ($h === 'LimeWhite')
+	{
+		$hue = 75;
+		$s = 69;
+		$l = 37;
+	}
+	elseif ($h === 'Gray')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 45;
+	}
+	elseif ($h === 'GreenGray')
+	{
+		$hue = 131;
+		$s = 7;
+		$l = 45;
+	}
+	elseif ($h === 'PinkGray')
+	{
+		$hue = 330;
+		$s = 3;
+		$l = 52;
+	}
+	elseif ($h === 'SandGray')
+	{
+		$hue = 50;
+		$s = 13;
+		$l = 40;
+	}
+	elseif ($h === 'DarkGray')
+	{
+		$hue = 210;
+		$s = 4;
+		$l = 29;
+	}
+	elseif ($h === '')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 0;
+	}
+	if (isset($hue, $s, $l))
+		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
 
 function color2class($colour)
 {
-	if ($colour === 'White' || $colour === 'MoonWhite' || $colour === 'WistariaWhite' || $colour === 'Gold' || $colour === 'LimeWhite' )
+	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite'|| $colour === 'Gold' || $colour === 'LimeWhite' )
 		return 'white';
-	elseif ($colour === 'Gray' || $colour === 'GrayGreen' || $colour === 'PinkGray' || $colour === 'SandGray')
+	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
 		return 'secondary';
-	elseif ($colour === 'Black' || $colour === 'Onyx')
+	elseif ($colour === 'Black' || $colour === 'DarkGray')
 		return 'dark';
-	elseif ($colour === 'DarkGreen' || $colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+	elseif ($colour === 'MillennialGreen' || $colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
 		return 'success';
-	elseif ($colour === 'Carrot' || $colour === 'Orange' || $colour === 'Topaz' || $colour === 'DarkYellow' || $colour === 'Sepia'|| $colour === 'RawUmber' || $colour === 'Khaki' || $colour === 'Coffee')
+	elseif ($colour === 'Carrot' || $colour === 'Orange' || $colour === 'Topaz' || $colour === 'DarkYellow' || $colour === 'Chocolate'|| $colour === 'Soil' || $colour === 'Khaki' || $colour === 'Coffee')
 		return 'warning';
 	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Pink' || $colour === 'DarkPink' || $colour === 'Coral' || $colour === 'Violet' || $colour === 'Grape')
 		return 'danger';

@@ -75,10 +75,10 @@ $number_of_feeds = 10;
 
 
 #Article images
-$number_of_images = 4;
+$number_of_images = 10;
 
 #Comments
-$number_of_comments = 5;
+$number_of_comments = 10;
 
 
 #Category and Search results

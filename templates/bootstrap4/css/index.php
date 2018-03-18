@@ -101,7 +101,7 @@ body,
 
 .text-muted,
 .breadcrumb-item+.breadcrumb-item:before
-{color:'.hsla($color, '-10', '+3', .8).'!important}
+{color:'.hsla($color, -10, 3, .8).'!important}
 
 a:hover,
 .btn-link:hover,
@@ -111,7 +111,7 @@ a:hover,
 .page-link:hover,
 .breadcrumb-item.active,
 input.color
-{color:'.hsla($color, +5, +10, .8).'}
+{color:'.hsla($color, 5, 10, .8).'}
 
 .form-control::placeholder
 {color:'.hsla($color, '', '', .6).'}
@@ -195,7 +195,7 @@ a.bg-primary:hover,
 {border-bottom:1px solid '.hsla($color, '', '', .3).'!important}
 
 .nav-tabs .nav-link.active
-{border-color:'.hsla($color, '-5', '+5', .2).' '.hsla($color, '', '', .2).' white!important}
+{border-color:'.hsla($color, -5, 5, .2).' '.hsla($color, '', '', .2).' white!important}
 
 .nav-tabs .nav-link:hover
 {border-color:'.hsla($color, '', '', .1).'}
@@ -209,7 +209,7 @@ a.bg-primary:hover,
 .btn-outline-primary:active:focus:not(:disabled):not(.disabled),
 .btn-primary.dropdown-toggle:focus,
 .btn-primary:active:not(:disabled):not(.disabled), .show > .btn-primary.dropdown-toggle
-{box-shadow: 0 0 0 .2rem '.hsla($color, +5, +5, .2).'!important}
+{box-shadow: 0 0 0 .2rem '.hsla($color, 5, 5, .2).'!important}
 
 
 ::selection, .highlight, .comment:target{background-color:'.hsla($color, '', '', .2).';color:'.hsla($color).'}
@@ -230,7 +230,7 @@ if (color2class($color) === 'white')
 {color:'.hsla($color, -2, -3, .8).'!important}
 
 .navbar-dark .navbar-nav .nav-link:hover
-{color:'.hsla($color, 3, +3, .5).'!important}
+{color:'.hsla($color, 3, 3, .5).'!important}
 
 .navbar-dark.bg-primary,
 .breadcrumb,

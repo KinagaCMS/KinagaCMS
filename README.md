@@ -1,52 +1,72 @@
-# ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=35) 紀永
+# kinaga
+<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300" align="left">
+<br>
 
-　「紀永」とは、*気長*の読みに当て字して「末永く書く」という意味を持たせた縁起の良い名称のコンテンツマネジメントシステムのことであり、ネットワーク・ファイルシステムによるディレクトリ管理構造を特徴とすることから、データベースやアドミン権限を必要とせず、安全性の高い簡易CMSとして位置付けられます。
+<br>
 
-　閲覧者には、基本的なメニュー等構造の他、コメント等のレスポンス機能や、幅広いデバイスに対応するレスポンシブなデザインを提供し、執筆者には、デスクトップ作業の要領で管理できる構造の他、テキストエディタに書いた通りの記事レイアウトを基本として、HTMLタグやPHPを補記することもでき、かつデジカメで撮影した画像をフォルダに入れるだけでスライドショーとして公開することのできる機能等も提供します。
+紀永（kinaga）は、気長の当て字で「末永く書く」を意味します
 
-　また、外部機能として、既存のHTMLファイルを紀永の記事に変換するシステム（[既存サイトからの移行について](http://xn--5rwx17a.xn--v8jtdudb.com/%E6%97%A2%E5%AD%98%E3%82%B5%E3%82%A4%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E7%A7%BB%E8%A1%8C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)）や、HTMLタグの入力補助機能を備えつつ動的にレイアウトを確認することが出来るオンラインテキストエディタ（[紀永起草](http://xn--vl1al2s.xn--v8jtdudb.com)）の他、HTMLタグの入力補助を目的とした各種テキストエディタのプラグイン（[Taglist および Snippet](https://github.com/KinagaCMS)）を提供しているため、マークアップ言語を習熟するための教材としても活用することが出来ます。
+<br>
 
-　動作確認や詳しい使用方法については、[デモサイト](http://xn--5rwx17a.xn--v8jtdudb.com/)をご覧下さい。
+ロゴは、フォルダ管理と HTML タグをイメージしました
 
+<br>
+
+イメージカラーは千歳緑（Millennial Green）です
+
+
+<br>
+
+<br>
+
+---
+
+
+## 概要
+
+Linux ユーザーに最適化された CMS
+
+ファイルシステムから管理できる特徴があります
+
+簡単なルールに沿って、フォルダやファイルを配置するだけで、Web サイトが完成します
+
+---
 
 ## 動作環境
 
-- PHP 5.5 かそれ以上
-- Apache 2.2 かそれ以上
-- .htaccess をサポートしていること
+- PHP 5.5 以上
+- Apache 2.2 以上
+- .htaccess 及び RewriteEngine が利用可能であること
 
-
+---
 
 ## インストール
 
-1. Clone
+- [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)
 
-		git clone https://github.com/KinagaCMS/KinagaCMS.git
+- パーミッションなどを適宜変更してから公開ディレクトリにアップロードして下さい
 
-2. Download
-
-	.zip ファイルを展開し、フォルダ名とパーミッションを適宜変更して下さい
+---
 
 ## 初期設定
 
 1.  /includes/config.php
 
-　　言語、文字コード、テンプレート等を設定して下さい
+　　テンプレート、表示言語、文字コードなどを設定することができます
 
 2.  /includes/lang/○○.php
 
-　　該当する言語ファイルを編集。もしくは言語と文字コードに合わせて作成して下さい
-  
-　　サイト名や概要を記入して下さい
+　　サイト名やメールアドレスなどを設定することができます
 
+---
 
 ## 簡単な使い方
 
-1.  ファイルマネージャの NFS または [WinSCP](https://winscp.net/) でサーバーに接続します
-2.  「**contents**」フォルダの中に「**カテゴリ名**」のフォルダを作成して下さい
-3.  「**カテゴリ名**」フォルダの中に「**記事名**」のフォルダを作成して下さい
-4.  「**記事名**」フォルダの中に「**index.html**」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Pluma](https://github.com/mate-desktop/pluma)、[Geany](https://github.com/geany/geany/)などのテキストエディタで開き、文章を入力して下さい
-5.  また、以下のようにフォルダやテキストを配置することにより各機能を追加することも出来ます。
+1.  ファイルマネージャでサーバーに接続します
+2.  contents フォルダの中に「<b>カテゴリ名</b>」のフォルダを作成して下さい
+3.  カテゴリ名フォルダの中に「<b>記事名</b>」のフォルダを作成して下さい
+4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Pluma](https://github.com/mate-desktop/pluma)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい
+5.  また、フォルダやテキストを以下のように配置することで追加機能を利用することも出来ます
 
 
 		contents
@@ -57,9 +77,9 @@
 		│	│	│
 		│	│	├── comments ( コメント欄が表示されます。必須ではありません )
 		│	│	│
-		│	│	├── counter.txt ( よく読まれている記事が表示されます。必須ではありません )
+		│	│	├── counter.txt ( カウンター。よく読まれている記事が表示されます。必須ではありません )
 		│	│	│
-		│	│	├── images ( または background-images。必須ではありません )
+		│	│	├── images ( または background-images など。必須ではありません )
 		│	│	│
 		│	│	└── index.html ( ここに記事を書いて下さい )
 		│	│
@@ -67,17 +87,10 @@
 		│
 		├── サイドページ.html ( インフォメーションに表示されます。必須ではありません )
 		│
-		└── index.html ( トップページになります。必須ではありません )
-
-
-
-## コントリビューション
-
-　ドキュメントを含む各国語への対応、文言およびデザイン等修正、バグフィクスなどを歓迎します。
-
-
+		├── サイドページ２.html ( サイドページはファイル名がタイトルとなります )
+		│
+		└── index.html ( トップページ。必須ではありません )
+---
 
 ## ライセンス
-
-- 紀永には GPL v3 かそれ以上のライセンスが適用されています。 詳しくは、[LICENSE](LICENSE) をご一読下さい。
-- 紀永に使用した [Bootstrap](http://getbootstrap.com/)、[jQuery](http://jquery.com/)、[Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/) には MIT ライセンスが適用されています。
+-  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)

@@ -4,11 +4,15 @@ date_default_timezone_set( 'America/New_York' );
 #Site Name
 $site_name = 'kinaga';
 
-#Your home or office address: Sidebox and Mail footer
-$address = '';
+# Your mail address
+$mail_address = '';
 
-#Hue: red, orange, yellow, liteGreen, green, liteBlue, blue, darkBlue, purple, peach, brown or BLANK
-$color = 'green';
+#Your home or office address
+$address = '';
+$address_title = '';
+
+#Hue: Red, Rose, Pink, DarkPink, Coral, Carrot, Orange, Topaz, DarkYellow, SpringGreen, MossGreen, MintGreen, DarkGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Sepia, RawUmber, Khaki, Coffee, White, MoonWhite, WistariaWhite, Gold, LimeWhite, Gray, GrayGreen, PinkGray, SandGray, Onyx, Black or BLANK
+$color = 'SandGray';
 
 
 #Description: Top page
@@ -58,8 +62,10 @@ $download_subtitle = 'Click the links below.';
 
 $page_prefix = 'Page %s';
 
+#Social icons
+$social = 'Share this';
 
-$permalink = 'Permalink <small>Copy the link and add to your website.</small>';
+$permalink = 'Permalink';
 
 $for_html = 'HTML';
 
@@ -69,8 +75,8 @@ $for_forum = 'Forum';
 
 
 #Separator
-$top = '<a class="text-primary page-top" href="#TOP"><span class="glyphicon glyphicon-chevron-up"></span></a>';
-
+$top = '<a class="page-top text-right d-block p-0 small" href="#TOP"> </a>';
+$pagetop = 'go to top';
 
 $last_modified = 'Last updated: %s';
 
@@ -116,7 +122,7 @@ $comment_acceptance =
 	'To post this comment,' . $n .
 	'save the attached file: %s' . $n .
 	'and upload it in the following folder' . $n . $n .
-	$s.'contents'.$s.'%s'.$s.'%s'.$s.'comments'.$s;
+	'/contents/%s/%s/comments/';
 
 $contact_name = 'Name';
 
@@ -162,9 +168,9 @@ $days_ago = ' days ago';
 #/images/index.php
 $images_title = 'Images - %s';
 
-$images_heading = 'Images <small>Copy the tag and paste your article.</small>';
+$images_heading = 'Images <small class=text-muted>Copy the tag and paste your article.</small>';
 
-$images_aligner = 'Image Alignment <small>You might need &lt;div class=clearfix&gt;&lt;/div&gt; to release wrap.</small>';
+$images_aligner = 'Image Alignment <small class=text-muted>You might need &lt;div class=clearfix&gt;&lt;/div&gt; to release wrap.</small>';
 
 $noscript = 'Please enable <strong>javascript</strong>.';
 
@@ -181,43 +187,237 @@ $large_image = 'Large';
 
 $small_image = 'Small';
 
+$imgs_first= 'First';
 $imgs_prev = 'Prev';
 
 $imgs_next = 'Next';
+$imgs_last = 'Last';
 
-
-function hsla( $h, $s = 100, $l = 50, $a = 1 )
+function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 {
-	$hue = array(
-		'red'       => 0,
-		'orange'    => 35,
-		'yellow'    => 50,
-		'liteGreen' => 65,
-		'green'     => 85,
-		'liteBlue'  => 170,
-		'blue'      => 195,
-		'darkBlue'  => 220,
-		'purple'    => 265,
-		'peach'     => 330,
-		'brown'     => 25
-	);
-	if ( isset( $hue[$h] ) )
+	if ($h === 'Red')
 	{
-		return "hsla( $hue[$h], $s%, $l%, $a )";
+		$hue = 354;
+		$s = 66;
+		$l = 44;
 	}
+	elseif ($h === 'Rose')
+	{
+		$hue = 351;
+		$s = 77;
+		$l = 62;
+	}
+	elseif ($h === 'Pink')
+	{
+		$hue = 333;
+		$s = 77;
+		$l = 62;
+	}
+	elseif ($h === 'DarkPink')
+	{
+		$hue = 340;
+		$s = 52;
+		$l = 55;
+	}
+	if ($h === 'Coral')
+	{
+		$hue = 9;
+		$s = 79;
+		$l = 68;
+	}
+	if ($h === 'Carrot')
+	{
+		$hue = 26;
+		$s = 100;
+		$l = 40;
+	}
+	if ($h === 'Orange')
+	{
+		$hue = 30;
+		$s = 100;
+		$l = 47;
+	}
+	if ($h === 'Topaz')
+	{
+		$hue = 48;
+		$s = 86;
+		$l = 40;
+	}
+	if ($h === 'DarkYellow')
+	{
+		$hue = 41;
+		$s = 60;
+		$l = 49;
+	}
+	if ($h === 'SpringGreen')
+	{
+		$hue = 85;
+		$s = 43;
+		$l = 48;
+	}
+	if ($h === 'MossGreen')
+	{
+		$hue = 75;
+		$s = 66;
+		$l = 31;
+	}
+	if ($h === 'MintGreen')
+	{
+		$hue = 131;
+		$s = 31;
+		$l = 55;
+	}
+	elseif ($h === 'MillennialGreen')
+	{
+		$hue = 142;
+		$s = 36;
+		$l = 30;
+	}
+	elseif ($h === 'Turquoise')
+	{
+		$hue = 190;
+		$s = 40;
+		$l = 45;
+	}
+	elseif ($h === 'LapisLazuli')
+	{
+		$hue = 214;
+		$s = 69;
+		$l = 38;
+	}
+	elseif ($h === 'MidnightBlue')
+	{
+		$hue = 222;
+		$s = 68;
+		$l = 19;
+	}
+	if ($h === 'OrientalBlue')
+	{
+		$hue = 232;
+		$s = 39;
+		$l = 49;
+	}
+	if ($h === 'Violet')
+	{
+		$hue = 259;
+		$s = 30;
+		$l = 49;
+	}
+	elseif ($h === 'Grape')
+	{
+		$hue = 283;
+		$s = 34;
+		$l = 28;
+	}
+	elseif ($h === 'Chocolate')
+	{
+		$hue = 16;
+		$s = 28;
+		$l = 34;
+	}
+	elseif ($h === 'Soil')
+	{
+		$hue = 39;
+		$s = 57;
+		$l = 37;
+	}
+	elseif ($h === 'Khaki')
+	{
+		$hue = 45;
+		$s = 27;
+		$l = 52;
+	}
+	elseif ($h === 'Coffee')
+	{
+		$hue = 39;
+		$s = 56;
+		$l = 26;
+	}
+	elseif ($h === 'White')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 60;
+	}
+	elseif ($h === 'Moonlight')
+	{
+		$hue = 206;
+		$s = 12;
+		$l = 55;
+	}
+	elseif ($h === 'WistariaWhite')
+	{
+		$hue = 270;
+		$s = 16;
+		$l = 55;
+	}
+	elseif ($h === 'Gold')
+	{
+		$hue = 53;
+		$s = 95;
+		$l = 33;
+	}
+	elseif ($h === 'LimeWhite')
+	{
+		$hue = 75;
+		$s = 69;
+		$l = 37;
+	}
+	elseif ($h === 'Gray')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 45;
+	}
+	elseif ($h === 'GreenGray')
+	{
+		$hue = 131;
+		$s = 7;
+		$l = 45;
+	}
+	elseif ($h === 'PinkGray')
+	{
+		$hue = 330;
+		$s = 3;
+		$l = 52;
+	}
+	elseif ($h === 'SandGray')
+	{
+		$hue = 50;
+		$s = 13;
+		$l = 40;
+	}
+	elseif ($h === 'DarkGray')
+	{
+		$hue = 210;
+		$s = 4;
+		$l = 29;
+	}
+	elseif ($h === '')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 0;
+	}
+	if (isset($hue, $s, $l))
+		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
 
-function color2class( $colour )
+function color2class($colour)
 {
-	switch ( true )
-	{
-		case $colour == 'green' || $colour == 'liteGreen': return 'success';
-
-		case $colour == 'orange' || $colour == 'yellow' || $colour == 'brown': return 'warning';
-
-		case $colour == 'red' || $colour == 'purple' || $colour == 'peach': return 'danger';
-
-		default: return 'info';
-	}
+	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite'|| $colour === 'Gold' || $colour === 'LimeWhite' )
+		return 'white';
+	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
+		return 'secondary';
+	elseif ($colour === 'Black' || $colour === 'DarkGray')
+		return 'dark';
+	elseif ($colour === 'MillennialGreen' || $colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+		return 'success';
+	elseif ($colour === 'Carrot' || $colour === 'Orange' || $colour === 'Topaz' || $colour === 'DarkYellow' || $colour === 'Chocolate'|| $colour === 'Soil' || $colour === 'Khaki' || $colour === 'Coffee')
+		return 'warning';
+	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Pink' || $colour === 'DarkPink' || $colour === 'Coral' || $colour === 'Violet' || $colour === 'Grape')
+		return 'danger';
+	else
+		return'primary';
 }

@@ -1,19 +1,14 @@
 <?php
 
-$lang = 'ja';
-
-$mail_address = '';
-
-#bootstrap-header, bootstrap-narrow, bootstrap-navbar, bootstrap-simple, bootstrap-harlequin
-$template = 'bootstrap-navbar';
-
+$template = 'bootstrap4';
 
 ##########################
 
+$lang = 'ja';
 
 $encoding = 'UTF-8';
 
-setlocale( LC_ALL, 'C.' . $encoding );
+setlocale(LC_ALL, 'C.' . $encoding);
 
 #Downloading Multi-byte filename on Windows Internet Explorer Japanese edition
 $encoding_win = 'SJIS-win';
@@ -69,7 +64,6 @@ $comment_length = 100;
 #Top page
 $number_of_default_sections = 5;
 
-
 #Category
 $number_of_categ_sections = 5;
 
@@ -84,7 +78,7 @@ $number_of_feeds = 10;
 $number_of_images = 10;
 
 #Comments
-$number_of_comments = 5;
+$number_of_comments = 10;
 
 
 #Category and Search results
@@ -110,10 +104,11 @@ $number_of_pager = 5;
 $number_of_similars = 3;
 
 
+#Social icon px size
+$social_icon_size = 150;
+
 ##########################
 
-
-$s = DIRECTORY_SEPARATOR;
 
 $n = PHP_EOL;
 
@@ -121,76 +116,35 @@ $n = PHP_EOL;
 ##########################
 
 
-if ( ! function_exists( 'r' ) )
+function r($path)
 {
-	function r( $path )
+	return str_replace(array('%26', '%2F', '%5C', '%3A'), array('&amp;', '/', '/', ':'), rawurlencode($path));
+}
+
+function h($str)
+{
+	global $encoding;
+	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding);
+}
+
+function size_unit($size)
+{
+	if ($size > 0)
 	{
-		global $s;
-		$entities = array( '%26', '%2F', '%5C' );
-		$replaces = array( '&amp;', $s, $s );
-		return str_replace( $entities, $replaces, rawurlencode( $path ) );
+		$unit = array('B', 'KB', 'MB', 'GB');
+		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
 	}
 }
 
-
-if ( ! function_exists( 'h' ) )
+function timestamp($file)
 {
-	function h( $str )
-	{
-		global $encoding;
-		return htmlspecialchars( $str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding );
-	}
-}
-
-
-if ( ! function_exists( 'size_unit' ) )
-{
-	function size_unit( $size )
-	{
-		if ( $size > 0 )
-		{
-			$unit = array( 'B', 'KB', 'MB', 'GB' );
-			return round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
-		}
-	}
-}
-
-
-if ( ! function_exists( 'timestamp' ) )
-{
-	function timestamp( $file )
-	{
-		return gmdate( 'D, d M Y H:i:s T', filemtime( $file ) );
-	}
-}
-
-
-if ( ! function_exists( 'sideless' ) )
-{
-	function sideless()
-	{
-		global $header, $get_title;
-		if ( $get_title )
-			return $header .= '<style>.col-md-9{width:100%}.col-md-3{width:100%}</style>';
-	}
-}
-
-
-if ( ! function_exists( 'nowrap' ) )
-{
-	function nowrap()
-	{
-		global $header;
-		return $header .= '<style>.article{white-space:normal}</style>';
-	}
+	return gmdate('D, d M Y H:i:s T', filemtime($file));
 }
 
 function is_ssl()
 {
 	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
 		return true;
-	else
-		return false;
 }
 
 ##########################
@@ -198,39 +152,42 @@ function is_ssl()
 
 $now = time();
 
-$port = getenv( 'SERVER_PORT' );
+$port = getenv('SERVER_PORT') !== '80' ? ':' . getenv('SERVER_PORT') : '';
 
-$server = getenv( 'SERVER_NAME' );
+$server = getenv('SERVER_NAME');
 
-$dir = r( dirname( getenv( 'SCRIPT_NAME' ) ) );
+$dir = r(dirname(getenv('SCRIPT_NAME')));
 
-$addslash = $dir != $s ? $s : '';
+$addslash = $dir !== '/' ? '/' : '';
 
 $script = $dir . $addslash;
 
 $scheme = is_ssl() ? 'https://' : 'http://';
 
-$url = ( $port === '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
+$url = $scheme . $server . $port . $script;
 
-$line_breaks = array( "\n", "\r\n", "\r", '&#13;&#10;', '&#13;', '&#10;' );
+$line_breaks = array("\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;');
 
-$user_agent = getenv( 'HTTP_USER_AGENT' );
+$remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
 
-$user_agent_lang = getenv( 'HTTP_ACCEPT_LANGUAGE' );
+$user_agent = h(getenv('HTTP_USER_AGENT'));
 
-$glob_dir = 'contents' . $s . '*' . $s . '*' . $s;
+$user_agent_lang = h(getenv('HTTP_ACCEPT_LANGUAGE'));
 
-$tpl_dir = 'templates' . $s . $template . $s;
+$token = bin2hex(openssl_random_pseudo_bytes(16));
 
-$css = $url . $tpl_dir . 'css' . $s;
+$glob_dir = 'contents/*/*/';
 
-$js = $url . $tpl_dir . 'js' . $s;
+$tpl_dir = 'templates/' . $template . '/';
 
+$css = $url . $tpl_dir . 'css/';
+
+$js = $url . $tpl_dir . 'js/';
+
+$glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 
 ##########################
 
 
-if ( is_file( $lang_file = __DIR__ . $s . 'lang' . $s . $lang . '.php' ) && !is_link( $lang_file ) )
-{
+if (is_file($lang_file = __DIR__ . '/lang/' . $lang . '.php'))
 	include_once $lang_file;
-}

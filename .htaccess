@@ -31,7 +31,7 @@ RewriteRule ^(.*)$ ?page=$1 [L]
 </IfModule>
 
 <ifModule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/x-javascript application/x-httpd-php
+AddOutputFilterByType DEFLATE text/html text/plain text/xml image/svg+xml application/xhtml+xml application/xml text/css text/javascript application/javascript application/x-javascript application/x-httpd-php application/x-httpd-fastphp
 </ifModule>
 
 <ifModule mod_expires.c>
@@ -42,7 +42,7 @@ ExpiresDefault "access plus 1 week"
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/6.0"
+Header set X-Powered-By "kinaga/6.0.1"
 <FilesMatch "\.(html|php)$">
 Header append Author "Gari-Hari LLC."
 </FilesMatch>

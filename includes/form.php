@@ -43,7 +43,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<td colspan=2 class=text-center><strong class=text-danger>' . $cookie_disabled_error . '</strong></td>' . $n .
 		'</tr>' . $n .
 		'<tr>' . $n .
-		'<td><a onclick="$(\'#preview\').hide()" href=#form class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
 		'<td><button disabled class="btn btn-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>' . $contact_send . '</button></td>' . $n .
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
@@ -51,7 +51,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		$_SESSION['token'] = $token;
 		echo
 		'<tr>' . $n .
-		'<td><a onclick="$(\'#preview\').hide()" href=#form class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
 		'<td>' . $n .
 		'<form method=post action="' . h(getenv('REQUEST_URI')) . (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title') ? '#form_result' : '') . '">' . $n .
 		'<input type=hidden name=preview_name value="' . base64_encode($filtered_preview_name) . '">' . $n .
@@ -66,7 +66,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	else
 		echo
 		'<tr>' . $n .
-		'<td><a onclick="$(\'#preview\').hide()" href=#form class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">' . $contact_cancel . '</a></td>' . $n .
 		'<td><button disabled class="btn btn-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>' . $contact_send . '</button></td>' . $n .
 		'</tr>';
 	echo

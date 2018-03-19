@@ -232,6 +232,12 @@ if (color2class($color) === 'white')
 .navbar-dark .navbar-nav .nav-link:hover
 {color:'.hsla($color, 3, 3, .5).'!important}
 
+.navbar-dark .navbar-toggler
+{border-color:'.hsla($color).';background-color:'.hsla($color).'}
+
+.navbar-dark .navbar-toggler:hover
+{opacity:0.8}
+
 .navbar-dark.bg-primary,
 .breadcrumb,
 .title,

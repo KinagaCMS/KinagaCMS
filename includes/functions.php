@@ -447,7 +447,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				$counter = is_file($counter_txt = $article_dir .'/counter.txt') ?
 				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))).'</span>' : '';
 				$comments = $use_comment && is_dir($comments_dir = $article_dir .'/comments') ?
-				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#form">' . $n .
+				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#comment">' . $n .
 				'' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt', GLOB_NOSORT))) .
 				'</a>' : '';
 
@@ -594,7 +594,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		{
 			$comments_end = is_file($comment_dir .'/end.txt') ? true : false;
 			$count_comments = count($glob_comment_files);
-			$article .= '<small><a href=#form>' . sprintf($comments_count_title, $count_comments) . '</a></small>';
+			$article .= '<small><a href=#comment>' . sprintf($comments_count_title, $count_comments) . '</a></small>';
 		}
 		$article .=
 		'</h1>';
@@ -644,7 +644,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 
 			$prev_link = '';
 			rsort($sort_prev_next);
-			$article .= '<div class="mt-3 mb-5 clearfix">';
+			$article .= '<div class="mt-5 mb-5 clearfix">';
 
 			for($i = 0, $c = count($sort_prev_next); $i < $c; ++$i)
 			{
@@ -708,7 +708,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		if ($use_comment && is_dir($comment_dir))
 		{
 			$article .=
-			'<section class=mb-5><h2>' . $comment_title . '</h2>' . $n;
+			'<section class=mb-5 id=comment><h2>' . $comment_title . '</h2>' . $n;
 
 			if (isset($glob_comment_files) && $number_of_comments > 0)
 			{
@@ -759,13 +759,13 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 						if ($comment_pages > 1)
 							$article .=
 							'<li class=previous>' . $n .
-							'<a href="' . $current_url . '&amp;comments=' . ($comment_pages - 1) . '#form">' . $comments_prev . '</a>' . $n .
+							'<a href="' . $current_url . '&amp;comments=' . ($comment_pages - 1) . '#comment">' . $comments_prev . '</a>' . $n .
 							'</li>' . $n;
 
 						if ($comment_pages < ceil($count_comments / $number_of_comments))
 							$article .=
 							'<li class=next>' . $n .
-							'<a href="' . $current_url . '&amp;comments=' . ($comment_pages + 1) . '#form">' . $comments_next . '</a>' . $n .
+							'<a href="' . $current_url . '&amp;comments=' . ($comment_pages + 1) . '#comment">' . $comments_next . '</a>' . $n .
 							'</li>' . $n;
 
 						$article .=
@@ -951,7 +951,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				$counter = is_file($counter_txt = $article_dir .'/counter.txt') ?
 				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))) . '</span>' : '';
 				$comments = is_dir($comments_dir = $article_dir .'/comments') && $use_comment ?
-				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#form"> ' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt'), GLOB_NOSORT)) . '</a>' : '';
+				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#comment"> ' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt'), GLOB_NOSORT)) . '</a>' : '';
 
 
 

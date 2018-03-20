@@ -158,9 +158,10 @@ function img($src, $link='', $class='', $comment=true, $thumbnail=true)
 				$img = '<img class="img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
 			elseif ($get_title || $get_page)
 				$img = $exif_comment ? '<figure class="img-thumbnail text-center d-inline-block m-0"><img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' : '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
-
+			else
+				$img = '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 			if ($get_title || $get_page)
-				return '<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>';
+				return $exif_comment ? '<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>' : $img;
 			elseif ($img_source)
 				return '<figure class="img-thumbnail text-center d-inline-block m-0"><a class=expand href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '">' . $img . '</a>' . $img_source . '</figure>';
 			else

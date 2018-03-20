@@ -158,7 +158,7 @@ a.bg-light:hover,
 a.bg-primary:hover,
 button.bg-light:focus,
 button.bg-light:hover
-{background-color:'.hsla($color, -20, -15, .1).'!important}
+{background-color:'.hsla($color, -40, 30, .2).'!important}
 
 .bg-light,
 .card-footer

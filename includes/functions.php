@@ -157,9 +157,7 @@ function img($src, $link='', $class='', $comment=true, $thumbnail=true)
 			if ($use_thumbnails && $exif_thumbnail && $thumbnail)
 				$img = '<img class="img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
 			elseif ($get_title || $get_page)
-				$img = '<figure class="img-thumbnail text-center d-inline-block m-0"><img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>';
-			else
-				$img = '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
+				$img = $exif_comment ? '<figure class="img-thumbnail text-center d-inline-block m-0"><img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' : '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 
 			if ($get_title || $get_page)
 				return '<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>';

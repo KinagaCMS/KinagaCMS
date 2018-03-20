@@ -451,7 +451,6 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				'' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt', GLOB_NOSORT))) .
 				'</a>' : '';
 
-
 				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
 					sort($glob_default_imgs);
@@ -722,7 +721,6 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 
 					if ($pos_comment_files !== false)
 					{
-
 						$comment_file = explode('-~-', $comment_files);
 						$comment_time = basename($comment_file[0]);
 						$comment_content = h(strip_tags(file_get_contents($comment_files)));
@@ -734,8 +732,6 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 						'<div class=card-footer><span class=mr-3>' . basename($comment_file[1], '.txt') . '</span>' . timeformat($comment_time) . '</div>' . $n .
 						'</div>' . $n .
 						'</div>' . $n;
-
-
 					}
 				}
 				if (isset($comments_array))
@@ -774,7 +770,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 					}
 				}
 			}
-			if (! isset($comments_end))
+			if (!$comments_end)
 			{
 				ob_start();
 				include_once $form;
@@ -939,8 +935,6 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 			$article .= '<div class=card-columns>';
 			for($i = 0, $c = count($sections_in_default_page); $i < $c; ++$i)
 			{
-
-
 				$all_articles = explode('-~-', $sections_in_default_page[$i]);
 				$section = '<p class=wrap>' . get_summary($all_articles[1]) . '</p>' . $n;
 				$all_link = explode('/', $all_articles[1]);
@@ -952,8 +946,6 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))) . '</span>' : '';
 				$comments = is_dir($comments_dir = $article_dir .'/comments') && $use_comment ?
 				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#comment"> ' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt'), GLOB_NOSORT)) . '</a>' : '';
-
-
 
 				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
@@ -1049,7 +1041,6 @@ if ($use_recents && $recent_dirs = glob($glob_dir, GLOB_ONLYDIR + GLOB_NOSORT))
 	}
 	$aside .= '</div>';
 }
-
 $glob_info_files = glob('contents/*.html', GLOB_NOSORT);
 if ($glob_info_files || $dl || $use_contact)
 {

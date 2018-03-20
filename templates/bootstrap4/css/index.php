@@ -103,13 +103,13 @@ body,
 .breadcrumb-item+.breadcrumb-item:before
 {color:'.hsla($color, -10, 3, .8).'!important}
 
-a:hover,
+.blockquote-footer,
+.breadcrumb-item.active,
 .btn-link:hover,
 .list-group-item-action:focus,
 .list-group-item-action:hover,
-.blockquote-footer,
 .page-link:hover,
-.breadcrumb-item.active,
+a:hover,
 input.color
 {color:'.hsla($color, 5, 10, .8).'}
 
@@ -123,52 +123,55 @@ input.color
 .btn-outline-primary:hover
 {color:white!important}
 
+.btn-outline-primary:active:not(:disabled):not(.disabled),
 .btn-primary:hover,
-.nav-pills .show > .nav-link,
-a.bg-primary:focus,
 .dropdown-item:active,
-.btn-outline-primary:active:not(:disabled):not(.disabled)
+.nav-pills .show > .nav-link,
+a.bg-primary:focus
 {background-color:'.hsla($color).'!important}
 
-.progress-bar.bg-primary,
-.btn-outline-primary:hover,
-.page-item.active .page-link,
-.navbar-dark.bg-primary,
-.title,
 .badge-primary,
+.btn-outline-primary:hover,
 .btn-primary,
-.nav-pills .nav-link.active
+.nav-pills .nav-link.active,
+.navbar-dark.bg-primary,
+.page-item.active .page-link,
+.progress-bar.bg-primary,
+.title
 {background-color:'.hsla($color, 0, 0, .9).'!important}
 
 .breadcrumb,
+.card-header,
+.custom-file-label:after,
+.dropdown-item:hover,
+.input-group-text,
+.jumbotron,
 .list-group-item-action:focus,
-a.bg-light:focus,
-a.bg-light:hover,
-button.bg-light:focus,
-button.bg-light:hover,
-.table-active, .table-active > td, .table-active > th,
-.progress,
-.page-link:hover,
-a.bg-primary:hover,
-.bg-light,
 .list-group-item-action:focus,
 .list-group-item-action:hover,
 .list-group-item.active,
-.input-group-text,
-.card-header,
-.custom-file-label:after,
-.jumbotron,
-.dropdown-item:hover
+.page-link:hover,
+.progress,
+.table-active, .table-active > td, .table-active > th,
+a.bg-light:focus,
+a.bg-light:hover,
+a.bg-primary:hover,
+button.bg-light:focus,
+button.bg-light:hover
 {background-color:'.hsla($color, -20, -15, .1).'!important}
 
+.bg-light
+{background-color:'.hsla($color, 0, 30, .1).'!important}
+
+.border-primary,
 .list-group-item.active,
-.page-item.active .page-link,
-.btn-outline-primary:hover,
 .page-link,
+.page-item.active .page-link,
 .btn-outline-primary,
+.btn-outline-primary:hover,
 .btn-primary,
 .btn-primary:active:not(:disabled):not(.disabled)
-{border-color:'.hsla($color).'}
+{border-color:'.hsla($color).'!important}
 
 .list-group-item,
 .card,

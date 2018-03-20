@@ -242,11 +242,12 @@ if (color2class($color) === 'white')
 .navbar-dark .navbar-toggler:hover
 {opacity:0.8}
 
-.navbar-dark.bg-primary,
 .breadcrumb,
-.title,
-.card-header,
-.list-group-item.active
+.col-lg-3 .card-header.bg-light,
+.col-lg-3 .list-group-item.active,
+.col-lg-3 .list-group-item.bg-light,
+.navbar-dark.bg-primary,
+.title
 {background-color:white!important}
 
 .col-lg-3 .list-group-item,

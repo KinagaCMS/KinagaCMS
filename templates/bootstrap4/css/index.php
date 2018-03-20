@@ -160,7 +160,8 @@ button.bg-light:focus,
 button.bg-light:hover
 {background-color:'.hsla($color, -20, -15, .1).'!important}
 
-.bg-light
+.bg-light,
+.card-footer
 {background-color:'.hsla($color, 0, 30, .1).'!important}
 
 .border-primary,

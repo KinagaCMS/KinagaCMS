@@ -48,7 +48,6 @@ body{font-family:Roboto, "Droid Sans", "Yu Gothic", YuGothic, "Hiragino Sans", s
 <div class=container-fluid>
 <h1 class="h4 mb-4">' . $images_heading . '</h1>' . $n;
 
-
 foreach($sort as $image)
 {
 	$img = explode('-~-', $image);
@@ -155,6 +154,6 @@ echo
 <footer class="mb-3 text-center"><small>&copy; ' . date('Y') . ' ' . $site_name . '. Powered by kinaga.</small></footer>
 </div>
 <script src="../' . $tpl_dir . 'js/jquery.min.js"></script>
-<script>function c(c){$(".form-control").val(function(index,value){return value.replace(/img-thumbnail(.*?)img-fluid/g,"img-thumbnail "+c+" img-fluid")});$(".input-group").fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)}$("#left").click(function(){$("#right").removeClass("active");$(this).addClass("active");c("float-left")});$("#right").click(function(){$("#left").removeClass("active");$(this).addClass("active");c("float-right")})</script>
+<script>function c(c){$(".form-control").val(function(index,value){return value.replace(/img-thumbnail(.*?)img-fluid/g,"img-thumbnail "+c+" img-fluid")});$(".input-group").fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)}$("#left").click(function(){$("#right").removeClass("active");$(this).addClass("active");c("float-left mr-2")});$("#right").click(function(){$("#left").removeClass("active");$(this).addClass("active");c("float-right ml-2")})</script>
 </body>
 </html>';

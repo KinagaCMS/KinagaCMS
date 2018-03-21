@@ -37,6 +37,8 @@ a:hover img{opacity:0.8}
 .page-top:not(:hover):after{opacity:0;transition:.3s}
 .page-top:after{content:"'.$pagetop.'";position:absolute;opacity:0;right:-2em}
 
+.custom-file-label:after{content:"\0053c2\007167"}
+
 @media(max-width:767px){.card-columns{column-count:1}}
 
 .t{background-color:rgb(85, 172, 238);border-color:rgb(85, 172, 238)}.t:hover{background-color:rgba(85, 172, 238, .9);border-color:rgba(85, 172, 238, .1)}

@@ -255,7 +255,7 @@ function sideless()
 {
 	global $header, $get_title;
 	if ($get_title)
-		return $header .= '<style>.col-lg-9{width:100%}.col-lg-3{width:100%}</style>';
+		return $header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
 }
 
 function nowrap()

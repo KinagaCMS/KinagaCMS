@@ -590,7 +590,6 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 
 		if ($use_comment && is_dir($comment_dir = $current_article_dir .'/comments') && $glob_comment_files = glob($comment_dir .'/*-~-*.txt', GLOB_NOSORT))
 		{
-			$comments_end = is_file($comment_dir .'/end.txt') ? true : false;
 			$count_comments = count($glob_comment_files);
 			$article .= '<small><a href=#comment>' . sprintf($comments_count_title, $count_comments) . '</a></small>';
 		}
@@ -769,15 +768,14 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 					}
 				}
 			}
-			if (!$comments_end)
+			if (is_file($comment_dir .'/end.txt'))
+				$article .= '<strong class=mb-5>' . $comments_not_allow . '</strong>' . $n;
+			else
 			{
 				ob_start();
 				include_once $form;
 				$article .= trim(ob_get_clean());
 			}
-			else
-				$article .= '<strong class=mb-5>' . $comments_not_allow . '</strong>' . $n;
-
 			$article .= '</section>';
 		}
 	}

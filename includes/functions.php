@@ -509,6 +509,8 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 			'<h1 class="h2 mb-4">' . $no_article . '</h1>' . $n .
 			'<div class=article>' . $not_found . '</div>' . $n;
 		}
+		else
+			$header .= '<title>' . $categ_title . ' - ' . $site_name . '</title>' . $n;
 	}
 	else
 	{

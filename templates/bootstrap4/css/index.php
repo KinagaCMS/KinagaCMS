@@ -25,6 +25,10 @@ body{font-family:"Droid Sans","Yu Gothic",YuGothic,"Hiragino Sans",sans-serif;co
 
 a:hover img{opacity:0.8}
 
+.bg-success.text-success{background-color:#dff0d8!important;color:#3c763d!important}
+.bg-info.text-info{background-color:#d9edf7!important;color:#31708f!important}
+.bg-warning.text-warning{background-color:#fcf8e3!important;color:#8a6d3b!important}
+.bg-danger.text-danger{background-color:#f2dede!important;color:#a94442!important}
 ::selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 ::-moz-selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 
@@ -242,7 +246,10 @@ if (color2class($color) === 'white')
 {border-color:'.hsla($color).';background-color:'.hsla($color).'}
 
 .navbar-dark .navbar-toggler:hover
-{opacity:0.8}
+{opacity:0.5}
+
+.navbar-toggler-icon
+{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\''.hsla($color).'\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E")!important}
 
 .breadcrumb,
 .col-lg-3 .card-header.bg-light,

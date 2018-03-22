@@ -819,7 +819,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 
 			foreach($sort_search as $filename)
 			{
-				$temp = get_summary($filename);
+				$temp = h(file_get_contents($filename));
 				$file_title = get_title($filename);
 				$temp.= '<p class="blockquote-footer small">';
 				$temp.= $file_title === 'contents' ? trim(strip_tags(basename($filename, '.html'))) : get_categ($filename) . ' ' . $file_title;

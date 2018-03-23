@@ -128,7 +128,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$body .= chunk_split($filtered_sending_message) . $n . $n;
 			}
 
-echo'<pre id=form_result>sitename:'.$site_name.'<br>to:'.h($to).'<br>subject:',$subject.'<br>body:',$body.'<br>header:',h($headers).'</pre>';
+#echo'<pre id=form_result>sitename:'.$site_name.'<br>to:'.h($to).'<br>subject:',$subject.'<br>body:',$body.'<br>header:',h($headers).'</pre>';
 
 			if (isset($_SESSION[$session_name]))
 				setcookie(session_name(), '', 1);

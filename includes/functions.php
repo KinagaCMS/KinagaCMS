@@ -157,13 +157,13 @@ function img($src, $link='', $class='', $comment=true, $thumbnail=true)
 			if ($use_thumbnails && $exif_thumbnail && $thumbnail)
 				$img = '<img class="align-bottom img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
 			elseif ($get_title || $get_page)
-				$img = $exif_comment ? '<figure class="img-thumbnail text-center d-inline-block m-0"><img class="align-bottom img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' : '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
+				$img = $exif_comment ? '<figure class="img-thumbnail text-center d-inline-block mb-5"><img class="align-bottom img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' : '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 			else
 				$img = '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 			if ($get_title || $get_page)
 				return $exif_comment ? '<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>' : $img;
 			elseif ($img_source)
-				return '<figure class="img-thumbnail text-center d-inline-block m-0"><a class=expand href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '">' . $img . '</a>' . $img_source . '</figure>';
+				return '<figure class="img-thumbnail text-center d-inline-block mb-5"><a class=expand href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '">' . $img . '</a>' . $img_source . '</figure>';
 			else
 				return '<a href="' . $uri . $link . '">' . $img . '</a>';
 		}
@@ -171,7 +171,7 @@ function img($src, $link='', $class='', $comment=true, $thumbnail=true)
 		{
 			$vtt = is_file($vtt = str_replace($extension, 'vtt', $src)) ? r($vtt) : '';
 			if ($get_title || $get_page)
-				return '<figure class="img-thumbnail text-center d-inline-block m-0"><video class="align-middle img-fluid ' . $class . '" controls preload=none><source src="' . $uri . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $img_source . '</figure>' . $n;
+				return '<figure class="img-thumbnail text-center d-inline-block mb-5"><video class="align-middle img-fluid ' . $class . '" controls preload=none><source src="' . $uri . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $img_source . '</figure>' . $n;
 			else
 				return '<video class="align-middle img-fluid ' . $class . '" controls preload=none><source src="' . $uri . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $n;
 		}

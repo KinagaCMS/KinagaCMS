@@ -1,5 +1,5 @@
 <?php
-$header = $nav = $article = $aside = $footer = $current = $search = '';
+$header = $nav = $article = $aside = $footer = $search = '';
 $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : basename(filter_input(INPUT_GET, 'title', FILTER_SANITIZE_STRIPPED));
 $get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : basename(filter_input(INPUT_GET, 'categ', FILTER_SANITIZE_STRIPPED));
 $get_page = !filter_has_var(INPUT_GET, 'page') ? '' : basename(filter_input(INPUT_GET, 'page', FILTER_SANITIZE_STRIPPED));
@@ -272,9 +272,17 @@ function redirect($link)
 		$header .= '<script>location.replace("' . $link . '")</script><meta http-equiv=refresh content="0;URL=' . $link . '">';
 }
 
+function get_logo()
+{
+	global $site_name;
+	if (is_file($logo = 'images/logo.png'))
+		return '<img src="'.$logo.'" alt="' . $site_name . '">';
+	else
+		return $site_name;
+}
+
 $contents = get_dirs('contents', false);
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
-#$current = ! $get_categ && ! $get_page ? ' class="navbar-nav active"' : 'class=navbar-nav';
 $form = 'includes/form.php';
 
 if (! empty($contents))

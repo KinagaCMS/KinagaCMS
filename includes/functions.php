@@ -274,9 +274,9 @@ function redirect($link)
 
 function get_logo()
 {
-	global $site_name;
+	global $site_name, $url;
 	if (is_file($logo = 'images/logo.png'))
-		return '<img src="'.$logo.'" alt="' . $site_name . '">';
+		return '<img src="' . $url . $logo . '" alt="' . $site_name . '">';
 	else
 		return $site_name;
 }

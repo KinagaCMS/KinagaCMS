@@ -9,7 +9,7 @@
 <body id=TOP>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-<a class=navbar-brand href="<?=$url?>"><?=$site_name?></a>
+<a class=navbar-brand href="<?=$url?>"><?=get_logo()?></a>
 <button class=navbar-toggler type=button data-toggle=collapse data-target="#nav">
 <span class=navbar-toggler-icon></span>
 </button>

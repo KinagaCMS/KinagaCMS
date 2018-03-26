@@ -133,7 +133,7 @@ input.color
 .btn-primary:hover,
 .dropdown-item:active,
 .nav-pills .show > .nav-link,
-a.bg-primary:focus
+.bg-primary
 {background-color:'.hsla($color).'!important}
 
 .badge-primary,

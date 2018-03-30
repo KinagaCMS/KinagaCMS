@@ -1,23 +1,6 @@
 # kinaga
-<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300" align="left">
-<br>
+<img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300" align="center">
 
-<br>
-
-紀永（kinaga）は、気長の当て字で「末永く書く」を意味します
-
-<br>
-
-ロゴは、フォルダ管理と HTML タグをイメージしました
-
-<br>
-
-イメージカラーは千歳緑（Millennial Green）です
-
-
-<br>
-
-<br>
 
 ---
 
@@ -26,9 +9,8 @@
 
 Linux ユーザーに最適化された CMS
 
-ファイルシステムから管理できる特徴があります
-
-簡単なルールに沿って、フォルダやファイルを配置するだけで、Web サイトが完成します
+ファイルシステムからの管理を特徴とするため、
+簡単なルールに沿って、フォルダやファイルを配置するだけで Web サイトが完成します
 
 ---
 

@@ -47,7 +47,7 @@ Linux ユーザーに最適化された CMS
 1.  ファイルマネージャでサーバーに接続します
 2.  contents フォルダの中に「<b>カテゴリ名</b>」のフォルダを作成して下さい
 3.  カテゴリ名フォルダの中に「<b>記事名</b>」のフォルダを作成して下さい
-4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Pluma](https://github.com/mate-desktop/pluma)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい
+4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい
 5.  また、フォルダやテキストを以下のように配置することで追加機能を利用することも出来ます
 
 

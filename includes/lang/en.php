@@ -11,15 +11,15 @@ $mail_address = '';
 $address = '';
 $address_title = '';
 
-#Hue: Red, Rose, Pink, DarkPink, Coral, Carrot, Orange, Topaz, DarkYellow, SpringGreen, MossGreen, MintGreen, DarkGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Sepia, RawUmber, Khaki, Coffee, White, MoonWhite, WistariaWhite, Gold, LimeWhite, Gray, GrayGreen, PinkGray, SandGray, Onyx, Black or BLANK
-$color = 'SandGray';
+#Hue: Red, Rose, Orange, Topaz, SpringGreen, MossGreen, MintGreen, MillennialGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Chocolate, Coffee, White, Moonlight, WistariaWhite, Gold, LimeWhite, Gray, GreenGray, PinkGray, SandGray, Black or BLANK
+$color = 'Moonlight';
 
 
 #Description: Top page
 $meta_description = 'description goes here.';
 
 #Subtitle: Top Page H1 and TITLE
-$subtitle = 'Your install is compleate';
+$subtitle = '';
 
 
 #Top Page
@@ -54,10 +54,10 @@ $comments_next = 'Older';
 
 
 #Contact Us
-$contact_subtitle = 'Want to say hello, ask a question. Use the form below.';
+$contact_subtitle = '';
 
 
-$download_subtitle = 'Click the links below.';
+$download_subtitle = '';
 
 
 $page_prefix = 'Page %s';
@@ -197,45 +197,21 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 {
 	if ($h === 'Red')
 	{
-		$hue = 354;
-		$s = 66;
-		$l = 44;
+		$hue = 355;
+		$s = 65;
+		$l = 40;
 	}
 	elseif ($h === 'Rose')
 	{
-		$hue = 351;
-		$s = 77;
-		$l = 62;
-	}
-	elseif ($h === 'Pink')
-	{
-		$hue = 333;
-		$s = 77;
-		$l = 62;
-	}
-	elseif ($h === 'DarkPink')
-	{
-		$hue = 340;
-		$s = 52;
-		$l = 55;
-	}
-	if ($h === 'Coral')
-	{
-		$hue = 9;
-		$s = 79;
-		$l = 68;
-	}
-	if ($h === 'Carrot')
-	{
-		$hue = 26;
-		$s = 100;
+		$hue = 330;
+		$s = 75;
 		$l = 40;
 	}
 	if ($h === 'Orange')
 	{
 		$hue = 30;
-		$s = 100;
-		$l = 47;
+		$s = 98;
+		$l = 42;
 	}
 	if ($h === 'Topaz')
 	{
@@ -243,29 +219,23 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		$s = 86;
 		$l = 40;
 	}
-	if ($h === 'DarkYellow')
-	{
-		$hue = 41;
-		$s = 60;
-		$l = 49;
-	}
 	if ($h === 'SpringGreen')
 	{
-		$hue = 85;
-		$s = 43;
-		$l = 48;
+		$hue = 80;
+		$s = 75;
+		$l = 40;
 	}
 	if ($h === 'MossGreen')
 	{
-		$hue = 75;
-		$s = 66;
-		$l = 31;
+		$hue = 70;
+		$s = 65;
+		$l = 30;
 	}
 	if ($h === 'MintGreen')
 	{
 		$hue = 131;
-		$s = 31;
-		$l = 55;
+		$s = 45;
+		$l = 40;
 	}
 	elseif ($h === 'MillennialGreen')
 	{
@@ -276,8 +246,8 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 	elseif ($h === 'Turquoise')
 	{
 		$hue = 190;
-		$s = 40;
-		$l = 45;
+		$s = 60;
+		$l = 37;
 	}
 	elseif ($h === 'LapisLazuli')
 	{
@@ -288,8 +258,8 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 	elseif ($h === 'MidnightBlue')
 	{
 		$hue = 222;
-		$s = 68;
-		$l = 19;
+		$s = 65;
+		$l = 10;
 	}
 	if ($h === 'OrientalBlue')
 	{
@@ -300,14 +270,14 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 	if ($h === 'Violet')
 	{
 		$hue = 259;
-		$s = 30;
-		$l = 49;
+		$s = 40;
+		$l = 40;
 	}
 	elseif ($h === 'Grape')
 	{
-		$hue = 283;
-		$s = 34;
-		$l = 28;
+		$hue = 290;
+		$s = 40;
+		$l = 38;
 	}
 	elseif ($h === 'Chocolate')
 	{
@@ -315,85 +285,67 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		$s = 28;
 		$l = 34;
 	}
-	elseif ($h === 'Soil')
-	{
-		$hue = 39;
-		$s = 57;
-		$l = 37;
-	}
-	elseif ($h === 'Khaki')
-	{
-		$hue = 45;
-		$s = 27;
-		$l = 52;
-	}
 	elseif ($h === 'Coffee')
 	{
 		$hue = 39;
 		$s = 56;
-		$l = 26;
+		$l = 30;
 	}
 	elseif ($h === 'White')
 	{
 		$hue = 0;
 		$s = 0;
-		$l = 60;
+		$l = 42;
 	}
 	elseif ($h === 'Moonlight')
 	{
-		$hue = 206;
-		$s = 12;
-		$l = 55;
+		$hue = 200;
+		$s = 18;
+		$l = 42;
 	}
 	elseif ($h === 'WistariaWhite')
 	{
 		$hue = 270;
-		$s = 16;
-		$l = 55;
+		$s = 18;
+		$l = 42;
 	}
 	elseif ($h === 'Gold')
 	{
 		$hue = 53;
-		$s = 95;
-		$l = 33;
+		$s = 45;
+		$l = 42;
 	}
 	elseif ($h === 'LimeWhite')
 	{
 		$hue = 75;
-		$s = 69;
-		$l = 37;
+		$s = 45;
+		$l = 42;
 	}
 	elseif ($h === 'Gray')
 	{
 		$hue = 0;
 		$s = 0;
-		$l = 45;
+		$l = 40;
 	}
 	elseif ($h === 'GreenGray')
 	{
 		$hue = 131;
-		$s = 7;
-		$l = 45;
+		$s = 10;
+		$l = 40;
 	}
 	elseif ($h === 'PinkGray')
 	{
-		$hue = 330;
-		$s = 3;
-		$l = 52;
+		$hue = 320;
+		$s = 10;
+		$l = 40;
 	}
 	elseif ($h === 'SandGray')
 	{
 		$hue = 50;
-		$s = 13;
+		$s = 10;
 		$l = 40;
 	}
-	elseif ($h === 'DarkGray')
-	{
-		$hue = 210;
-		$s = 4;
-		$l = 29;
-	}
-	elseif ($h === '')
+	elseif ($h === 'Black')
 	{
 		$hue = 0;
 		$s = 0;
@@ -403,21 +355,24 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
-
 function color2class($colour)
 {
-	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite'|| $colour === 'Gold' || $colour === 'LimeWhite' )
+	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite' || $colour === 'Gold' || $colour === 'LimeWhite' )
 		return 'white';
 	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
 		return 'secondary';
-	elseif ($colour === 'Black' || $colour === 'DarkGray')
+	elseif ($colour === 'Black' || $colour === 'MidnightBlue')
 		return 'dark';
-	elseif ($colour === 'MillennialGreen' || $colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+	elseif ($colour === 'Chocolate' || $colour === 'Coffee' || $colour === 'MillennialGreen')
+		return 'muted';
+	elseif ($colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
 		return 'success';
-	elseif ($colour === 'Carrot' || $colour === 'Orange' || $colour === 'Topaz' || $colour === 'DarkYellow' || $colour === 'Chocolate'|| $colour === 'Soil' || $colour === 'Khaki' || $colour === 'Coffee')
+	elseif ($colour === 'Orange' || $colour === 'Topaz' )
 		return 'warning';
-	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Pink' || $colour === 'DarkPink' || $colour === 'Coral' || $colour === 'Violet' || $colour === 'Grape')
+	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Grape' || $colour === 'Violet')
 		return 'danger';
+	elseif ($colour === 'Turquoise' || $colour === 'LapisLazuli' || $colour === 'OrientalBlue')
+		return 'info';
 	else
-		return'primary';
+		return 'primary';
 }

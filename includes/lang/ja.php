@@ -12,8 +12,8 @@ $address = '';
 #空欄の場合はサイト名を表示
 $address_title = '';
 
-#色相：緋、薔薇、躑躅、中紅、珊瑚、人参、蜜柑、黄水晶、山吹茶、鶸萌黄、苔、薄緑、千歳緑、青碧、瑠璃、濃藍、紺桔梗、菫、葡萄、焦茶、桑茶、利休茶、珈琲、白、月白、白藤、金色、白柳、青鈍、源氏鼠、砂鼠、藍墨、黒 または空欄
-$color = '白';
+#色相：'緋', '薔薇', '蜜柑', '黄水晶', '萌黄', '苔', '薄緑', '千歳緑', '青碧', '瑠璃', '濃藍', '紺桔梗', '菫', '葡萄', '焦茶', '珈琲', '白', '月白', '白藤', '金色', '白柳', '灰', '青鈍', '源氏鼠', '砂鼠', '黒', または空欄
+$color = '月白';
 
 #キャッチコピー：トップページのメタ情報とヘッダーに表示
 $meta_description = 'ここにはサイトの概要を記入して下さい。';
@@ -205,75 +205,48 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 {
 	if ($h === '緋')
 	{
-		$hue = 354;
-		$s = 66;
-		$l = 44;
+		$hue = 355;
+		$s = 65;
+		$l = 40;
 	}
 	elseif ($h === '薔薇')
 	{
-		$hue = 351;
-		$s = 77;
-		$l = 62;
-	}
-	elseif ($h === '躑躅')
-	{
-		$hue = 333;
-		$s = 77;
-		$l = 62;
-	}
-	elseif ($h === '中紅')
-	{
-		$hue = 340;
-		$s = 52;
-		$l = 55;
-	}
-	if ($h === '珊瑚')
-	{
-		$hue = 9;
-		$s = 79;
-		$l = 68;
-	}
-	if ($h === '人参')
-	{
-		$hue = 26;
-		$s = 100;
+		$hue = 330;
+		$s = 75;
 		$l = 40;
 	}
+
 	if ($h === '蜜柑')
 	{
 		$hue = 30;
-		$s = 100;
-		$l = 47;
+		$s = 98;
+		$l = 42;
 	}
+
 	if ($h === '黄水晶')
 	{
 		$hue = 48;
 		$s = 86;
 		$l = 40;
 	}
-	if ($h === '山吹茶')
+
+	if ($h === '萌黄')
 	{
-		$hue = 41;
-		$s = 60;
-		$l = 49;
-	}
-	if ($h === '鶸萌黄')
-	{
-		$hue = 85;
-		$s = 43;
-		$l = 48;
+		$hue = 80;
+		$s = 75;
+		$l = 40;
 	}
 	if ($h === '苔')
 	{
-		$hue = 75;
-		$s = 66;
-		$l = 31;
+		$hue = 70;
+		$s = 65;
+		$l = 30;
 	}
 	if ($h === '薄緑')
 	{
 		$hue = 131;
-		$s = 31;
-		$l = 55;
+		$s = 45;
+		$l = 40;
 	}
 	elseif ($h === '千歳緑')
 	{
@@ -284,8 +257,8 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 	elseif ($h === '青碧')
 	{
 		$hue = 190;
-		$s = 40;
-		$l = 45;
+		$s = 60;
+		$l = 37;
 	}
 	elseif ($h === '瑠璃')
 	{
@@ -296,26 +269,26 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 	elseif ($h === '濃藍')
 	{
 		$hue = 222;
-		$s = 68;
-		$l = 19;
+		$s = 65;
+		$l = 10;
 	}
 	if ($h === '紺桔梗')
 	{
 		$hue = 232;
-		$s = 39;
-		$l = 49;
+		$s = 44;
+		$l = 40;
 	}
 	if ($h === '菫')
 	{
 		$hue = 259;
-		$s = 30;
-		$l = 49;
+		$s = 40;
+		$l = 40;
 	}
 	elseif ($h === '葡萄')
 	{
-		$hue = 283;
-		$s = 34;
-		$l = 28;
+		$hue = 290;
+		$s = 40;
+		$l = 38;
 	}
 	elseif ($h === '焦茶')
 	{
@@ -323,83 +296,65 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		$s = 28;
 		$l = 34;
 	}
-	elseif ($h === '桑茶')
-	{
-		$hue = 39;
-		$s = 57;
-		$l = 37;
-	}
-	elseif ($h === '利休茶')
-	{
-		$hue = 45;
-		$s = 27;
-		$l = 52;
-	}
 	elseif ($h === '珈琲')
 	{
 		$hue = 39;
 		$s = 56;
-		$l = 26;
+		$l = 30;
 	}
 	elseif ($h === '白')
 	{
 		$hue = 0;
 		$s = 0;
-		$l = 60;
+		$l = 42;
 	}
 	elseif ($h === '月白')
 	{
-		$hue = 206;
-		$s = 12;
-		$l = 55;
+		$hue = 200;
+		$s = 18;
+		$l = 42;
 	}
 	elseif ($h === '白藤')
 	{
 		$hue = 270;
-		$s = 16;
-		$l = 55;
+		$s = 18;
+		$l = 42;
 	}
 	elseif ($h === '金色')
 	{
 		$hue = 53;
-		$s = 95;
-		$l = 33;
+		$s = 45;
+		$l = 42;
 	}
 	elseif ($h === '白柳')
 	{
 		$hue = 75;
-		$s = 69;
-		$l = 37;
+		$s = 45;
+		$l = 42;
 	}
 	elseif ($h === '灰')
 	{
 		$hue = 0;
 		$s = 0;
-		$l = 45;
+		$l = 40;
 	}
 	elseif ($h === '青鈍')
 	{
 		$hue = 131;
-		$s = 7;
-		$l = 45;
+		$s = 10;
+		$l = 40;
 	}
 	elseif ($h === '源氏鼠')
 	{
-		$hue = 330;
-		$s = 3;
-		$l = 52;
+		$hue = 320;
+		$s = 10;
+		$l = 40;
 	}
 	elseif ($h === '砂鼠')
 	{
 		$hue = 50;
-		$s = 13;
+		$s = 10;
 		$l = 40;
-	}
-	elseif ($h === '藍墨')
-	{
-		$hue = 210;
-		$s = 4;
-		$l = 29;
 	}
 	elseif ($h === '黒')
 	{
@@ -411,21 +366,24 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
-
 function color2class($colour)
 {
 	if ($colour === '白' || $colour === '月白' || $colour === '白藤'|| $colour === '金色' || $colour === '白柳' )
 		return 'white';
 	elseif ($colour === '灰' || $colour === '青鈍' || $colour === '源氏鼠' || $colour === '砂鼠')
 		return 'secondary';
-	elseif ($colour === '黒' || $colour === '藍墨')
+	elseif ($colour === '黒' || $colour === '濃藍')
 		return 'dark';
-	elseif ($colour === '千歳緑' || $colour === '薄緑' || $colour === '苔' || $colour === '鶸萌黄')
+	elseif ($colour === '焦茶' || $colour === '珈琲' || $colour === '千歳緑')
+		return 'muted';
+	elseif ($colour === '薄緑' || $colour === '苔' || $colour === '萌黄')
 		return 'success';
-	elseif ($colour === '人参' || $colour === '蜜柑' || $colour === '黄水晶' || $colour === '山吹茶' || $colour === '焦茶'|| $colour === '桑茶' || $colour === '利休茶' || $colour === '珈琲')
+	elseif ($colour === '蜜柑' || $colour === '黄水晶' )
 		return 'warning';
-	elseif ($colour === '緋' || $colour === '薔薇' || $colour === '躑躅' || $colour === '中紅' || $colour === '珊瑚' || $colour === '菫' || $colour === '葡萄')
+	elseif ($colour === '緋' || $colour === '薔薇' || $colour === '葡萄' || $colour === '菫')
 		return 'danger';
+	elseif ($colour === '青碧' || $colour === '瑠璃' || $colour === '紺桔梗')
+		return 'info';
 	else
-		return'primary';
+		return 'primary';
 }

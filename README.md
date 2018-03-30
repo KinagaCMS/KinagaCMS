@@ -1,5 +1,5 @@
 # kinaga
-<center><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br>kinaga v6</center>
+<div style=text-align:center><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300">kinaga v6</div>
 
 
 ---

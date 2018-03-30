@@ -253,22 +253,22 @@ function pager($num, $max, $visible)
 
 function sideless()
 {
-	global $header, $get_title;
-	if ($get_title)
+	global $header, $get_title, $get_page;
+	if ($get_title || $get_page)
 		return $header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
 }
 
 function nowrap()
 {
-	global $header, $get_title;
-	if ($get_title)
+	global $header, $get_title, $get_page;
+	if ($get_title || $get_page)
 		return $header .= '<style>.article{white-space:normal}</style>';
 }
 
 function redirect($link)
 {
-	global $header, $get_title;
-	if ($get_title)
+	global $header, $get_title, $get_page;
+	if ($get_title || $get_page)
 		$header .= '<script>location.replace("' . $link . '")</script><meta http-equiv=refresh content="0;URL=' . $link . '">';
 }
 
@@ -1084,7 +1084,7 @@ if ($glob_info_files || $dl || $use_contact)
 if ($address)
 	$aside .=
 	'<div class="card mb-5">' . $n .
-	'<div class="card-header bg-light">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
+	'<div class="card-header">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
 	'<div class="card-body wrap">' . $address . '</div>' . $n .
 	'</div>';
 
@@ -1092,7 +1092,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 {
 	$aside .=
 	'<div class="list-group mb-5">' . $n .
-	'<div class="list-group-item active">' . $popular_articles . '</div>' . $n;
+	'<div class="list-group-item list-group-item-primary">' . $popular_articles . '</div>' . $n;
 
 	foreach($glob_all_counter_files as $all_counter_files)
 		$counter_sort[] = (int)trim(strip_tags(file_get_contents($all_counter_files))) . $all_counter_files;
@@ -1112,7 +1112,7 @@ if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glo
 {
 	$aside .=
 	'<div class="list-group mb-5">' . $n .
-	'<div class="list-group-item bg-light">' . $recent_comments . '</div>';
+	'<div class="list-group-item list-group-item-primary">' . $recent_comments . '</div>';
 
 	foreach($glob_all_comment_files as $all_comment_files)
 		$new_comments_sort[] = $all_comment_files;

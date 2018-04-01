@@ -21,6 +21,12 @@ Linux ユーザーに最適化された CMS
 
 ---
 
+## スクリーンショット
+
+![screenshot](https://user-images.githubusercontent.com/25574701/38170905-12afe050-35ca-11e8-95d1-d4fb5a0a5995.png)
+
+---
+
 ## インストール
 
 - [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)

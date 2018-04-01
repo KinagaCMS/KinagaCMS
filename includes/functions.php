@@ -161,7 +161,9 @@ function img($src, $link='', $class='', $comment=true, $thumbnail=true)
 			else
 				$img = '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 			if ($get_title || $get_page)
-				return $exif_comment ? '<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>' : $img;
+				return $exif_comment ?
+					'<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>' :
+					'<a href="' . $uri . $link . '" target="_blank" onclick="return false"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>';
 			elseif ($img_source)
 				return '<figure class="img-thumbnail text-center d-inline-block mb-5"><a class=expand href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '">' . $img . '</a>' . $img_source . '</figure>';
 			else

@@ -10,7 +10,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 <a class=navbar-brand href="<?=$url?>"><?=get_logo()?></a>
-<button class=navbar-toggler type=button data-toggle=collapse data-target="#nav">
+<button class=navbar-toggler type=button data-toggle=collapse data-target="#nav" accesskey=n tabindex=100>
 <span class=navbar-toggler-icon></span>
 </button>
 <div class="collapse navbar-collapse" id=nav>
@@ -29,7 +29,7 @@
 </div>
 
 <footer class=text-center>
-<a href="#TOP" id=top class="btn btn-outline-primary">&uarr;</a>
+<a href="#TOP" id=page-top class="btn btn-outline-primary">&uarr;</a>
 <script src="<?=$js?>"></script>
 <?=$footer?>
 </footer>

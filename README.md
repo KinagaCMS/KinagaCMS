@@ -1,8 +1,6 @@
 <p align="center"><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br><b>kinaga</b> v6 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
 
-
 ---
-
 
 ## 概要
 
@@ -23,7 +21,7 @@ Linux ユーザーに最適化された CMS
 
 ## スクリーンショット
 
-![screenshot](https://user-images.githubusercontent.com/25574701/38170905-12afe050-35ca-11e8-95d1-d4fb5a0a5995.png)
+![screenshot](https://user-images.githubusercontent.com/25574701/38170940-b818f414-35ca-11e8-9b4a-0bba10b6f2e5.png)
 
 ---
 

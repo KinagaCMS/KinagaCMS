@@ -15,7 +15,7 @@ file_get_contents('bootstrap.min.css'),
 file_get_contents('magnific-popup.min.css'),
 
 '
-#top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
+#page-top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
 .article{font-size:large;line-height:1.8}
 .bg-danger.text-danger{background-color:#f2dede!important;color:#a94442!important}
 .bg-info.text-info{background-color:#d9edf7!important;color:#31708f!important}

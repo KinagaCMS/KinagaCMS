@@ -120,64 +120,68 @@ function permalink($t, $u)
 
 function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 {
-	if ($title)
-		$class .= ' note';
 	return
-	'<a href="' . $uri . '"' . ($class ? ' class="' . $class . '"' : '') . ($title ? ' title="' . $title . '" data-html="true"' : '') . ($position ? ' data-placement="' . $position . '"' : '') . ' target="' . $target . '"' . ($target==='_blank' ? ' rel="noopener noreferrer"' : '') . '>' .
+	'<a href="' . $uri . '" target="' . $target . '"' .
+	($class ? ' class="' . $class . '"' : '') .
+	($title ? ' data-toggle="tooltip" title="' . $title . '" data-html="true"' : '') .
+	($position ? ' data-placement="' . $position . '"' : '') .
+	($target === '_blank' ? ' rel="noopener noreferrer"' : '') . '>' .
 	(!$name ? h($uri) : h($name)) .
 	'</a>';
 }
 
-function img($src, $link='', $class='', $comment=true, $thumbnail=true)
+function img($src, $class='', $comment=true, $thumbnail=true)
 {
 	global $url, $source, $n, $get_title, $get_page, $use_thumbnails, $line_breaks;
 	$info = pathinfo($src);
-	if (strpos($src, '://') !== false)
-	{
-		$addr = parse_url($src);
-		$uri = '';
-		$link = $src;
-		$src = rawurldecode($src);
-		$img_source = '<p class="blockquote-footer my-2"><a href="' . $addr['scheme'].'://'.$addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></p>';
-	}
-	else
-	{
-		$uri = $url;
-		$img_source = '';
-	}
+
 	if (isset($info['extension']))
 	{
+		if ($scheme = strpos($src, '://'))
+			$addr = parse_url($src);
 		$extension = strtolower($info['extension']);
 		if (array_search($extension, array('gif', 'jpg', 'jpeg', 'png', 'svg')) !== false)
 		{
 			$exif = @exif_read_data($src, '', '', true);
 			$exif_thumbnail = isset($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
-			$exif_comment = isset($exif['COMMENT']) && $comment ?str_replace($line_breaks, '&#10;', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
+			$exif_comment = isset($exif['COMMENT']) && $comment ? str_replace($line_breaks, '&#10;', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
 
-			if ($use_thumbnails && $exif_thumbnail && $thumbnail)
-				$img = '<img class="align-top img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
-			elseif ($get_title || $get_page)
-				$img = $exif_comment ? 
-					'<figure class="img-thumbnail text-center d-inline-block mb-5"><img class="align-bottom img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' : 
-					'<img class="img-fluid img-thumbnail ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
-			else
-				$img = '<img class="img-fluid ' . $class . '" src="' . $uri . r($src) . '" alt="' . h(basename($src)) . '">';
 			if ($get_title || $get_page)
-				return $exif_comment ?
-					'<a href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>' :
-					'<a href="' . $uri . r($src) . '" target="_blank" onclick="return false"' . (strpos($class, 'expand') !== false ? ' class=expand' : '') . '>' . $img . '</a>';
-			elseif ($img_source)
-				return '<figure class="img-thumbnail text-center d-inline-block mb-5"><a class=expand href="' . $uri . $link . '" target="_blank" onclick="return false" title="' . $exif_comment . '">' . $img . '</a>' . $img_source . '</figure>';
+			{
+				if ($use_thumbnails && $exif_thumbnail && $thumbnail)
+					$img = '<img class="align-top img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
+				else
+					$img = $exif_comment ?
+						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' :
+						'<img class="img-fluid img-thumbnail ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '">';
+				if ($scheme !== false)
+					return '<figure class="img-thumbnail text-center d-inline-block ' . $class . '"><a class=expand href="' . $src . '" target="_blank" onclick="return false" title="' . $exif_comment . '"><img class="img-fluid" src="' . r($src) . '" alt="' . h(basename($src)) . '"></a><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>';
+				else
+				{
+					$expand = strpos($class, 'expand') !== false ? ' class=expand' : '';
+					return $exif_comment ?
+						'<a href="' . $url . r($src) . '" target="_blank" onclick="return false" title="' . $exif_comment . '"' . $expand . '>' . $img . '</a>' :
+						'<a href="' . $url . r($src) . '" target="_blank" onclick="return false"' . $expand . '>' . $img . '</a>';
+				}
+			}
 			else
-				return '<a href="' . $uri . $link . '">' . $img . '</a>';
+			{
+				$dirname = dirname(dirname($src));
+				return '<a href="' . $url . r(basename(dirname($dirname)) . '/' . basename($dirname)) . '"><img class="img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"></a>';
+			}
 		}
 		elseif (array_search($extension, array('mp4', 'ogg', 'webm')) !== false)
 		{
-			$vtt = is_file($vtt = str_replace($extension, 'vtt', $src)) ? r($vtt) : '';
+			$vtt = str_replace($extension, 'vtt', $src);
 			if ($get_title || $get_page)
-				return '<figure class="img-thumbnail text-center d-inline-block mb-5"><video class="align-middle img-fluid ' . $class . '" controls preload=none><source src="' . $uri . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $img_source . '</figure>' . $n;
+			{
+				if ($scheme !== false)
+					return '<figure class="align-top img-thumbnail text-center d-inline-block ' . $class . '"><video class="img-fluid" controls preload=none><source src="' . r($src) . '"><track src="' . $vtt . '"></video><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>' . $n;
+				else
+					return '<video class="align-top img-thumbnail img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url . $vtt . '"></video>';
+			}
 			else
-				return '<video class="align-middle img-fluid ' . $class . '" controls preload=none><source src="' . $uri . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $n;
+				return '<video class="align-top img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url. $vtt . '"></video>' . $n;
 		}
 	}
 }
@@ -465,7 +469,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
 					sort($glob_default_imgs);
-					$default_image = img($glob_default_imgs[0], $categ_link .'/'. $title_link, 'card-img-top', false, false);
+					$default_image = img($glob_default_imgs[0], 'card-img-top', false, false);
 					$count_images = count($glob_default_imgs);
 				}
 				else
@@ -474,7 +478,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				if (is_dir($default_background_dir = $article_dir .'/background-images') && $glob_default_background_imgs = glob($default_background_dir .'/*', GLOB_NOSORT))
 				{
 					sort($glob_default_background_imgs);
-					$default_background_image = img($glob_default_background_imgs[0], $categ_link.'/'. $title_link, 'card-img-top', false, false);
+					$default_background_image = img($glob_default_background_imgs[0], 'card-img-top', false, false);
 					$count_background_images = count($glob_default_background_imgs);
 				}
 				else
@@ -631,7 +635,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			}
 			$article .= '<div class="gallery text-center">' . $n;
 			for($i = 0, $c = count($images_in_page); $i < $c; ++$i)
-				$article .= img($images_in_page[$i], r($images_in_page[$i]), '', true, true);
+				$article .= img($images_in_page[$i]);
 			$article .= '</div>' . $n;
 
 			if ($glob_images_number > $number_of_images)
@@ -961,7 +965,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
 					sort($glob_default_imgs);
-					$default_image = img($glob_default_imgs[0], $categ_link.'/'. $title_link, 'card-img-top', false, false);
+					$default_image = img($glob_default_imgs[0], 'card-img-top', false, false);
 					$count_images = count($glob_default_imgs);
 				}
 				else
@@ -970,7 +974,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				if (is_dir($default_background_dir = $article_dir .'/background-images') && $glob_default_background_imgs = glob($default_background_dir .'/*', GLOB_NOSORT))
 				{
 					sort($glob_default_background_imgs);
-					$default_background_image = img($glob_default_background_imgs[0], $categ_link.'/'. $title_link, 'card-img-top', false, false);
+					$default_background_image = img($glob_default_background_imgs[0], 'card-img-top', false, false);
 					$count_background_images = count($glob_default_background_imgs);
 				}
 				else

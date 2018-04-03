@@ -1,26 +1,25 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
-  */
-
 date_default_timezone_set( 'America/New_York' );
 
 #Site Name
 $site_name = 'kinaga';
 
-#Your home or office address: Sidebox and Mail footer
-$address = '';
+# Your mail address
+$mail_address = '';
 
-#Hue: red, orange, yellow, liteGreen, green, liteBlue, blue, darkBlue, purple, peach, brown or BLANK
-$color = 'green';
+#Your home or office address
+$address = '';
+$address_title = '';
+
+#Hue: Red, Rose, Orange, Topaz, SpringGreen, MossGreen, MintGreen, MillennialGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Chocolate, Coffee, White, Moonlight, WistariaWhite, Gold, LimeWhite, Gray, GreenGray, PinkGray, SandGray, Black or BLANK
+$color = 'Moonlight';
 
 
 #Description: Top page
 $meta_description = 'description goes here.';
 
 #Subtitle: Top Page H1 and TITLE
-$subtitle = 'Your install is compleate';
+$subtitle = '';
 
 
 #Top Page
@@ -55,16 +54,18 @@ $comments_next = 'Older';
 
 
 #Contact Us
-$contact_subtitle = 'Want to say hello, ask a question. Use the form below.';
+$contact_subtitle = '';
 
 
-$download_subtitle = 'Click the links below.';
+$download_subtitle = '';
 
 
 $page_prefix = 'Page %s';
 
+#Social icons
+$social = 'Share this';
 
-$permalink = 'Permalink <small>Copy the link and add to your website.</small>';
+$permalink = 'Permalink';
 
 $for_html = 'HTML';
 
@@ -74,8 +75,8 @@ $for_forum = 'Forum';
 
 
 #Separator
-$top = '<a class="text-primary page-top" href="#TOP"><span class="glyphicon glyphicon-chevron-up"></span></a>';
-
+$top = '<a class="page-top text-right d-block p-0 small" href="#TOP"> </a>';
+$pagetop = 'go to top';
 
 $last_modified = 'Last updated: %s';
 
@@ -121,7 +122,7 @@ $comment_acceptance =
 	'To post this comment,' . $n .
 	'save the attached file: %s' . $n .
 	'and upload it in the following folder' . $n . $n .
-	$s.'contents'.$s.'%s'.$s.'%s'.$s.'comments'.$s;
+	'/contents/%s/%s/comments/';
 
 $contact_name = 'Name';
 
@@ -167,9 +168,9 @@ $days_ago = ' days ago';
 #/images/index.php
 $images_title = 'Images - %s';
 
-$images_heading = 'Images <small>Copy the tag and paste your article.</small>';
+$images_heading = 'Images <small class=text-muted>Copy the tag and paste your article.</small>';
 
-$images_aligner = 'Image Alignment <small>You might need &lt;div class=clearfix&gt;&lt;/div&gt; to release wrap.</small>';
+$images_aligner = 'Image Alignment <small class=text-muted>You might need &lt;div class=clearfix&gt;&lt;/div&gt; to release wrap.</small>';
 
 $noscript = 'Please enable <strong>javascript</strong>.';
 
@@ -180,50 +181,198 @@ $align_center = 'Center';
 $align_right = 'Right';
 
 #Number of images per page
-$number_of_imgs = '3';
+$number_of_imgs = 3;
 
 $large_image = 'Large';
 
 $small_image = 'Small';
 
+$imgs_first= 'First';
 $imgs_prev = 'Prev';
 
 $imgs_next = 'Next';
+$imgs_last = 'Last';
 
-
-function hsla( $h, $s = 100, $l = 50, $a = 1 ) {
-
-	$hue = array(
-		'red'           => '0',
-		'orange'     => '35',
-		'yellow'       => '50',
-		'liteGreen' => '65',
-		'green'       => '85',
-		'liteBlue'    => '170',
-		'blue'          => '195',
-		'darkBlue'  => '220',
-		'purple'      => '265',
-		'peach'       => '330',
-		'brown'       => '25'
-	);
-
-	if ( isset( $hue[$h] ) ) return "hsla( $hue[$h], $s%, $l%, $a )";
-
-}
-
-
-function color2class( $colour ) {
-
-	switch ( true ) {
-
-		case $colour == 'green' || $colour == 'liteGreen': return 'success';
-
-		case $colour == 'orange' || $colour == 'yellow' || $colour == 'brown': return 'warning';
-
-		case $colour == 'red' || $colour == 'purple' || $colour == 'peach': return 'danger';
-
-		default: return 'info';
+function hsla($h, $cal_s=0, $cal_l=0, $a=1)
+{
+	if ($h === 'Red')
+	{
+		$hue = 355;
+		$s = 65;
+		$l = 40;
 	}
-
+	elseif ($h === 'Rose')
+	{
+		$hue = 330;
+		$s = 75;
+		$l = 40;
+	}
+	if ($h === 'Orange')
+	{
+		$hue = 30;
+		$s = 98;
+		$l = 42;
+	}
+	if ($h === 'Topaz')
+	{
+		$hue = 48;
+		$s = 86;
+		$l = 40;
+	}
+	if ($h === 'SpringGreen')
+	{
+		$hue = 80;
+		$s = 75;
+		$l = 40;
+	}
+	if ($h === 'MossGreen')
+	{
+		$hue = 70;
+		$s = 65;
+		$l = 30;
+	}
+	if ($h === 'MintGreen')
+	{
+		$hue = 131;
+		$s = 45;
+		$l = 40;
+	}
+	elseif ($h === 'MillennialGreen')
+	{
+		$hue = 142;
+		$s = 36;
+		$l = 30;
+	}
+	elseif ($h === 'Turquoise')
+	{
+		$hue = 190;
+		$s = 60;
+		$l = 37;
+	}
+	elseif ($h === 'LapisLazuli')
+	{
+		$hue = 214;
+		$s = 69;
+		$l = 38;
+	}
+	elseif ($h === 'MidnightBlue')
+	{
+		$hue = 222;
+		$s = 65;
+		$l = 10;
+	}
+	if ($h === 'OrientalBlue')
+	{
+		$hue = 232;
+		$s = 39;
+		$l = 49;
+	}
+	if ($h === 'Violet')
+	{
+		$hue = 259;
+		$s = 40;
+		$l = 40;
+	}
+	elseif ($h === 'Grape')
+	{
+		$hue = 290;
+		$s = 40;
+		$l = 38;
+	}
+	elseif ($h === 'Chocolate')
+	{
+		$hue = 16;
+		$s = 28;
+		$l = 34;
+	}
+	elseif ($h === 'Coffee')
+	{
+		$hue = 39;
+		$s = 56;
+		$l = 30;
+	}
+	elseif ($h === 'White')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 42;
+	}
+	elseif ($h === 'Moonlight')
+	{
+		$hue = 200;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === 'WistariaWhite')
+	{
+		$hue = 270;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === 'Gold')
+	{
+		$hue = 53;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === 'LimeWhite')
+	{
+		$hue = 75;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === 'Gray')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 40;
+	}
+	elseif ($h === 'GreenGray')
+	{
+		$hue = 131;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'PinkGray')
+	{
+		$hue = 320;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'SandGray')
+	{
+		$hue = 50;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'Black')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 0;
+	}
+	if (isset($hue, $s, $l))
+		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
+function color2class($colour)
+{
+	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite' || $colour === 'Gold' || $colour === 'LimeWhite' )
+		return 'white';
+	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
+		return 'secondary';
+	elseif ($colour === 'Black' || $colour === 'MidnightBlue')
+		return 'dark';
+	elseif ($colour === 'Chocolate' || $colour === 'Coffee' || $colour === 'MillennialGreen')
+		return 'muted';
+	elseif ($colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+		return 'success';
+	elseif ($colour === 'Orange' || $colour === 'Topaz' )
+		return 'warning';
+	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Grape' || $colour === 'Violet')
+		return 'danger';
+	elseif ($colour === 'Turquoise' || $colour === 'LapisLazuli' || $colour === 'OrientalBlue')
+		return 'info';
+	else
+		return 'primary';
+}

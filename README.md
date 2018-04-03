@@ -1,77 +1,81 @@
-<p align="right"><a href="README.ja.md">【日本語版 README はこちら】</a></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br><b>kinaga</b> v6 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
 
-# ![](https://avatars3.githubusercontent.com/u/26238188?v=3&s=45) Kinaga
+---
 
-Kinaga is a Directory Management CMS that has NoDB and NoAdmin, so use **NFS** and **Text Editor**, just like usual desktop work. 
+## 概要
 
+Linux ユーザーに最適化された CMS
 
+ファイルシステムからの管理を特徴とするため、
+簡単なルールに沿ってフォルダやファイルを配置するだけで Web サイトが完成します
 
-# Requirements
+---
 
-- PHP 5.5 or higher
-- Apache 2.2 or higher
-- .htaccess support
+## 動作環境
 
+- PHP 5.5 以上
+- Apache 2.2 以上
+- .htaccess 及び RewriteEngine が利用可能であること
 
-# Installation
+---
 
-	git clone https://github.com/KinagaCMS/KinagaCMS.git
+## スクリーンショット
 
+![screenshot](https://user-images.githubusercontent.com/25574701/38170940-b818f414-35ca-11e8-9b4a-0bba10b6f2e5.png)
 
-# Setting Up
+---
+
+## インストール
+
+- [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)
+
+- パーミッションなどを適宜変更してから公開ディレクトリにアップロードして下さい
+
+---
+
+## 初期設定
 
 1.  /includes/config.php
 
-	You can set your language, encoding, and template.
+　　テンプレート、表示言語、文字コードなどを設定することができます
 
-2.  /includes/lang/YOUR_LANGUAGE.php
+2.  /includes/lang/○○.php
 
-	Edit or create your language file (ex: en.php).
+　　サイト名やメールアドレスなどを設定することができます
 
-	You can also set Site Name and description.
+---
 
+## 簡単な使い方
 
-# Quick Start
+1.  ファイルマネージャでサーバーに接続します
+2.  contents フォルダの中に「<b>カテゴリ名</b>」のフォルダを作成して下さい
+3.  カテゴリ名フォルダの中に「<b>記事名</b>」のフォルダを作成して下さい
+4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい
+5.  また、フォルダやテキストを以下のように配置することで追加機能を利用することも出来ます
 
-1.  Connect with NFS or [WinSCP](https://winscp.net/) to your server.
-
-2.  Create a new folder in the *contents* as a **category**.
-
-3.  Create a new folder in the *category* as a **article title**.
-
-4.  Create a *index.html* in the **article folder** and publish your article with text editor ( [ReText](https://github.com/retext-project/retext), [Pluma](https://github.com/mate-desktop/pluma), [Geany](https://github.com/geany/geany/) ).
-
-5. Create folders and texts as follows, each function can be added.
 
 		contents
 		│
-		├── CATEGORY NAME
+		├── カテゴリ名フォルダ
 		│	│
-		│	├── ARTICLE TITLE
+		│	├── 記事名フォルダ
 		│	│	│
-		│	│	├── comments ( Provide a contact form. Not required )
+		│	│	├── comments ( コメント欄が表示されます。必須ではありません )
 		│	│	│
-		│	│	├── counter.txt ( As a popular article. Not required )
+		│	│	├── counter.txt ( カウンター。よく読まれている記事が表示されます。必須ではありません )
 		│	│	│
-		│	│	├── images ( or background-images. Not required )
+		│	│	├── images ( または background-images など。必須ではありません )
 		│	│	│
-		│	│	└── index.html ( Publish your article here )
+		│	│	└── index.html ( ここに記事を書いて下さい )
 		│	│
-		│	└── index.html ( Category Subtitle. Not required )
+		│	└── index.html ( カテゴリのサブタイトルです。必須ではありません )
 		│
-		├── ASIDE PAGE.html ( Belong to "Informations" of the Sidebox. Not required )
+		├── サイドページ.html ( インフォメーションに表示されます。必須ではありません )
 		│
-		└── index.html ( Top page. Not required )
+		├── サイドページ２.html ( サイドページはファイル名がタイトルとなります )
+		│
+		└── index.html ( トップページ。必須ではありません )
+---
 
-
-# Contributing
-
-Any forms of contribution are welcome: translation into other languages, bug fixes.
-
-
-
-# Licenses
-
-- Kinaga is licensed under GPL v3 or higher. See the [LICENSE](LICENSE) file for details.
-
-- [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/) and [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/) are released under the MIT license.
+## ライセンス
+-  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)

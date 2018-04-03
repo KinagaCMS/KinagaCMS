@@ -155,7 +155,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' :
 						'<img class="img-fluid img-thumbnail ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '">';
 				if ($scheme !== false)
-					return '<figure class="img-thumbnail text-center d-inline-block ' . $class . '"><a class=expand href="' . $src . '" target="_blank" onclick="return false" title="' . $exif_comment . '"><img class="img-fluid" src="' . r($src) . '" alt="' . h(basename($src)) . '"></a><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>';
+					return '<figure class="img-thumbnail text-center d-inline-block ' . $class . '"><a class=expand href="' . $src . '" target="_blank" onclick="return false" title="' . $exif_comment . '"><img class="img-fluid" src="' . $addr['scheme'] . '://' . $addr['host'] . r($addr['path']) . '" alt="' . h(basename($src)) . '"></a><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>';
 				else
 				{
 					$expand = strpos($class, 'expand') !== false ? ' class=expand' : '';
@@ -176,9 +176,9 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			if ($get_title || $get_page)
 			{
 				if ($scheme !== false)
-					return '<figure class="align-top img-thumbnail text-center d-inline-block ' . $class . '"><video class="img-fluid" controls preload=none><source src="' . r($src) . '"><track src="' . r($vtt) . '"></video><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>' . $n;
+					return '<figure class="align-top img-thumbnail text-center d-inline-block ' . $class . '"><video class=img-fluid controls preload=none><source src="' . $addr['scheme'] . '://' . $addr['host'] . r($addr['path']) . '"><track src="' . str_replace($extension, 'vtt', $addr['scheme'] . '://' . $addr['host'] . r($addr['path'])) . '"></video><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>' . $n;
 				else
-					return '<video class="align-top img-thumbnail img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url . r($vtt) . '"></video>';
+					return '<a href="' . $url . r($src) . '" class="sr-only mfp-iframe">video-iframe</a><video class="align-top img-thumbnail img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url . r($vtt) . '"></video>';
 			}
 			else
 				return '<video class="align-top img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url. r($vtt) . '"></video>' . $n;

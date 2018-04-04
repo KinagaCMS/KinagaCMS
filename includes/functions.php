@@ -659,12 +659,11 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 
 			$prev_link = '';
 			rsort($sort_prev_next);
-			$article .= '<div class="mt-5 mb-5 clearfix">';
+			$article .= '<div class="my-5 clearfix">';
 
 			for($i = 0, $c = count($sort_prev_next); $i < $c; ++$i)
 			{
-				$prev_next_parts = explode('-~-', $sort_prev_next[$i] . '-~-' . $i);
-
+				$prev_next_parts = explode('-~-', $sort_prev_next[$i]);
 				$prev_next_title = get_title($prev_next_parts[1]);
 
 				if ((int)$prev_next_parts[0] > $article_filemtime)
@@ -676,9 +675,6 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 					$prev_link =
 					'<a class="btn btn-outline-primary" title="' . $prev_next_encode_title . '" href="' . $prev_href . '">' . mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding) . '</a>' . $n;
 				}
-
-				$prev_next_count = (int)$prev_next_parts[0] == $article_filemtime ? (int)$prev_next_parts[2] +1: '';
-
 				if ((int)$prev_next_parts[0] < $article_filemtime)
 				{
 					$next_href = $url . r($get_categ) .'/'. r($prev_next_title);

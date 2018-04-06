@@ -176,12 +176,12 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			if ($get_title || $get_page)
 			{
 				if ($scheme !== false)
-					return '<figure class="align-top img-thumbnail text-center d-inline-block ' . $class . '"><video class=img-fluid controls preload=none><source src="' . $addr['scheme'] . '://' . $addr['host'] . r($addr['path']) . '"><track src="' . str_replace($extension, 'vtt', $addr['scheme'] . '://' . $addr['host'] . r($addr['path'])) . '"></video><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>' . $n;
+					return '<figure class="align-top img-thumbnail text-center d-inline-block ' . $class . '"><video controls preload=none><source src="' . $addr['scheme'] . '://' . $addr['host'] . r($addr['path']) . '"><track src="' . str_replace($extension, 'vtt', $addr['scheme'] . '://' . $addr['host'] . r($addr['path'])) . '"></video><small class="blockquote-footer my-2 text-right"><a href="' . $addr['scheme'] . '://' . $addr['host'] . '/" target="_blank" rel="noopener noreferrer">' . sprintf($source, h($addr['host'])) . '</a></small></figure>' . $n;
 				else
-					return '<a href="' . $url . r($src) . '" class="sr-only mfp-iframe">video-iframe</a><video class="align-top img-thumbnail img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url . r($vtt) . '"></video>';
+					return '<a href="' . $url . r($src) . '" class="sr-only mfp-iframe">video-iframe</a><video class="align-top img-thumbnail ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url . r($vtt) . '"></video>';
 			}
 			else
-				return '<video class="align-top img-fluid ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url. r($vtt) . '"></video>' . $n;
+				return '<video class="align-top ' . $class . '" controls preload=none><source src="' . $url . r($src) . '"><track src="' . $url. r($vtt) . '"></video>' . $n;
 		}
 	}
 }

@@ -23,6 +23,7 @@ file_get_contents('magnific-popup.min.css'),
 .bg-warning.text-warning{background-color:#fcf8e3!important;color:#8a6d3b!important}
 .card-columns{column-count:2}
 .custom-file-label:after{content:"\0053c2\007167"}
+.img-fluid{width:100%}
 .mfp-title{padding-bottom:3em}
 .page-top:after{content:"'.$pagetop.'";position:absolute;opacity:0;right:-2em}
 .page-top:hover:after{opacity:1;right:0;transition:.3s linear}

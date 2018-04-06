@@ -149,7 +149,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			if ($get_title || $get_page)
 			{
 				if ($use_thumbnails && $exif_thumbnail && $thumbnail)
-					$img = '<img class="align-top img-fluid ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
+					$img = '<img class="align-top ' . $class . ' img-thumbnail" src="data:' . image_type_to_mime_type(exif_imagetype($src)) . ';base64,' . base64_encode($exif_thumbnail) . '" alt="' . h(basename($src)) . '">';
 				else
 					$img = $exif_comment ?
 						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"><p class="text-center wrap my-2">' . $exif_comment . '</p></figure>' :

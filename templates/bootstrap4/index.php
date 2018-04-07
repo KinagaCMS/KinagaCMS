@@ -23,7 +23,7 @@
 
 <div class=container-fluid>
 <div class=row>
-<div class=col-lg-9 style="min-width:0"><?=$article?></div>
+<div class=col-lg-9><?=$article?></div>
 <div class=col-lg-3><?=$aside?></div>
 </div>
 </div>

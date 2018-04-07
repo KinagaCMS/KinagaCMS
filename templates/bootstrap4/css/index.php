@@ -22,16 +22,19 @@ file_get_contents('magnific-popup.min.css'),
 .bg-success.text-success{background-color:#dff0d8!important;color:#3c763d!important}
 .bg-warning.text-warning{background-color:#fcf8e3!important;color:#8a6d3b!important}
 .card-columns{column-count:2}
+.col-lg-9{min-width:0}
 .custom-file-label:after{content:"\0053c2\007167"}
 .img-responsive{display:block;max-width:100%;height:auto}
 .mfp-title{padding-bottom:3em}
+.nowrap{white-space:normal}
 .page-top:after{content:"'.$pagetop.'";position:absolute;opacity:0;right:-2em}
 .page-top:hover:after{opacity:1;right:0;transition:.3s linear}
 .page-top:not(:hover):after{opacity:0;transition:.3s}
 .page-top{border-bottom:thin dotted;position:relative;text-decoration:none!important}
+.popover{max-width:70%}
 .similar-article{height:2rem}
 .title{color:white}
-.wrap,.mfp-title{word-wrap:break-word;white-space:pre-wrap}
+.wrap,.mfp-title,.popover-body{word-wrap:break-word;white-space:pre-wrap}
 ::-moz-selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 ::selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 a:hover img{opacity:0.8}

@@ -401,6 +401,7 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 	}
 	else
 	{
+		http_response_code(404);
 		$header .= '<title>' . $error . ' - ' . $site_name . '</title>' . $n;
 		$article .=
 		'<h1 class="h2 mb-4">' . $error . '</h1>' . $n .
@@ -519,6 +520,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 		}
 		elseif (!$categ_file)
 		{
+			http_response_code(404);
 			$header .=
 			'<title>' . $no_article . ' - ' . $categ_title . ' - ' . $site_name . '</title>' . $n;
 			$article .=
@@ -530,6 +532,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 	}
 	else
 	{
+		http_response_code(404);
 		$header .=
 		'<title>' . $no_categ . ' - ' . $site_name . '</title>' . $n;
 		$article .=
@@ -795,6 +798,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 	}
 	else
 	{
+		http_response_code(404);
 		$header .=
 		'<title>' . $no_article . ' - ' . $site_name . '</title>' . $n;
 		$article .=
@@ -1015,6 +1019,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 }
 else
 {
+	http_response_code(404);
 	$header .=
 	'<title>' . $error . ' - ' . $site_name . '</title>' . $n;
 	$article .=

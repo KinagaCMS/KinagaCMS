@@ -30,7 +30,7 @@ function get_summary($file)
 	include_once $file;
 	$text = ob_get_clean();
 	$text = strip_tags(preg_replace('/<script.*?\/script>/s', '', $text));
-	$text = str_replace([ $n . $n . $n, $n . $n ], $n, $text);
+	$text = str_replace(array($n . $n . $n, $n . $n), $n, $text);
 	$text = mb_strimwidth($text, 0, $summary_length, $ellipsis, $encoding);
 	return trim($text);
 }
@@ -60,7 +60,7 @@ function get_page($nr)
 	if (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title'))
 		return $current_url . '&amp;pages=' . $nr;
 	elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title'))
-		return $url . $get_categ.'/'. $nr . '/';
+		return $url . $get_categ . '/' . $nr . '/';
 	elseif (filter_has_var(INPUT_GET, 'query'))
 		return $url . '?query=' . $word . '&amp;pages=' . $nr;
 	elseif (filter_has_var(INPUT_GET, 'page') == $download_contents)
@@ -76,8 +76,8 @@ function ht($str)
 
 function social($t, $u)
 {
-	global $social, $social_icon_size, $n, $url, $color;
-	return
+	global $article, $social, $social_icon_size, $n;
+	$article .=
 	'<section id=social class=mb-5>' . $n .
 	'<h2>' . $social . '</h2><div class="btn-group btn-group-lg">' . $n .
 	'<a class="btn t" href="https://twitter.com/intent/tweet?text=' . $t . '&amp;url=' . $u . '" target="_blank" rel="noopener noreferrer">' . $n .
@@ -95,8 +95,8 @@ function social($t, $u)
 
 function permalink($t, $u)
 {
-	global $permalink, $for_html, $for_wiki, $for_forum, $n;
-	return
+	global $article, $permalink, $for_html, $for_wiki, $for_forum, $n;
+	$article .=
 	'<section id=permalink class=mb-5>' . $n .
 	'<h2>' . $permalink . '</h2>' . $n .
 	'<ul class="nav nav-tabs" role=tablist>' . $n .
@@ -263,14 +263,14 @@ function sideless()
 {
 	global $header, $get_title, $get_page;
 	if ($get_title || $get_page)
-		return $header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
+		$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
 }
 
 function nowrap()
 {
 	global $header, $get_title, $get_page;
 	if ($get_title || $get_page)
-		return $header .= '<style>.article{white-space:normal}</style>';
+		$header .= '<style>.article{white-space:normal}</style>';
 }
 
 function redirect($link)
@@ -306,11 +306,11 @@ $form = 'includes/form.php';
 if (! empty($contents))
 {
 	foreach($contents as $categ)
-		$nav .= '<a ' . (filter_has_var(INPUT_GET, 'categ') && $get_categ == $categ ? 'class="nav-item nav-link active"' : 'class="nav-item nav-link"') . ' href="' . $url . r($categ) .'/">' . h($categ) . '</a>' . $n;
+		$nav .= '<a ' . (filter_has_var(INPUT_GET, 'categ') && $get_categ == $categ ? 'class="nav-item nav-link active"' : 'class="nav-item nav-link"') . ' href="' . $url . r($categ) . '/">' . h($categ) . '</a>' . $n;
 }
 if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 {
-	if (is_file($pages_file = 'contents/'. $get_page . '.html'))
+	if (is_file($pages_file = 'contents/' . $get_page . '.html'))
 	{
 		$basetitle = h($get_page);
 		$header .=
@@ -328,10 +328,10 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 		$article .= '<div class="article mb-5">' . $pages_content . '</div>' . $n;
 
 		if ($use_social)
-			$article .= social(rawurlencode($basetitle . ' - ' . $site_name), rawurlencode($url . $basetitle));
+			social(rawurlencode($basetitle . ' - ' . $site_name), rawurlencode($url . $basetitle));
 
 		if ($use_permalink)
-			$article .= permalink($basetitle . ' - ' . $site_name, $url . rawurlencode($basetitle));
+			permalink($basetitle . ' - ' . $site_name, $url . rawurlencode($basetitle));
 	}
 	elseif ($use_contact && $get_page === $contact_us)
 	{
@@ -345,10 +345,10 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 	}
 	elseif ($dl && $get_page === $download_contents)
 	{
-		if (is_file($dl_file = $downloads_dir .'/'. $get_dl) && pathinfo($dl_file, PATHINFO_EXTENSION))
+		if (is_file($dl_file = $downloads_dir . '/' . $get_dl) && pathinfo($dl_file, PATHINFO_EXTENSION))
 		{
-			header('Content-Length: ' . filesize($dl_file) . '');
-			header('Content-Type: ' . mime_content_type($dl_file) . '');
+			header('Content-Length: ' . filesize($dl_file));
+			header('Content-Type: ' . mime_content_type($dl_file));
 
 			if (strpos($user_agent_lang, 'ja') !== false && strpos($user_agent, 'MSIE') !== false && strpos($user_agent, 'rv:11.0') !== false)
 			{
@@ -359,7 +359,6 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 				header('Content-Disposition: attachment; filename="' . $get_dl . '"');
 
 			readfile($dl_file);
-
 			exit;
 		}
 		$breadcrumb .= '<li class="breadcrumb-item active">' . $download_contents . '</li>';
@@ -374,7 +373,7 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 		if ($download_subtitle)
 			$article .= '<h1 class="h2 mb-4">' . $download_contents . ' <small class="wrap text-muted">' . $download_subtitle . '</small></h1>' . $n;
 
-		$dl_files = glob($downloads_dir .'/*.*', GLOB_NOSORT);
+		$dl_files = glob($downloads_dir . '/*.*', GLOB_NOSORT);
 
 		if ($dl_files)
 		{
@@ -414,14 +413,14 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 }
 elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title'))
 {
-	if (is_dir($current_categ = 'contents/'. $get_categ))
+	if (is_dir($current_categ = 'contents/' . $get_categ))
 	{
 		$categ_title = h($get_categ);
 		$breadcrumb .= '<li class="breadcrumb-item active">' . $categ_title . '</li>';
 		$categ_contents = get_dirs($current_categ);
 		$categ_contents_number = $categ_contents ? count($categ_contents) : 0;
 
-		if (is_file($categ_file = $current_categ .'/index.html'))
+		if (is_file($categ_file = $current_categ . '/index.html'))
 		{
 			ob_start();
 			include_once $categ_file;
@@ -440,7 +439,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 			}
 
 			for($i = 0; $i < $categ_contents_number; ++$i)
-				$articles_sort[] = is_file($article_files = $current_categ .'/'. $categ_contents[$i] .'/index.html') ? filemtime($article_files) . '-~-' . $article_files : '';
+				$articles_sort[] = is_file($article_files = $current_categ . '/' . $categ_contents[$i] . '/index.html') ? filemtime($article_files) . '-~-' . $article_files : '';
 
 			$articles_sort = array_filter($articles_sort);
 			rsort($articles_sort);
@@ -456,22 +455,19 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 			for($i = 0, $c = count($sections_in_categ_page); $i < $c; ++$i)
 			{
 				$articles = explode('-~-', $sections_in_categ_page[$i]);
-				$section = '<p class=wrap>' . get_summary($articles[1]) . '</p>' . $n;
 				$articles_link = explode('/', $articles[1]);
 				$categ_link = r($articles_link[1]);
 				$title_link = r($articles_link[2]);
 				$article_dir = dirname($articles[1]);
-				$article_link_title = ht($articles_link[2]);
 				$count_images = '';
-
-				$counter = is_file($counter_txt = $article_dir .'/counter.txt') ?
-				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))).'</span>' : '';
-				$comments = $use_comment && is_dir($comments_dir = $article_dir .'/comments') ?
-				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#comment">' . $n .
-				'' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt', GLOB_NOSORT))) .
+				$counter = is_file($counter_txt = $article_dir . '/counter.txt') ?
+				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))) . '</span>' : '';
+				$comments = $use_comment && is_dir($comments_dir = $article_dir . '/comments') ?
+				'<a class=card-link href="' . $url . $categ_link . '/' . $title_link . '#comment">' . $n .
+				sprintf($comment_counts, count(glob($comments_dir . '/*-~-*.txt', GLOB_NOSORT))) .
 				'</a>' : '';
 
-				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
+				if (is_dir($default_imgs_dir = $article_dir . '/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
 					sort($glob_default_imgs);
 					$default_image = img($glob_default_imgs[0], 'card-img-top', false, false);
@@ -480,7 +476,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				else
 					$default_image = $count_images = '';
 
-				if (is_dir($default_background_dir = $article_dir .'/background-images') && $glob_default_background_imgs = glob($default_background_dir .'/*', GLOB_NOSORT))
+				if (is_dir($default_background_dir = $article_dir . '/background-images') && $glob_default_background_imgs = glob($default_background_dir . '/*', GLOB_NOSORT))
 				{
 					sort($glob_default_background_imgs);
 					$default_background_image = img($glob_default_background_imgs[0], 'card-img-top', false, false);
@@ -489,7 +485,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				else
 					$default_background_image = $count_background_images = '';
 
-				if (is_dir($default_popup_dir = $article_dir .'/popup-images') && $glob_default_popup_imgs = glob($default_popup_dir .'/*', GLOB_NOSORT))
+				if (is_dir($default_popup_dir = $article_dir . '/popup-images') && $glob_default_popup_imgs = glob($default_popup_dir . '/*', GLOB_NOSORT))
 					$count_popup_images = count($glob_default_popup_imgs);
 				else
 					$count_popup_images = 0;
@@ -499,15 +495,15 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<small class="card-subtitle mb-2 text-muted">' . timeformat($articles[0]) . '</small>'.
-				'<h2 class="h4 card-title"><a href="' . $url . $categ_link .'/'. $title_link . '">' . $article_link_title;
+				'<small class="card-subtitle mb-2 text-muted">' . timeformat($articles[0]) . '</small>' .
+				'<h2 class="h4 card-title"><a href="' . $url . $categ_link . '/' . $title_link . '">' . ht($articles_link[2]);
 
 				if ($total_images > 0)
 					$article .= '<small>' . sprintf($images_count_title, $total_images) . '</small>';
 
 				$article .=
 				'</a></h2>' . $n .
-				$section . $n .
+				'<p class=wrap>' . get_summary($articles[1]) . '</p>' . $n .
 				'</div>' . $n;
 				if ($counter || $comments)
 					$article .=
@@ -533,12 +529,12 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title'))
 {
 	$breadcrumb .=
-	'<li class=breadcrumb-item><a href="' . $url . r($get_categ) .'/">' . h($get_categ) . '</a></li>' . $n .
+	'<li class=breadcrumb-item><a href="' . $url . r($get_categ) . '/">' . h($get_categ) . '</a></li>' . $n .
 	'<li class="breadcrumb-item active">' . h($get_title) . '</li>';
 
-	if (is_dir($current_article_dir = 'contents/'. $get_categ .'/'. $get_title) && is_file($current_article = $current_article_dir .'/index.html'))
+	if (is_dir($current_article_dir = 'contents/' . $get_categ . '/' . $get_title) && is_file($current_article = $current_article_dir . '/index.html'))
 	{
-		if (is_dir($background_images_dir = $current_article_dir .'/background-images') && $glob_background_images = glob($background_images_dir .'/*', GLOB_NOSORT))
+		if (is_dir($background_images_dir = $current_article_dir . '/background-images') && $glob_background_images = glob($background_images_dir . '/*', GLOB_NOSORT))
 		{
 			$header .= '<style>';
 
@@ -554,7 +550,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			}
 			$header .= '</style>' . $n;
 		}
-		if (is_dir($popup_images_dir = $current_article_dir .'/popup-images') && $glob_popup_images = glob($popup_images_dir .'/*', GLOB_NOSORT))
+		if (is_dir($popup_images_dir = $current_article_dir . '/popup-images') && $glob_popup_images = glob($popup_images_dir . '/*', GLOB_NOSORT))
 		{
 			$header .= '<style>.tooltip-inner{max-width:inherit}</style>';
 			$footer .= '<script>';
@@ -580,11 +576,11 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			$header .= '<title>' . $article_encode_title . ' - ' . $site_name . '</title>' . $n;
 		}
 		$article_filemtime = filemtime($current_article);
-		$current_url = $url . r($get_categ) .'/'. r($get_title);
+		$current_url = $url . r($get_categ) . '/' . r($get_title);
 		$article .=
 		'<small class=text-muted>' . sprintf($last_modified, date($time_format, $article_filemtime)) . '</small>';
 
-		if (is_file($counter_txt = $current_article_dir .'/counter.txt') && is_writeable($counter_txt))
+		if (is_file($counter_txt = $current_article_dir . '/counter.txt') && is_writeable($counter_txt))
 		{
 			if (flock($fr = fopen($counter_txt, 'r+'), LOCK_EX | LOCK_NB))
 			{
@@ -599,7 +595,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		$article .=
 		'<h1 class="h2 mb-4">' . $article_encode_title;
 
-		if ($use_comment && is_dir($comment_dir = $current_article_dir .'/comments') && $glob_comment_files = glob($comment_dir .'/*-~-*.txt', GLOB_NOSORT))
+		if ($use_comment && is_dir($comment_dir = $current_article_dir . '/comments') && $glob_comment_files = glob($comment_dir . '/*-~-*.txt', GLOB_NOSORT))
 		{
 			$count_comments = count($glob_comment_files);
 			$article .= '<small><a href=#comment>' . sprintf($comments_count_title, $count_comments) . '</a></small>';
@@ -615,7 +611,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		$article .=
 		'<div class="mb-2 article">' . $current_article_content . '</div>' . $n;
 
-		if (is_dir($images_dir = $current_article_dir .'/images') && $glob_image_files = glob($images_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
+		if (is_dir($images_dir = $current_article_dir . '/images') && $glob_image_files = glob($images_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 		{
 			sort($glob_image_files);
 			$glob_images_number = count($glob_image_files);
@@ -635,7 +631,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 				pager($pages, $page_ceil, $number_of_pager);
 		}
 
-		if ($glob_prev_next = glob('contents/'. $get_categ .'/*/index.html', GLOB_NOSORT))
+		if ($glob_prev_next = glob('contents/' . $get_categ . '/*/index.html', GLOB_NOSORT))
 		{
 			$similar_article = [];
 			foreach($glob_prev_next as $prev_next)
@@ -661,7 +657,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 
 				if ((int)$prev_next_parts[0] > $article_filemtime)
 				{
-					$prev_href = $url . r($get_categ) .'/'. r($prev_next_title);
+					$prev_href = $url . r($get_categ) . '/' . r($prev_next_title);
 					$prev_next_encode_title = h($prev_next_title);
 					$header .=
 					'<link rel=prev href="' . $prev_href . '">' . $n;
@@ -670,7 +666,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 				}
 				if ((int)$prev_next_parts[0] < $article_filemtime)
 				{
-					$next_href = $url . r($get_categ) .'/'. r($prev_next_title);
+					$next_href = $url . r($get_categ) . '/' . r($prev_next_title);
 					$prev_next_encode_title = h($prev_next_title);
 					$header .=
 					'<link rel=next href="' . $next_href . '">' . $n;
@@ -696,7 +692,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 						$similar = explode('-~-', $similar_article[$i]);
 						$article .=
 						'<div class="progress similar-article mb-2">' . $n .
-						'<a class="progress-bar progress-bar-striped bg-primary" style="width:' . $similar[0] . '%" href="' . $url . r($get_categ) .'/'. r($similar[1]) . '">' . h($similar[1]) . ' - ' . $similar[0] . '%</a>' . $n .
+						'<a class="progress-bar progress-bar-striped bg-primary" style="width:' . $similar[0] . '%" href="' . $url . r($get_categ) . '/' . r($similar[1]) . '">' . h($similar[1]) . ' - ' . $similar[0] . '%</a>' . $n .
 						'</div>';
 					}
 					$article .= '</section>';
@@ -704,10 +700,10 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			}
 		}
 		if ($use_social)
-			$article .= social(rawurlencode($get_title . ' - ' . $site_name), rawurlencode($url . $get_categ .'/'. $get_title));
+			social(rawurlencode($get_title . ' - ' . $site_name), rawurlencode($url . $get_categ . '/' . $get_title));
 
 		if ($use_permalink)
-			$article .= permalink($article_encode_title . ' - ' . $site_name, $current_url);
+			permalink($article_encode_title . ' - ' . $site_name, $current_url);
 
 		if ($use_comment && is_dir($comment_dir))
 		{
@@ -775,7 +771,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 					}
 				}
 			}
-			if (is_file($comment_dir .'/end.txt'))
+			if (is_file($comment_dir . '/end.txt'))
 				$article .= '<strong class=mb-5>' . $comments_not_allow . '</strong>' . $n;
 			else
 			{
@@ -866,7 +862,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 					}
 					else
 						$article .=
-						'<h2><a href="' . $url . r(get_categ($output[1])) .'/'. r($title) . '">' . h($title) . '</a></h2>' . $n .
+						'<h2><a href="' . $url . r(get_categ($output[1])) . '/' . r($title) . '">' . h($title) . '</a></h2>' . $n .
 						'<div class=wrap>' . $output[2] . '</div>' . $n;
 					$article .= '</section>' . $n;
 
@@ -934,18 +930,16 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 			for($i = 0, $c = count($sections_in_default_page); $i < $c; ++$i)
 			{
 				$all_articles = explode('-~-', $sections_in_default_page[$i]);
-				$section = '<p class=wrap>' . get_summary($all_articles[1]) . '</p>' . $n;
 				$all_link = explode('/', $all_articles[1]);
 				$categ_link = r($all_link[1]);
 				$title_link = r($all_link[2]);
-				$article_link_title = ht($all_link[2]);
 				$article_dir = dirname($all_articles[1]);
-				$counter = is_file($counter_txt = $article_dir .'/counter.txt') ?
+				$counter = is_file($counter_txt = $article_dir . '/counter.txt') ?
 				'<span class=card-link>' . sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))) . '</span>' : '';
-				$comments = is_dir($comments_dir = $article_dir .'/comments') && $use_comment ?
-				'<a class=card-link href="' . $url . $categ_link .'/'. $title_link . '#comment"> ' . sprintf($comment_counts, count(glob($comments_dir .'/*-~-*.txt'), GLOB_NOSORT)) . '</a>' : '';
+				$comments = is_dir($comments_dir = $article_dir . '/comments') && $use_comment ?
+				'<a class=card-link href="' . $url . $categ_link . '/' . $title_link . '#comment"> ' . sprintf($comment_counts, count(glob($comments_dir . '/*-~-*.txt'), GLOB_NOSORT)) . '</a>' : '';
 
-				if (is_dir($default_imgs_dir = $article_dir .'/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
+				if (is_dir($default_imgs_dir = $article_dir . '/images') && $glob_default_imgs = glob($default_imgs_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 				{
 					sort($glob_default_imgs);
 					$default_image = img($glob_default_imgs[0], 'card-img-top', false, false);
@@ -954,7 +948,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				else
 					$default_image = $count_images = '';
 
-				if (is_dir($default_background_dir = $article_dir .'/background-images') && $glob_default_background_imgs = glob($default_background_dir .'/*', GLOB_NOSORT))
+				if (is_dir($default_background_dir = $article_dir . '/background-images') && $glob_default_background_imgs = glob($default_background_dir . '/*', GLOB_NOSORT))
 				{
 					sort($glob_default_background_imgs);
 					$default_background_image = img($glob_default_background_imgs[0], 'card-img-top', false, false);
@@ -963,7 +957,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				else
 					$default_background_image = $count_background_images = '';
 
-				if (is_dir($default_popup_dir = $article_dir .'/popup-images') && $glob_default_popup_imgs = glob($default_popup_dir .'/*', GLOB_NOSORT))
+				if (is_dir($default_popup_dir = $article_dir . '/popup-images') && $glob_default_popup_imgs = glob($default_popup_dir . '/*', GLOB_NOSORT))
 					$count_popup_images = count($glob_default_popup_imgs);
 				else
 					$count_popup_images = 0;
@@ -974,22 +968,20 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<small class="card-subtitle mb-2 text-muted">'.timeformat($all_articles[0]).'</small>' . $n .
-				'<h2 class="h4 card-title"><a href="' . $url . $categ_link.'/'. $title_link . '">' . $article_link_title;
+				'<small class="card-subtitle mb-2 text-muted">' . timeformat($all_articles[0]) . '</small>' . $n .
+				'<h2 class="h4 card-title"><a href="' . $url . $categ_link. '/' . $title_link . '">' . ht($all_link[2]);
 
 				if ($total_images > 0)
 					$article .= '<small>' . sprintf($images_count_title, $total_images) . '</small>';
 
 				$article .=
 				'</a></h2>' . $n .
-				'' . $section .
-				'<span class="blockquote-footer text-right"><a href="' . $url . $categ_link .'/" class=card-link>' . h($all_link[1]) . '</a></span>' . $n .
+				'<p class=wrap>' . get_summary($all_articles[1]) . '</p>' . $n.
+				'<span class="blockquote-footer text-right"><a href="' . $url . $categ_link . '/" class=card-link>' . h($all_link[1]) . '</a></span>' . $n .
 				'</div>' . $n;
 				if ($counter || $comments)
 					$article .=
-					'<div class="card-footer bg-transparent">' . $n .
-					$counter . $comments .
-					'</div>' . $n;
+					'<div class="card-footer bg-transparent">' . $counter . $comments . '</div>' . $n;
 				$article .=
 				'</div>' . $n;
 			}
@@ -1017,7 +1009,7 @@ if ($use_recents && $recent_dirs = glob($glob_dir, GLOB_ONLYDIR + GLOB_NOSORT))
 
 	foreach($recent_dirs as $recents_name)
 	{
-		if (is_file($recents_index = $recents_name .'/index.html'))
+		if (is_file($recents_index = $recents_name . '/index.html'))
 			$recents_sort[] = filemtime($recents_index) . '-~-' . $recents_name;
 	}
 	if (isset($recents_sort))
@@ -1028,7 +1020,7 @@ if ($use_recents && $recent_dirs = glob($glob_dir, GLOB_ONLYDIR + GLOB_NOSORT))
 			$recent_name = explode('-~-', $recents_sort[$i]);
 			$recent_basename = basename($recent_name[1]);
 			$aside .=
-			'<a class="list-group-item list-group-item-action' . ($get_categ . $get_title === basename(dirname($recent_name[1])) . $recent_basename ? ' bg-light' : '') . '" href="' . $url . r(get_title($recent_name[1]) .'/'. $recent_basename) . '">' . h($recent_basename) . '</a>' . $n;
+			'<a class="list-group-item list-group-item-action' . ($get_categ . $get_title === basename(dirname($recent_name[1])) . $recent_basename ? ' bg-light' : '') . '" href="' . $url . r(get_title($recent_name[1]) . '/' . $recent_basename) . '">' . h($recent_basename) . '</a>' . $n;
 		}
 	}
 	$aside .= '</div>';
@@ -1088,7 +1080,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 	{
 		$popular_titles = explode('/', $counter_sort[$i]);
 		$aside .=
-		'<a class="list-group-item list-group-item-action' . ($get_categ . $get_title === $popular_titles[1] . $popular_titles[2] ? ' bg-light' : '') . '" href="' . $url . r($popular_titles[1]) .'/'. r($popular_titles[2]) . '">' . h($popular_titles[2]) . '</a>' . $n;
+		'<a class="list-group-item list-group-item-action' . ($get_categ . $get_title === $popular_titles[1] . $popular_titles[2] ? ' bg-light' : '') . '" href="' . $url . r($popular_titles[1]) . '/' . r($popular_titles[2]) . '">' . h($popular_titles[2]) . '</a>' . $n;
 	}
 	$aside .= '</div>' . $n;
 }
@@ -1111,7 +1103,7 @@ if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glo
 		$new_comments = explode('-~-', $new_comments_sort[$i]);
 		$comment_link = explode('/', $new_comments[0]);
 		$aside .=
-		'<a class="list-group-item list-group-item-action" href="' . $url . r($comment_link[1]) .'/'. r($comment_link[2]) . '#cid-' . basename($new_comments[0]) . '">' . $n .
+		'<a class="list-group-item list-group-item-action" href="' . $url . r($comment_link[1]) . '/' . r($comment_link[2]) . '#cid-' . basename($new_comments[0]) . '">' . $n .
 		'<p class="comment-text wrap list-group-item-text">' . mb_strimwidth($comments_content, 0, $comment_length, $ellipsis, $encoding) . '</p>' . $n .
 		'<small class="blockquote-footer text-right">' . h(basename($new_comments[1], '.txt')) . ' (' . timeformat(basename($new_comments[0])) . ')</small>' . $n .
 		'</a> ' . $n;

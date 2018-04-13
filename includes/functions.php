@@ -17,8 +17,8 @@ function get_dirs($dir, $nosort=true)
 			if (isset($dir_names))
 				$all_dirs[] = basename($dir_names);
 		}
-	if (isset($all_dirs))
-		return $all_dirs;
+		if (isset($all_dirs))
+			return $all_dirs;
 	}
 }
 

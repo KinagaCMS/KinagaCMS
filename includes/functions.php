@@ -289,6 +289,16 @@ function get_logo()
 		return $site_name;
 }
 
+function not_found()
+{
+	global $header, $article, $error, $site_name, $not_found, $n;
+	http_response_code(404);
+	$header .= '<title>' . $error . ' - ' . $site_name . '</title>' . $n;
+	$article .=
+	'<h1 class="h2 mb-4">' . $error . '</h1>' . $n .
+	'<div class=article>' . $not_found . '</div>' . $n;
+}
+
 $contents = get_dirs('contents', false);
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
 $form = 'includes/form.php';
@@ -400,13 +410,7 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 		}
 	}
 	else
-	{
-		http_response_code(404);
-		$header .= '<title>' . $error . ' - ' . $site_name . '</title>' . $n;
-		$article .=
-		'<h1 class="h2 mb-4">' . $error . '</h1>' . $n .
-		'<div class=article>' . $not_found . '</div>' . $n;
-	}
+		not_found();
 }
 elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title'))
 {
@@ -519,26 +523,12 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				pager($pages, $page_ceil, $number_of_pager);
 		}
 		elseif (!$categ_file)
-		{
-			http_response_code(404);
-			$header .=
-			'<title>' . $no_article . ' - ' . $categ_title . ' - ' . $site_name . '</title>' . $n;
-			$article .=
-			'<h1 class="h2 mb-4">' . $no_article . '</h1>' . $n .
-			'<div class=article>' . $not_found . '</div>' . $n;
-		}
+			not_found();
 		else
 			$header .= '<title>' . $categ_title . ' - ' . $site_name . '</title>' . $n;
 	}
 	else
-	{
-		http_response_code(404);
-		$header .=
-		'<title>' . $no_categ . ' - ' . $site_name . '</title>' . $n;
-		$article .=
-		'<h1 class="h2 mb-4">' . $no_categ . '</h1>' . $n .
-		'<div class=article>' . $not_found . '</div>' . $n;
-	}
+		not_found();
 }
 elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title'))
 {
@@ -797,14 +787,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		}
 	}
 	else
-	{
-		http_response_code(404);
-		$header .=
-		'<title>' . $no_article . ' - ' . $site_name . '</title>' . $n;
-		$article .=
-		'<h1 class="h2 mb-4">' . $no_article . '</h1>' . $n .
-		'<div class=article>' . $not_found . '</div>' . $n;
-	}
+		not_found();
 }
 elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title'))
 {
@@ -1018,14 +1001,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 	}
 }
 else
-{
-	http_response_code(404);
-	$header .=
-	'<title>' . $error . ' - ' . $site_name . '</title>' . $n;
-	$article .=
-	'<h1 class="h2 mb-4">' . $error . '</h1>' . $n .
-	'<div class=article>' . $not_found . '</div>' . $n;
-}
+	not_found();
 
 $article .= '<div class="clearfix mb-5"></div>';
 

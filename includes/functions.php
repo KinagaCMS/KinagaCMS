@@ -659,7 +659,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 				{
 					$prev_href = $url . r($get_categ) . '/' . r($prev_next_title);
 					$prev_next_encode_title = h($prev_next_title);
-					$header .=
+					$header_prev =
 					'<link rel=prev href="' . $prev_href . '">' . $n;
 					$prev_link =
 					'<a class="btn btn-outline-primary" title="' . $prev_next_encode_title . '" href="' . $prev_href . '">' . mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding) . '</a>' . $n;
@@ -668,13 +668,17 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 				{
 					$next_href = $url . r($get_categ) . '/' . r($prev_next_title);
 					$prev_next_encode_title = h($prev_next_title);
-					$header .=
+					$header_next =
 					'<link rel=next href="' . $next_href . '">' . $n;
 					$article .=
 					'<a class="float-right btn btn-outline-primary" title="' . $prev_next_encode_title . '" href="' . $next_href . '">' . mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding) . '</a>' . $n;
 					break;
 				}
 			}
+			if (isset($header_prev))
+				$header .= $header_prev;
+			if (isset($header_next))
+				$header .= $header_next;
 			$article .= $prev_link . '</div>';
 
 			if ($use_similars && $similar_article)

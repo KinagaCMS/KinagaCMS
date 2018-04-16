@@ -13,4 +13,4 @@ include_once 'includes/functions.php';
 if (is_file($tpl = $tpl_dir . 'index.php'))
 	include_once $tpl;
 else
-	include_once $includes . 'index.php';
+	include_once 'includes/index.php';

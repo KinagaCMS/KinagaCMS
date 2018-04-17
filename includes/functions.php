@@ -208,7 +208,7 @@ function pager($num, $max, $visible)
 {
 	global $article, $nav_laquo, $nav_raquo, $n;
 	$article .=
-	'<ul class="justify-content-center pagination mt-3">' . $n;
+	'<ul class="justify-content-center pagination my-4">' . $n;
 
 	if($num > 2)
 		$article .= '<li class=page-item><a class=page-link href="' . get_page(1) . '">' . $nav_laquo . $nav_laquo . '</a></li>';
@@ -502,9 +502,11 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 					$article .= '<small>' . sprintf($images_count_title, $total_images) . '</small>';
 
 				$article .=
-				'</a></h2>' . $n .
-				'<p class=wrap>' . get_summary($articles[1]) . '</p>' . $n .
-				'</div>' . $n;
+				'</a></h2>' . $n;
+				if ($use_summary)
+					$article .=
+					'<p class=wrap>' . get_summary($articles[1]) . '</p>' . $n;
+				$article .= '</div>' . $n;
 				if ($counter || $comments)
 					$article .=
 					'<div class="card-footer bg-transparent">' . $n .
@@ -979,8 +981,11 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 					$article .= '<small>' . sprintf($images_count_title, $total_images) . '</small>';
 
 				$article .=
-				'</a></h2>' . $n .
-				'<p class=wrap>' . get_summary($all_articles[1]) . '</p>' . $n.
+				'</a></h2>';
+				if ($use_summary)
+					$article .=
+					'<p class=wrap>' . get_summary($all_articles[1]) . '</p>' . $n;
+				$article .=
 				'<span class="blockquote-footer text-right"><a href="' . $url . $categ_link . '/" class=card-link>' . h($all_link[1]) . '</a></span>' . $n .
 				'</div>' . $n;
 				if ($counter || $comments)

@@ -47,9 +47,10 @@ $use_thumbnails = true;
 #Show Similar articles
 $use_similars = true;
 
+#Show Summary
+$use_summary = true;
 
 ##########################
-
 
 #Sidebox
 $number_of_recents = 5;

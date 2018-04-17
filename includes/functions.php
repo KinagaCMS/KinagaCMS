@@ -167,7 +167,8 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			else
 			{
 				$dirname = dirname(dirname($src));
-				return '<a href="' . $url . r(basename(dirname($dirname)) . '/' . basename($dirname)) . '"><img class="img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"></a>';
+				$img_size = @getimagesize($src);
+				return '<a href="' . $url . r(basename(dirname($dirname)) . '/' . basename($dirname)) . '"><img class="d-block mx-auto img-fluid ' . $class . '" src="' . $url . r($src) . '" alt="' . h(basename($src)) . '"' . (isset($img_size[0]) && $img_size[0] < 450 ? ' style="width:' . $img_size[0] . 'px"' : '') . '></a>';
 			}
 		}
 		elseif (array_search($extension, array('mp4', 'ogg', 'webm')) !== false)

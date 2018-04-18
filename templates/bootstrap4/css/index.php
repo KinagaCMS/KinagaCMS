@@ -53,7 +53,6 @@ if ($use_auto_wrap === true)
 
 .article #accordion,
 .article .accordion,
-.article .alert,
 .article .btn-group,
 .article .card,
 .article .carousel,

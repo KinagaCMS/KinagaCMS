@@ -612,7 +612,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		$header .=
 		'<meta name=description content="' . get_description($current_article_content) . '">' . $n;
 		$article .=
-		'<div class="mb-2 article">' . $current_article_content . '</div>' . $n;
+		'<div class="mb-2 article clearfix">' . $current_article_content . '</div>' . $n;
 
 		if (is_dir($images_dir = $current_article_dir . '/images') && $glob_image_files = glob($images_dir . $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 		{

@@ -7,10 +7,14 @@ RewriteEngine on
 #Subdomain
 #RewriteBase /
 
-#HTTPS
-#RewriteCond %{HTTPS} off
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https
-#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#HTTPS 1
+#RewriteCond %{HTTP:X-Sakura-Forwarded-For} ^$
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+#HTTPS 2
+#SetEnvIf REDIRECT_HTTPS (.*) HTTPS=$1
+#RewriteCond %{ENV:HTTPS} !on
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -27,25 +31,24 @@ RewriteRule ^(.*)$ ?page=$1 [L]
 </IfModule>
 
 <ifModule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/x-javascript application/x-httpd-php
+AddOutputFilterByType DEFLATE text/html text/plain text/xml image/svg+xml application/xhtml+xml application/xml text/css text/javascript application/javascript application/x-javascript application/x-httpd-php application/x-httpd-fastphp
 </ifModule>
 
 <ifModule mod_expires.c>
 ExpiresActive On
-ExpiresDefault "access plus 1 weeks"
+ExpiresDefault "access plus 1 week"
 </ifModule>
 
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/5.0"
+Header set X-Powered-By "kinaga/6.0.20"
+<FilesMatch "\.(html|php)$">
+Header append Author "Gari-Hari LLC."
+</FilesMatch>
 Header set X-XSS-Protection "1; mode=block"
 Header unset ETag
 <FilesMatch "\.(js|css|xml|gz|html)$">
 Header append Vary: Accept-Encoding
 </FilesMatch>
-</IfModule>
-
-<IfModule mod_php5.c>
-php_value short_open_tag 1
 </IfModule>

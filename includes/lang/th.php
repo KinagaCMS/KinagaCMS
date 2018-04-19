@@ -10,17 +10,21 @@ date_default_timezone_set('Asia/Bangkok');
 // Site Name
 $site_name = 'kinaga';
 
-// Your home or office address: Sidebox and Mail footer
-$address = '';
+// Your mail address
+$mail_address = '';
 
-// Hue: red, orange, yellow, liteGreen, green, liteBlue, blue, darkBlue, purple, peach, brown or BLANK
-$color = 'green';
+// Your home or office address
+$address = '';
+$address_title = '';
+
+// Hue: Red, Rose, Orange, Topaz, SpringGreen, MossGreen, MintGreen, MillennialGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Chocolate, Coffee, White, Moonlight, WistariaWhite, Gold, LimeWhite, Gray, GreenGray, PinkGray, SandGray, Black or BLANK
+$color = 'Moonlight';
 
 // Description: Top page
 $meta_description = 'คำอธิบายเกี่ยวกับไซต์';
 
 // Subtitle: Top Page H1 and TITLE
-$subtitle = 'ติดตั้งเรียบร้อย';
+$subtitle = '';
 
 // Top Page
 $home = 'หน้าหลัก';
@@ -49,13 +53,15 @@ $comments_prev = 'ใหม่';
 $comments_next = 'เก่า';
 
 // Contact Us
-$contact_subtitle = 'พูดคุย ติดต่อสอบถาม ติดต่อเรา';
+$contact_subtitle = '';
 
-$download_subtitle = 'คลิกลิงค์ด้านล่าง';
+$download_subtitle = '';
 
 $page_prefix = 'หน้าที่ %s';
 
-$permalink = 'ลิงค์ถาวร <small>ก๊อปปี้ลิงค์ไปวางบนไซต์คุณ</small>';
+$social = 'หุ้น';
+
+$permalink = 'ลิงค์ถาวร';
 
 $for_html = 'HTML';
 
@@ -108,7 +114,7 @@ $separator = '_______________________________________________';
 $comment_acceptance = 'To post this comment,'.$n.
   'save the attached file: %s'.$n.
   'and upload it in the following folder'.$n.$n.
-  $s.'contents'.$s.'%s'.$s.'%s'.$s.'comments'.$s;
+  '/contents/%s/%s/comments/';
 
 $contact_name = 'ชื่อ';
 
@@ -154,9 +160,9 @@ $days_ago = ' วันก่อน';
 // /images/index.php
 $images_title = 'รูปภาพ - %s';
 
-$images_heading = 'รูปภาพ <small>สำเนา tag ของรูปภาพไปวางในบทความ</small>';
+$images_heading = 'รูปภาพ <small class=text-muted>สำเนา tag ของรูปภาพไปวางในบทความ</small>';
 
-$images_aligner = 'จัดเรียงรูปภาพ <small>คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
+$images_aligner = 'จัดเรียงรูปภาพ <small class=text-muted>คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
 
 $noscript = 'กรุณาเปิดการใช้งาน <strong>javascript</strong>.';
 
@@ -173,40 +179,193 @@ $large_image = 'ใหญ่';
 
 $small_image = 'เล็ก';
 
+$imgs_first= 'เป็นครั้งแรก';
 $imgs_prev = 'ก่อนหน้า';
 
 $imgs_next = 'ถัดไป';
+$imgs_last = 'ในที่สุด';
 
-function hsla($h, $s = 100, $l = 50, $a = 1)
+
+function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 {
-  $hue = array(
-    'red' => '0',
-    'orange' => '35',
-    'yellow' => '50',
-    'liteGreen' => '65',
-    'green' => '85',
-    'liteBlue' => '170',
-    'blue' => '195',
-    'darkBlue' => '220',
-    'purple' => '265',
-    'peach' => '330',
-    'brown' => '25'
-  );
-  if (isset($hue[$h])) {
-    return "hsla($hue[$h], $s%, $l%, $a )";
-  }
+	if ($h === 'Red')
+	{
+		$hue = 355;
+		$s = 65;
+		$l = 40;
+	}
+	elseif ($h === 'Rose')
+	{
+		$hue = 330;
+		$s = 75;
+		$l = 40;
+	}
+	if ($h === 'Orange')
+	{
+		$hue = 30;
+		$s = 98;
+		$l = 42;
+	}
+	if ($h === 'Topaz')
+	{
+		$hue = 48;
+		$s = 86;
+		$l = 40;
+	}
+	if ($h === 'SpringGreen')
+	{
+		$hue = 80;
+		$s = 75;
+		$l = 40;
+	}
+	if ($h === 'MossGreen')
+	{
+		$hue = 70;
+		$s = 65;
+		$l = 30;
+	}
+	if ($h === 'MintGreen')
+	{
+		$hue = 131;
+		$s = 45;
+		$l = 40;
+	}
+	elseif ($h === 'MillennialGreen')
+	{
+		$hue = 142;
+		$s = 36;
+		$l = 30;
+	}
+	elseif ($h === 'Turquoise')
+	{
+		$hue = 190;
+		$s = 60;
+		$l = 37;
+	}
+	elseif ($h === 'LapisLazuli')
+	{
+		$hue = 214;
+		$s = 69;
+		$l = 38;
+	}
+	elseif ($h === 'MidnightBlue')
+	{
+		$hue = 222;
+		$s = 65;
+		$l = 10;
+	}
+	if ($h === 'OrientalBlue')
+	{
+		$hue = 232;
+		$s = 39;
+		$l = 49;
+	}
+	if ($h === 'Violet')
+	{
+		$hue = 259;
+		$s = 40;
+		$l = 40;
+	}
+	elseif ($h === 'Grape')
+	{
+		$hue = 290;
+		$s = 40;
+		$l = 38;
+	}
+	elseif ($h === 'Chocolate')
+	{
+		$hue = 16;
+		$s = 28;
+		$l = 34;
+	}
+	elseif ($h === 'Coffee')
+	{
+		$hue = 39;
+		$s = 56;
+		$l = 30;
+	}
+	elseif ($h === 'White')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 42;
+	}
+	elseif ($h === 'Moonlight')
+	{
+		$hue = 200;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === 'WistariaWhite')
+	{
+		$hue = 270;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === 'Gold')
+	{
+		$hue = 53;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === 'LimeWhite')
+	{
+		$hue = 75;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === 'Gray')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 40;
+	}
+	elseif ($h === 'GreenGray')
+	{
+		$hue = 131;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'PinkGray')
+	{
+		$hue = 320;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'SandGray')
+	{
+		$hue = 50;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === 'Black')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 0;
+	}
+	if (isset($hue, $s, $l))
+		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
 function color2class($colour)
 {
-  switch (true) {
-    case $colour == 'green' || $colour == 'liteGreen':
-      return 'success';
-    case $colour == 'orange' || $colour == 'yellow' || $colour == 'brown':
-      return 'warning';
-    case $colour == 'red' || $colour == 'purple' || $colour == 'peach':
-      return 'danger';
-    default:
-      return 'info';
-  }
+	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite' || $colour === 'Gold' || $colour === 'LimeWhite' )
+		return 'white';
+	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
+		return 'secondary';
+	elseif ($colour === 'Black' || $colour === 'MidnightBlue')
+		return 'dark';
+	elseif ($colour === 'Chocolate' || $colour === 'Coffee' || $colour === 'MillennialGreen')
+		return 'muted';
+	elseif ($colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+		return 'success';
+	elseif ($colour === 'Orange' || $colour === 'Topaz' )
+		return 'warning';
+	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Grape' || $colour === 'Violet')
+		return 'danger';
+	elseif ($colour === 'Turquoise' || $colour === 'LapisLazuli' || $colour === 'OrientalBlue')
+		return 'info';
+	else
+		return 'primary';
 }

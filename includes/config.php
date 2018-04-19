@@ -1,25 +1,16 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
-  */
 
-$lang = 'en';
-
-$mail_address = '';
-
-# bootstrap-header, bootstrap-narrow, bootstrap-navbar, bootstrap-simple, bootstrap-harlequin
-$template = 'bootstrap-navbar';
-
+$template = 'bootstrap4';
 
 ##########################
 
+$lang = 'ja';
 
 $encoding = 'UTF-8';
 
-setlocale( LC_ALL, 'C.' . $encoding );
+setlocale(LC_ALL, 'C.' . $encoding);
 
-#Downloading Multi-byte filename on Windows Internet Explorer Japanese
+#Downloading Multi-byte filename on Windows Internet Explorer Japanese edition
 $encoding_win = 'SJIS-win';
 
 
@@ -56,68 +47,69 @@ $use_thumbnails = true;
 #Show Similar articles
 $use_similars = true;
 
+#Show Summary
+$use_summary = true;
 
 ##########################
 
-
 #Sidebox
-$number_of_recents = '5';
+$number_of_recents = 5;
 
-$number_of_popular_articles = '5';
+$number_of_popular_articles = 5;
 
-$number_of_new_comments = '5';
+$number_of_new_comments = 5;
 
-$comment_length = '100';
+$comment_length = 100;
 
 
 #Top page
-$number_of_default_sections = '5';
-
+$number_of_default_sections = 5;
 
 #Category
-$number_of_categ_sections = '5';
+$number_of_categ_sections = 5;
 
 #Search
-$number_of_results = '5';
+$number_of_results = 5;
 
 #Atom
-$number_of_feeds = '10';
+$number_of_feeds = 10;
 
 
 #Article images
-$number_of_images = '10';
+$number_of_images = 10;
 
 #Comments
-$number_of_comments = '5';
+$number_of_comments = 10;
 
 
 #Category and Search results
-$summary_length = '300';
+$summary_length = 300;
 
 
 #META description and Atom
-$description_length = '150';
+$description_length = 150;
 
 
 #Prev Next link title length
-$prev_next_length = '50';
+$prev_next_length = 50;
 
 
 #Download files
-$number_of_downloads = '10';
+$number_of_downloads = 10;
 
 
 #Page Navigation
-$number_of_pager = '5';
+$number_of_pager = 5;
 
 #Similar articles
-$number_of_similars = '3';
+$number_of_similars = 3;
 
+
+#Social icon px size
+$social_icon_size = 150;
 
 ##########################
 
-
-$s = DIRECTORY_SEPARATOR;
 
 $n = PHP_EOL;
 
@@ -125,122 +117,78 @@ $n = PHP_EOL;
 ##########################
 
 
-if ( ! function_exists( 'r' ) ) {
-
-	function r( $path ) {
-
-		global $s;
-
-		$entities = array( '%26', '%2F', '%5C' );
-
-		$replaces = array( '&amp;', $s, $s );
-
-		return str_replace( $entities, $replaces, rawurlencode( $path ) );
-
-	}
-
+function r($path)
+{
+	return str_replace(array('%26', '%2F', '%5C', '%3A'), array('&amp;', '/', '/', ':'), rawurlencode($path));
 }
 
-
-if ( ! function_exists( 'h' ) ) {
-
-	function h( $str ) {
-
-		global $encoding;
-
-		return htmlspecialchars( $str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding );
-
-	}
-
+function h($str)
+{
+	global $encoding;
+	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding);
 }
 
-
-if ( ! function_exists( 'size_unit' ) ) {
-
-	function size_unit( $size ) {
-
-		$unit = array( 'B', 'KB', 'MB', 'GB' );
-
-		if ( $size > 0 ) return round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
-
+function size_unit($size)
+{
+	if ($size > 0)
+	{
+		$unit = array('B', 'KB', 'MB', 'GB');
+		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
 	}
-
 }
 
-
-if ( ! function_exists( 'timestamp' ) ) {
-
-	function timestamp( $file ) {
-
-		return gmdate( 'D, d M Y H:i:s T', filemtime( $file ) );
-
-	}
-
+function timestamp($file)
+{
+	return gmdate('D, d M Y H:i:s T', filemtime($file));
 }
 
-
-if ( ! function_exists( 'sideless' ) ) {
-
-	function sideless() {
-
-		global $header;
-
-		return $header .= '<style>.col-md-9{width:100%}.col-md-3{display:none}</style>';
-
-	}
-
+function is_ssl()
+{
+	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
+		return true;
 }
-
-
-if ( ! function_exists( 'nowrap' ) ) {
-
-	function nowrap() {
-
-		global $header;
-
-		return $header .= '<style>.article{white-space:normal}</style>';
-
-	}
-
-}
-
 
 ##########################
 
 
 $now = time();
 
-$port = getenv( 'SERVER_PORT' );
+$port = getenv('SERVER_PORT') !== '80' ? ':' . getenv('SERVER_PORT') : '';
 
-$server = getenv( 'SERVER_NAME' );
+$server = getenv('SERVER_NAME');
 
-$dir = dirname( getenv( 'SCRIPT_NAME' ) );
+$dir = r(dirname(getenv('SCRIPT_NAME')));
 
-$addslash = $dir != $s ? $s : '';
+$addslash = $dir !== '/' ? '/' : '';
 
-$script = r( $dir ) . $addslash;
+$script = $dir . $addslash;
 
-$scheme = empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://';
+$scheme = is_ssl() ? 'https://' : 'http://';
 
-$url = ( $port == '80' ) ? $scheme . $server . $script : $scheme . $server . ':' . $port . $script;
+$url = $scheme . $server . $port . $script;
 
-$line_breaks = array( "\n", "\r\n", "\r", '&#13;&#10;', '&#13;', '&#10;' );
+$line_breaks = array("\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;');
 
-$user_agent = getenv( 'HTTP_USER_AGENT' );
+$remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
 
-$user_agent_lang = getenv( 'HTTP_ACCEPT_LANGUAGE' );
+$user_agent = h(getenv('HTTP_USER_AGENT'));
 
-$glob_dir = 'contents' . $s . '*' . $s . '*' . $s;
+$user_agent_lang = h(getenv('HTTP_ACCEPT_LANGUAGE'));
 
-$tpl_dir = 'templates' . $s . $template . $s;
+$token = bin2hex(openssl_random_pseudo_bytes(16));
 
-$css = $url . $tpl_dir . 'css' . $s;
+$glob_dir = 'contents/*/*/';
 
-$js = $url . $tpl_dir . 'js' . $s;
+$tpl_dir = 'templates/' . $template . '/';
 
+$css = $url . $tpl_dir . 'css/';
+
+$js = $url . $tpl_dir . 'js/';
+
+$glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 
 ##########################
 
 
-if ( is_file( $lang_file = __DIR__ . $s . 'lang' . $s . $lang . '.php' ) && !is_link( $lang_file ) ) include_once $lang_file;
-
+if (is_file($lang_file = __DIR__ . '/lang/' . $lang . '.php'))
+	include_once $lang_file;

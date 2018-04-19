@@ -1,25 +1,25 @@
 <?php
-/*
-  * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
-  * @license    GPL 3.0 or later; see LICENSE file for details.
-  */
-
-date_default_timezone_set( 'Asia/Tokyo' );
+date_default_timezone_set('Asia/Tokyo');
 
 #サイト名：
 $site_name = 'kinaga';
 
-#住所：サイドボックス、メールフッターに表示
-$address = '';
+#メールアドレス：お問い合わせとコメントを利用する場合は必須
+$mail_address = '';
 
-#色相：赤、橙、黄、鶯、緑、碧、青、紺、紫、桃、茶、または空欄
-$color = '緑';
+#住所：サイドボックスに表示
+$address = '';
+#空欄の場合はサイト名を表示
+$address_title = '';
+
+#色相：'緋', '薔薇', '蜜柑', '黄水晶', '萌黄', '苔', '薄緑', '千歳緑', '青碧', '瑠璃', '濃藍', '紺桔梗', '菫', '葡萄', '焦茶', '珈琲', '白', '月白', '白藤', '金色', '白柳', '灰', '青鈍', '源氏鼠', '砂鼠', '黒', または空欄
+$color = '月白';
 
 #キャッチコピー：トップページのメタ情報とヘッダーに表示
 $meta_description = 'ここにはサイトの概要を記入して下さい。';
 
 #サブタイトル：H1タイトルの横とタイトルタグに表示
-$subtitle = '簡易CMS「紀永」のインストールが完了しました';
+$subtitle = '';
 
 
 #トップページの名称
@@ -57,26 +57,29 @@ $comments_next = '過去のコメント';
 
 
 #お問い合わせ小見出し
-$contact_subtitle = 'ご意見・ご質問を承ります';
+$contact_subtitle = '';
 
 #ダウンロード小見出し
-$download_subtitle = '以下のファイル名をクリックして保存して下さい';
+$download_subtitle = '';
 
 #接頭辞：ページ
 $page_prefix = 'Page %s';
 
+#ソーシャルアイコン
+$social = 'シェア';
 
 #引用リンク
-$permalink = '引用リンク <small>下記のアドレスをコピーしてご利用下さい</small>';
+$permalink = '引用リンク';
 
-$for_html = 'HTML 用';
+$for_html = 'HTML';
 
-$for_wiki = 'Wiki 用';
+$for_wiki = 'Wiki';
 
-$for_forum = 'フォーラム 用';
+$for_forum = 'フォーラム';
 
 #セパレーター兼ページトップ
-$top = '<a class="text-primary page-top" href="#TOP"><span class="glyphicon glyphicon-chevron-up"></span></a>';
+$top = '<a class="page-top text-right d-block p-0 small" href="#TOP"> </a>';
+$pagetop = 'このページのトップへ';
 
 #記事とコメント
 $last_modified = '最終更新日：%s';
@@ -104,6 +107,8 @@ $images_count_title = ' （画像：%s枚）';
 
 $source = '出典：%s';
 
+$browse = '選択';
+
 $result = '%s の検索結果';
 
 $no_results_found = '該当する記事が見つかりませんでした';
@@ -125,7 +130,7 @@ $comment_acceptance =
 	'このコメントを掲載するには、' . $n .
 	'添付ファイルの「%s」を保存してから、' . $n .
 	'下記のフォルダ内にアップロードして下さい' . $n . $n .
-	$s.'contents'.$s.'%s'.$s.'%s'.$s.'comments'.$s;
+	'/contents/%s/%s/comments/';
 
 $contact_name = 'お名前';
 
@@ -171,9 +176,9 @@ $days_ago = '日前';
 #/images/index.php
 $images_title = '画像一覧 - %s';
 
-$images_heading = '画像一覧 <small>タグをコピーしてお使い下さい</small>';
+$images_heading = '画像一覧 <small class=text-muted>タグをコピーしてお使い下さい</small>';
 
-$images_aligner = '画像の位置指定 <small>回り込み解除には「&lt;div class=clearfix&gt;&lt;/div&gt;」を必要とする場合があります</small>';
+$images_aligner = '画像の位置指定 <small class=text-muted>回り込み解除には「&lt;div class=clearfix&gt;&lt;/div&gt;」を必要とする場合があります</small>';
 
 $noscript = '<strong>javascript</strong> を有効にして下さい';
 
@@ -184,50 +189,201 @@ $align_center = '中央寄せ';
 $align_right = '右寄せ';
 
 #1ページあたりの表示枚数
-$number_of_imgs = '3';
+$number_of_imgs = 4;
 
 $large_image = 'Large';
 
 $small_image = 'Small';
 
-$imgs_prev = '前のページ';
+$imgs_first= '最初';
+$imgs_prev = '前';
 
-$imgs_next = '次のページ';
+$imgs_next = '次';
+$imgs_last = '最後';
 
-
-function hsla( $h, $s = 100, $l = 50, $a = 1 ) {
-
-	$hue = array(
-		'赤' => '0',
-		'橙' => '35',
-		'黄' => '50',
-		'鶯' => '65',
-		'緑' => '85',
-		'碧' => '170',
-		'青' => '195',
-		'紺' => '220',
-		'紫' => '265',
-		'桃' => '330',
-		'茶' => '25'
-	);
-
-	if ( isset( $hue[$h] ) ) return "hsla( $hue[$h], $s%, $l%, $a )";
-
-}
-
-
-function color2class( $colour ) {
-
-	switch ( true ) {
-
-		case $colour == '緑' || $colour == '鶯': return 'success';
-
-		case $colour == '橙' || $colour == '黄' || $colour == '茶': return 'warning';
-
-		case $colour == '赤' || $colour == '紫' || $colour == '桃': return 'danger';
-
-		default: return 'info';
+function hsla($h, $cal_s=0, $cal_l=0, $a=1)
+{
+	if ($h === '緋')
+	{
+		$hue = 355;
+		$s = 65;
+		$l = 40;
+	}
+	elseif ($h === '薔薇')
+	{
+		$hue = 330;
+		$s = 75;
+		$l = 40;
 	}
 
+	if ($h === '蜜柑')
+	{
+		$hue = 30;
+		$s = 98;
+		$l = 42;
+	}
+
+	if ($h === '黄水晶')
+	{
+		$hue = 48;
+		$s = 86;
+		$l = 40;
+	}
+
+	if ($h === '萌黄')
+	{
+		$hue = 80;
+		$s = 75;
+		$l = 40;
+	}
+	if ($h === '苔')
+	{
+		$hue = 70;
+		$s = 65;
+		$l = 30;
+	}
+	if ($h === '薄緑')
+	{
+		$hue = 131;
+		$s = 45;
+		$l = 40;
+	}
+	elseif ($h === '千歳緑')
+	{
+		$hue = 142;
+		$s = 36;
+		$l = 30;
+	}
+	elseif ($h === '青碧')
+	{
+		$hue = 190;
+		$s = 60;
+		$l = 37;
+	}
+	elseif ($h === '瑠璃')
+	{
+		$hue = 214;
+		$s = 69;
+		$l = 38;
+	}
+	elseif ($h === '濃藍')
+	{
+		$hue = 222;
+		$s = 65;
+		$l = 10;
+	}
+	if ($h === '紺桔梗')
+	{
+		$hue = 232;
+		$s = 44;
+		$l = 40;
+	}
+	if ($h === '菫')
+	{
+		$hue = 259;
+		$s = 40;
+		$l = 40;
+	}
+	elseif ($h === '葡萄')
+	{
+		$hue = 290;
+		$s = 40;
+		$l = 38;
+	}
+	elseif ($h === '焦茶')
+	{
+		$hue = 16;
+		$s = 28;
+		$l = 34;
+	}
+	elseif ($h === '珈琲')
+	{
+		$hue = 39;
+		$s = 56;
+		$l = 30;
+	}
+	elseif ($h === '白')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 42;
+	}
+	elseif ($h === '月白')
+	{
+		$hue = 200;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === '白藤')
+	{
+		$hue = 270;
+		$s = 18;
+		$l = 42;
+	}
+	elseif ($h === '金色')
+	{
+		$hue = 53;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === '白柳')
+	{
+		$hue = 75;
+		$s = 45;
+		$l = 42;
+	}
+	elseif ($h === '灰')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 40;
+	}
+	elseif ($h === '青鈍')
+	{
+		$hue = 131;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === '源氏鼠')
+	{
+		$hue = 320;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === '砂鼠')
+	{
+		$hue = 50;
+		$s = 10;
+		$l = 40;
+	}
+	elseif ($h === '黒')
+	{
+		$hue = 0;
+		$s = 0;
+		$l = 0;
+	}
+	if (isset($hue, $s, $l))
+		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
 }
 
+function color2class($colour)
+{
+	if ($colour === '白' || $colour === '月白' || $colour === '白藤'|| $colour === '金色' || $colour === '白柳' )
+		return 'white';
+	elseif ($colour === '灰' || $colour === '青鈍' || $colour === '源氏鼠' || $colour === '砂鼠')
+		return 'secondary';
+	elseif ($colour === '黒' || $colour === '濃藍')
+		return 'dark';
+	elseif ($colour === '焦茶' || $colour === '珈琲' || $colour === '千歳緑')
+		return 'muted';
+	elseif ($colour === '薄緑' || $colour === '苔' || $colour === '萌黄')
+		return 'success';
+	elseif ($colour === '蜜柑' || $colour === '黄水晶' )
+		return 'warning';
+	elseif ($colour === '緋' || $colour === '薔薇' || $colour === '葡萄' || $colour === '菫')
+		return 'danger';
+	elseif ($colour === '青碧' || $colour === '瑠璃' || $colour === '紺桔梗')
+		return 'info';
+	else
+		return 'primary';
+}

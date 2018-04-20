@@ -43,9 +43,6 @@ ExpiresDefault "access plus 1 week"
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
 Header set X-Powered-By "kinaga/6.0.21"
-<FilesMatch "\.(html|php)$">
-Header append Author "Gari-Hari LLC."
-</FilesMatch>
 Header set X-XSS-Protection "1; mode=block"
 Header unset ETag
 <FilesMatch "\.(js|css|xml|gz|html)$">

@@ -546,9 +546,10 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 				if (list($width, $height) = @getimagesize($background_images))
 				{
 					$info = pathinfo($background_images);
+					$exif = @exif_read_data($background_images, '', '', true);
 					$classname = '.' . basename($background_images, '.' . $info['extension']);
 					$aspect = round($height / $width * 100, 1);
-					$header .= '@media(max-width:' . ($width * 1.5) . 'px){' . $classname . '{' . ($height > 400 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px') . '}}' . $classname . '{max-width:' . $width . 'px;background-image:url(' . $url . r($background_images) . ');background-size:100%;background-repeat:no-repeat;' . ($height > 1000 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px') . '}';
+					$header .= '@media(max-width:' . ($width * 1.5) . 'px){' . $classname . '{' . ($height > 400 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px') . '}}' . $classname . '{max-width:' . $width . 'px;background-image:url(' . $url . r($background_images) . ');background-size:100%;background-repeat:no-repeat;' . ($height > 1000 ? 'height:0px!important;padding-bottom:' . $aspect . '%' : 'height:' . $height . 'px') . '}' . (isset($exif['COMMENT']) ? $classname . ':after{background-color:rgba(0,0,0,.3);color:white;content:"' . str_replace($line_breaks, '\00a', h(trim(strip_tags($exif['COMMENT'][0])))) . '";display:block;line-height:1.1;padding:.7% 1%;word-wrap:break-word;white-space:pre-wrap}' : '');
 				}
 			}
 			$header .= '</style>' . $n;

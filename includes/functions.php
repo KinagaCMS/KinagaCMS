@@ -276,9 +276,13 @@ function nowrap()
 
 function redirect($link)
 {
-	global $header, $get_title, $get_page;
+	global $get_title, $get_page;
 	if ($get_title || $get_page)
-		$header .= '<script>location.replace("' . $link . '")</script><meta http-equiv=refresh content="0;URL=' . $link . '">';
+	{
+		header('HTTP/1.1 301 Moved Permanently');
+		header('Location: ' . $link);
+		exit;
+	}
 }
 
 function get_logo()

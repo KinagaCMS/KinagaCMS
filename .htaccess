@@ -42,7 +42,7 @@ ExpiresDefault "access plus 1 week"
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/6.0.20"
+Header set X-Powered-By "kinaga/6.0.21"
 Header set X-XSS-Protection "1; mode=block"
 Header unset ETag
 <FilesMatch "\.(js|css|xml|gz|html)$">

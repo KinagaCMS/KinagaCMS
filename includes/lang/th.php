@@ -200,31 +200,31 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		$s = 75;
 		$l = 40;
 	}
-	if ($h === 'Orange')
+	elseif ($h === 'Orange')
 	{
 		$hue = 30;
 		$s = 98;
 		$l = 42;
 	}
-	if ($h === 'Topaz')
+	elseif ($h === 'Topaz')
 	{
 		$hue = 48;
 		$s = 86;
 		$l = 40;
 	}
-	if ($h === 'SpringGreen')
+	elseif ($h === 'SpringGreen')
 	{
 		$hue = 80;
 		$s = 75;
 		$l = 40;
 	}
-	if ($h === 'MossGreen')
+	elseif ($h === 'MossGreen')
 	{
 		$hue = 70;
 		$s = 65;
 		$l = 30;
 	}
-	if ($h === 'MintGreen')
+	elseif ($h === 'MintGreen')
 	{
 		$hue = 131;
 		$s = 45;
@@ -254,13 +254,13 @@ function hsla($h, $cal_s=0, $cal_l=0, $a=1)
 		$s = 65;
 		$l = 10;
 	}
-	if ($h === 'OrientalBlue')
+	elseif ($h === 'OrientalBlue')
 	{
 		$hue = 232;
 		$s = 39;
 		$l = 49;
 	}
-	if ($h === 'Violet')
+	elseif ($h === 'Violet')
 	{
 		$hue = 259;
 		$s = 40;

@@ -4,8 +4,8 @@ $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : basename(filter_input(IN
 $get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : basename(filter_input(INPUT_GET, 'categ', FILTER_SANITIZE_STRIPPED));
 $get_page = !filter_has_var(INPUT_GET, 'page') ? '' : basename(filter_input(INPUT_GET, 'page', FILTER_SANITIZE_STRIPPED));
 $get_dl = !filter_has_var(INPUT_GET, 'dl') ? '' : basename(filter_input(INPUT_GET, 'dl', FILTER_SANITIZE_STRIPPED));
-$pages = !filter_has_var(INPUT_GET, 'pages') || filter_input(INPUT_GET, 'pages') == 0 ? 1 : (int)filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT);
-$comment_pages = !filter_has_var(INPUT_GET, 'comments') || filter_input(INPUT_GET, 'comments') == 0 ? 1 : (int)filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT);
+$pages = filter_input(INPUT_GET, 'pages') == 0 ? 1 : (int)filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT);
+$comment_pages = filter_input(INPUT_GET, 'comments') == 0 ? 1 : (int)filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT);
 $breadcrumb = '<li class=breadcrumb-item><a href="' . $url . '">' . $home . '</a></li>';
 
 function get_dirs($dir, $nosort=true)

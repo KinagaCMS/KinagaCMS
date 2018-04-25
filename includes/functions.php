@@ -4,8 +4,8 @@ $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : basename(filter_input(IN
 $get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : basename(filter_input(INPUT_GET, 'categ', FILTER_SANITIZE_STRIPPED));
 $get_page = !filter_has_var(INPUT_GET, 'page') ? '' : basename(filter_input(INPUT_GET, 'page', FILTER_SANITIZE_STRIPPED));
 $get_dl = !filter_has_var(INPUT_GET, 'dl') ? '' : basename(filter_input(INPUT_GET, 'dl', FILTER_SANITIZE_STRIPPED));
-$pages = !filter_has_var(INPUT_GET, 'pages') ? '' : basename(filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT));
-$comment_pages = !filter_has_var(INPUT_GET, 'comments') ? '' : basename(filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT));
+$pages = !filter_has_var(INPUT_GET, 'pages') || filter_input(INPUT_GET, 'pages') == 0 ? 1 : (int)filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT);
+$comment_pages = !filter_has_var(INPUT_GET, 'comments') || filter_input(INPUT_GET, 'comments') == 0 ? 1 : (int)filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT);
 $breadcrumb = '<li class=breadcrumb-item><a href="' . $url . '">' . $home . '</a></li>';
 
 function get_dirs($dir, $nosort=true)
@@ -205,46 +205,46 @@ function timeformat($time)
 		return date($present_format, $time);
 }
 
-function pager($num, $max, $visible)
+function pager($num, $max)
 {
-	global $article, $nav_laquo, $nav_raquo, $n;
+	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $n;
 	$article .=
 	'<ul class="justify-content-center pagination my-4">' . $n;
 
 	if($num > 2)
 		$article .= '<li class=page-item><a class=page-link href="' . get_page(1) . '">' . $nav_laquo . $nav_laquo . '</a></li>';
 	if ($num > 1)
-		$article .= '<li class=page-item><a class=page-link href="' . get_page($num-1) . '">' . $nav_laquo . '</a></li>' . $n;
+		$article .= '<li class=page-item><a class=page-link href="' . get_page((int)$num-1) . '">' . $nav_laquo . '</a></li>' . $n;
 
 	$i = 1;
-	while ($i <= $visible)
+	while ($i <= $number_of_pager)
 	{
-		if ($num - ceil($visible/2) < 0)
+		if ($num - ceil($number_of_pager/2) < 0)
 		{
 			if ($i == $num)
-				$article .= '<li class="active page-item"><a class=page-link>' . $num . '</a></li>' . $n;
+				$article .= '<li class="active page-item"><a class=page-link>' . (int)$num . '</a></li>' . $n;
 			else
 				$article .= '<li class=page-item><a class=page-link href="' . get_page($i) . '">' . $i . '</a></li>' . $n;
 		}
-		elseif ($num + floor($visible/2) > $max)
+		elseif ($num + floor($number_of_pager/2) > $max)
 		{
-			if ($max > $visible)
-				$j = $max - $visible + $i;
+			if ($max > $number_of_pager)
+				$j = (int)$max - $number_of_pager + $i;
 			else
 				$j = $i;
 
 			if ($j == $num)
-				$article .= '<li class="active page-item"><a class=page-link>' . $num . '</a></li>' . $n;
+				$article .= '<li class="active page-item"><a class=page-link>' . (int)$num . '</a></li>' . $n;
 			else
 				$article .= '<li class=page-item><a class=page-link href="' . get_page($j) . '">' . $j . '</a></li>' . $n;
 		}
 		else
 		{
-			if ($i == ceil($visible/2))
-				$article .= '<li class="disable active page-item"><a class=page-link>' . $num . '</a></li>' . $n;
+			if ($i == ceil($number_of_pager/2))
+				$article .= '<li class="disable active page-item"><a class=page-link>' . (int)$num . '</a></li>' . $n;
 			else
 			{
-				$j = $num - ceil($visible/2) + $i;
+				$j = $num - ceil($number_of_pager/2) + $i;
 				$article .= '<li class=page-item><a class=page-link href="' . get_page($j) . '">' . $j . '</a></li>' . $n;
 			}
 		}
@@ -253,9 +253,9 @@ function pager($num, $max, $visible)
 		++$i;
 	}
 	if ($num < $max)
-		$article .= '<li class=page-item><a class=page-link href="' . get_page($num+1) . '">' . $nav_raquo . '</a></li>' . $n;
+		$article .= '<li class=page-item><a class=page-link href="' . get_page((int)$num+1) . '">' . $nav_raquo . '</a></li>' . $n;
 	if ($num < $max - 1)
-		$article .= '<li class=page-item><a class=page-link href="' . get_page($max) . '">' . $nav_raquo . $nav_raquo . '</a></li>' . $n;
+		$article .= '<li class=page-item><a class=page-link href="' . get_page((int)$max) . '">' . $nav_raquo . $nav_raquo . '</a></li>' . $n;
 	$article .=
 	'</ul>' . $n;
 }
@@ -367,14 +367,8 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 			exit;
 		}
 		$breadcrumb .= '<li class="breadcrumb-item active">' . $download_contents . '</li>';
+		$header .= '<title>' . $download_contents . ' - ' . $site_name . '</title>' . $n;
 
-		if (filter_has_var(INPUT_GET, 'pages') && is_numeric($pages))
-			$header .= '<title>' . $download_contents . ' - ' . sprintf($page_prefix, $pages) . ' - ' . $site_name . '</title>' . $n;
-		else
-		{
-			$pages = 1;
-			$header .= '<title>' . $download_contents . ' - ' . $site_name . '</title>' . $n;
-		}
 		if ($download_subtitle)
 			$article .= '<h1 class="h2 mb-4">' . $download_contents . ' <small class="wrap text-muted">' . $download_subtitle . '</small></h1>' . $n;
 
@@ -388,12 +382,14 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 			$dls_sort = array_filter($dls_sort);
 			rsort($dls_sort);
 			$dls_number = count($dls_sort);
-			$dls_in_page = array_slice($dls_sort, ($pages - 1) * $number_of_downloads, $number_of_downloads);
+			$page_ceil = ceil($dls_number / $number_of_downloads);
+			$max_pages = min($pages, $page_ceil);
+			$dls_in_page = array_slice($dls_sort, ($max_pages - 1) * $number_of_downloads, $number_of_downloads);
 
 			if ($dls_number > $number_of_downloads)
 			{
-				$page_ceil = ceil($dls_number / $number_of_downloads);
-				pager($pages, $page_ceil, $number_of_pager);
+				$footer .= '<script>document.title="' . $download_contents . ' - ' . sprintf($page_prefix, $max_pages) . ' - ' . $site_name . '"</script>';
+				pager($max_pages, $page_ceil);
 			}
 			$article .= '<div class="list-group list-group-flush">';
 
@@ -410,7 +406,7 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 			$article .= '</div>';
 
 			if ($dls_number > $number_of_downloads)
-				pager($pages, $page_ceil, $number_of_pager);
+				pager($max_pages, $page_ceil);
 		}
 	}
 	else
@@ -435,26 +431,22 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 		}
 		if ($categ_contents_number > 0)
 		{
-			if (filter_has_var(INPUT_GET, 'pages') && is_numeric($pages))
-				$header .= '<title>' . $categ_title . ' - ' . sprintf($page_prefix, $pages) . ' - ' . $site_name . '</title>' . $n;
-			else
-			{
-				$pages = 1;
-				$header .= '<title>' . $categ_title . ' - ' . $site_name . '</title>' . $n;
-			}
-
 			for($i = 0; $i < $categ_contents_number; ++$i)
 				$articles_sort[] = is_file($article_files = $current_categ . '/' . $categ_contents[$i] . '/index.html') ? filemtime($article_files) . '-~-' . $article_files : '';
 
 			$articles_sort = array_filter($articles_sort);
 			rsort($articles_sort);
-			$sections_in_categ_page = array_slice($articles_sort, ($pages - 1) * $number_of_categ_sections, $number_of_categ_sections);
+			$page_ceil = ceil($categ_contents_number / $number_of_categ_sections);
+			$max_pages = min($pages, $page_ceil);
+			$sections_in_categ_page = array_slice($articles_sort, ($max_pages - 1) * $number_of_categ_sections, $number_of_categ_sections);
+
+			if (filter_has_var(INPUT_GET, 'pages') && is_numeric($max_pages))
+				$header .= '<title>' . $categ_title . ' - ' . sprintf($page_prefix, $max_pages) . ' - ' . $site_name . '</title>' . $n;
+			else
+				$header .= '<title>' . $categ_title . ' - ' . $site_name . '</title>' . $n;
 
 			if ($categ_contents_number > $number_of_categ_sections)
-			{
-				$page_ceil = ceil($categ_contents_number / $number_of_categ_sections);
-				pager($pages, $page_ceil, $number_of_pager);
-			}
+				pager($max_pages, $page_ceil);
 
 			$article .= '<div class=card-columns>';
 			for($i = 0, $c = count($sections_in_categ_page); $i < $c; ++$i)
@@ -523,7 +515,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 			$article .= '</div>';
 
 			if ($categ_contents_number > $number_of_categ_sections)
-				pager($pages, $page_ceil, $number_of_pager);
+				pager($max_pages, $page_ceil);
 		}
 		elseif (!$categ_file)
 			not_found();
@@ -575,14 +567,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			$footer .= '</script>' . $n;
 		}
 		$article_encode_title = h($get_title);
-
-		if (filter_has_var(INPUT_GET, 'pages') && is_numeric($pages))
-			$header .= '<title>' . $article_encode_title . ' - ' . sprintf($page_prefix, $pages) . ' - ' . $site_name . '</title>' . $n;
-		else
-		{
-			$pages = 1;
-			$header .= '<title>' . $article_encode_title . ' - ' . $site_name . '</title>' . $n;
-		}
+		$header .= '<title>' . $article_encode_title . ' - ' . $site_name . '</title>' . $n;
 		$article_filemtime = filemtime($current_article);
 		$current_url = $url . r($get_categ) . '/' . r($get_title);
 		$article .=
@@ -623,12 +608,14 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		{
 			sort($glob_image_files);
 			$glob_images_number = count($glob_image_files);
-			$images_in_page = array_slice($glob_image_files, ($pages - 1) * $number_of_images, $number_of_images);
+			$page_ceil = ceil($glob_images_number / $number_of_images);
+			$max_pages = min($pages, $page_ceil);
+			$images_in_page = array_slice($glob_image_files, ($max_pages - 1) * $number_of_images, $number_of_images);
 
 			if ($glob_images_number > $number_of_images)
 			{
-				$page_ceil = ceil($glob_images_number / $number_of_images);
-				pager($pages, $page_ceil, $number_of_pager);
+				$footer .= '<script>document.title="' . $article_encode_title . ' - ' . sprintf($page_prefix, $max_pages) . ' - ' . $site_name . '"</script>';
+				pager($max_pages, $page_ceil);
 			}
 			$article .= '<div class="gallery text-center">' . $n;
 			for($i = 0, $c = count($images_in_page); $i < $c; ++$i)
@@ -636,7 +623,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 			$article .= '</div>' . $n;
 
 			if ($glob_images_number > $number_of_images)
-				pager($pages, $page_ceil, $number_of_pager);
+				pager($max_pages, $page_ceil);
 		}
 
 		if ($glob_prev_next = glob('contents/' . $get_categ . '/*/index.html', GLOB_NOSORT))
@@ -805,14 +792,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 		$word = trim(mb_convert_kana(filter_input(INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS), 'rnsK', 'UTF-8'));
 		$result_title = sprintf($result, $word);
 		$breadcrumb .= '<li class="breadcrumb-item active">' . $result_title . '</li>';
-
-		if (filter_has_var(INPUT_GET, 'pages') && is_numeric($pages))
-			$header .= '<title>' . $result_title . ' - ' . sprintf($page_prefix, $pages) . ' - ' . $site_name . '</title>' . $n;
-		else
-		{
-			$pages = 1;
-			$header .= '<title>' . $result_title . ' - ' . $site_name . '</title>' . $n;
-		}
+		$header .= '<title>' . $result_title . ' - ' . $site_name . '</title>' . $n;
 		$article .= '<h1 class="h2 mb-4">' . $result_title . '</h1>' . $n;
 		$outputs = [];
 		$glob_search = glob('{' . $glob_dir . 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
@@ -847,11 +827,14 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 			{
 				rsort($outputs);
 				$results_number = count($outputs);
-				$results_in_page = array_slice($outputs, ($pages - 1) * $number_of_results, $number_of_results);
+				$page_ceil = ceil($results_number / $number_of_results);
+				$max_pages = min($pages, $page_ceil);
+				$results_in_page = array_slice($outputs, ($max_pages - 1) * $number_of_results, $number_of_results);
+
 				if ($results_number > $number_of_results)
 				{
-					$page_ceil = ceil($results_number / $number_of_results);
-					pager($pages, $page_ceil, $number_of_pager);
+					$footer .= '<script>document.title="' . $result_title . ' - ' . sprintf($page_prefix, $max_pages) . ' - ' . $site_name . '"</script>';
+					pager($max_pages, $page_ceil);
 				}
 				for($i = 0, $c = count($results_in_page); $i < $c; ++$i)
 				{
@@ -880,7 +863,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 
 				}
 				if ($results_number > $number_of_results)
-					pager($pages, $page_ceil, $number_of_pager);
+					pager($max_pages, $page_ceil);
 			}
 			else
 				$no_results = true;
@@ -906,20 +889,10 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 	}
 	else
 	{
-		if (filter_has_var(INPUT_GET, 'pages') && is_numeric($pages))
-		{
-			$header .=
-			'<title>' . $site_name . ' - ' . sprintf($page_prefix, $pages) . '</title>' . $n;
-			#$article .= '<h1 class="h2 mb-4">' . $site_name . ' <small class=text-muted>' . sprintf($page_prefix, $pages) . '</small></h1>' . $n;
-		}
-		else
-		{
-			$pages = 1;
-			$header .=
-			'<title>' . $site_name . ($subtitle ? ' - ' . $subtitle : '') . '</title>' . $n;
-			if ($subtitle)
-				$article .= '<h1 class="h2 mb-4">' . $site_name . ' <small class="wrap text-muted">' . $subtitle . '</small></h1>' . $n;
-		}
+		$header .=
+		'<title>' . $site_name . ($subtitle ? ' - ' . $subtitle : '') . '</title>' . $n;
+		if ($subtitle)
+			$article .= '<h1 class="h2 mb-4">' . $site_name . ' <small class="wrap text-muted">' . $subtitle . '</small></h1>' . $n;
 		$header .= '<meta name=description content="' . $meta_description . '">' . $n;
 
 		if ($glob_files = glob($glob_dir . 'index.html', GLOB_NOSORT))
@@ -930,14 +903,15 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 			$all_sort = array_filter($all_sort);
 			rsort($all_sort);
 			$default_contents_number = count($all_sort);
-			$sections_in_default_page = array_slice($all_sort, ($pages - 1) * $number_of_default_sections, $number_of_default_sections);
+			$page_ceil = ceil($default_contents_number / $number_of_default_sections);
+			$max_pages = min($pages, $page_ceil);
+			$sections_in_default_page = array_slice($all_sort, ($max_pages - 1) * $number_of_default_sections, $number_of_default_sections);
 
 			if ($default_contents_number > $number_of_default_sections)
 			{
-				$page_ceil = ceil($default_contents_number / $number_of_default_sections);
-				pager($pages, $page_ceil, $number_of_pager);
+				$footer .= '<script>document.title="' . $site_name . ' - ' . sprintf($page_prefix, $max_pages) . '"</script>';
+				pager($max_pages, $page_ceil);
 			}
-
 			$article .= '<div class=card-columns>';
 			for($i = 0, $c = count($sections_in_default_page); $i < $c; ++$i)
 			{
@@ -1003,7 +977,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 			$article .= '</div>';
 
 			if ($default_contents_number > $number_of_default_sections)
-				pager($pages, $page_ceil, $number_of_pager);
+				pager($max_pages, $page_ceil);
 		}
 	}
 }

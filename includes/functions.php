@@ -492,7 +492,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<small class="card-subtitle mb-2 text-muted">' . timeformat($articles[0]) . '</small>' .
+				'<time class="small card-subtitle mb-2 text-muted">' . timeformat($articles[0]) . '</time>' .
 				'<h2 class="h4 card-title"><a href="' . $url . $categ_link . '/' . $title_link . '">' . ht($articles_link[2]);
 
 				if ($total_images > 0)
@@ -954,7 +954,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<small class="card-subtitle mb-2 text-muted">' . timeformat($all_articles[0]) . '</small>' . $n .
+				'<time class="small card-subtitle mb-2 text-muted">' . timeformat($all_articles[0]) . '</time>' . $n .
 				'<h2 class="h4 card-title"><a href="' . $url . $categ_link. '/' . $title_link . '">' . ht($all_link[2]);
 
 				if ($total_images > 0)

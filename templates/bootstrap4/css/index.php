@@ -155,7 +155,6 @@ input.color
 .page-link
 {border-color:'.hsla($color).'!important}
 
-
 .btn-outline-primary,
 .btn-primary:hover,
 .card,
@@ -228,12 +227,14 @@ a.bg-primary:hover
 else
 	echo '
 .breadcrumb,
-.bg-light,
 .card-footer,
 .list-group-item-action:focus,
 .list-group-item-primary,
 .progress
 {background-color:'.hsla($color, -5, 55).'!important}
+
+.bg-light
+{background-color:'.hsla($color, 0, 0, .03).'!important}
 
 .card-header,
 .custom-file-label:after,
@@ -243,12 +244,13 @@ else
 .table-primary, .table-primary > td, .table-primary > th,
 .list-group-item-action:hover,
 .page-link:hover,
-a.bg-light:focus,
-a.bg-light:hover,
 a.bg-primary:focus,
 a.bg-primary:hover
 {background-color:'.hsla($color, -15, 55).'!important}
 
+a.bg-light:focus,
+a.bg-light:hover
+{background-color:'.hsla($color, 0, 0, .05).'!important}
 ';
 
 if (color2class($color) === 'white')

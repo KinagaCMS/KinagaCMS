@@ -5,6 +5,7 @@
  * @author     Translate by Goragod Wiriya http://kotchasan.com
  */
 
+setlocale(LC_ALL, 'th_TH.UTF-8');
 date_default_timezone_set('Asia/Bangkok');
 
 // Site Name

@@ -1,5 +1,6 @@
 <?php
-date_default_timezone_set( 'America/New_York' );
+setlocale(LC_ALL, 'en_US.UTF-8');
+date_default_timezone_set('America/New_York');
 
 #Site Name
 $site_name = 'kinaga';

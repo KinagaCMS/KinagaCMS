@@ -8,11 +8,8 @@ $lang = 'ja';
 
 $encoding = 'UTF-8';
 
-setlocale(LC_ALL, 'C.' . $encoding);
-
-#Downloading Multi-byte filename on Windows Internet Explorer Japanese edition
+#Download Multi-byte filename for IE
 $encoding_win = 'SJIS-win';
-
 
 ##########################
 

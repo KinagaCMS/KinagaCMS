@@ -1,4 +1,5 @@
 <?php
+setlocale(LC_ALL, 'ja_JP.UTF-8');
 date_default_timezone_set('Asia/Tokyo');
 
 #サイト名：

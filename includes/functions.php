@@ -260,11 +260,17 @@ function pager($num, $max)
 	'</ul>' . $n;
 }
 
-function sideless()
+function sideless($hide = false)
 {
 	global $header, $get_title, $get_page;
-	if ($get_title || $get_page)
-		$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
+
+	if (!$hide)
+	{
+		if ($get_title || $get_page)
+			$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
+	}
+	else
+		$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{display:none}</style>';
 }
 
 function nowrap()

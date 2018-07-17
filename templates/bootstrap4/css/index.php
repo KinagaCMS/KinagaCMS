@@ -49,7 +49,7 @@ time:before{background:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/
 
 if ($use_auto_wrap === true)
 	echo '
-.article
+.article,.card-text
 {word-wrap:break-word;white-space:pre-wrap}
 
 .article #accordion,

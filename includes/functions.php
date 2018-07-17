@@ -307,7 +307,7 @@ function not_found()
 	$header .= '<title>' . $error . ' - ' . $site_name . '</title>' . $n;
 	$article .=
 	'<h1 class="h2 mb-4">' . $error . '</h1>' . $n .
-	'<div class=article>' . $not_found . '</div>' . $n;
+	'<div class="article not-found">' . $not_found . '</div>' . $n;
 }
 
 $contents = get_dirs('contents', false);

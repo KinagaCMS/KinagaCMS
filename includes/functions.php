@@ -1055,9 +1055,9 @@ if ($glob_info_files || $dl || $use_contact)
 
 if ($address)
 	$aside .=
-	'<div class="card mb-5">' . $n .
-	'<div class="card-header">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
-	'<div class="card-body wrap">' . $address . '</div>' . $n .
+	'<div class="list-group mb-5">' . $n .
+	'<div class="list-group-item list-group-item-primary">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
+	'<div class="list-group-item wrap">' . $address . '</div>' . $n .
 	'</div>';
 
 if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter_files = glob($glob_dir . 'counter.txt', GLOB_NOSORT))

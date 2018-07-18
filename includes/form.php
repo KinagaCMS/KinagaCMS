@@ -173,13 +173,19 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 }
 echo
 '<form id=form method=post action="' . h(getenv('REQUEST_URI')) . (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title') ? '#preview' : '') . '">' . $n .
-'<div class="d-flex justify-content-between">' . $n .
+'<div class=form-row>' . $n .
+'<div class="form-group col-md-6">' . $n .
 '<label for=e1 class="sr-only control-label">' . $contact_name . '</label>' . $n .
-'<input required id=e1 name=name type=text value="' . $filtered_preview_name . '" class="form-control mr-3" tabindex=3 accesskey=n placeholder="' . $contact_name . '">' . $n .
+'<input required id=e1 name=name type=text value="' . $filtered_preview_name . '" class=form-control tabindex=3 accesskey=n placeholder="' . $contact_name . '">' . $n .
+'</div>' . $n .
+'<div class="form-group col-md-6">' . $n .
 '<label for=e2 class="sr-only control-label">' . $contact_mail . '</label>' . $n .
 '<input required id=e2 name=email type=email value="' . $filtered_preview_email . '" class=form-control tabindex=4 accesskey=m placeholder="' . $contact_mail . '">' . $n .
 '</div>' . $n .
+'<div class="form-group col-md-12">' . $n .
 '<label for=e4 class="sr-only control-label">' . $contact_message . '</label>' . $n .
-'<textarea required id=e4 name=message class="mt-3 form-control" tabindex=5 accesskey=t rows=10 placeholder="' . $contact_message . '">' . $filtered_preview_message . '</textarea>' . $n .
+'<textarea required id=e4 name=message class=form-control tabindex=5 accesskey=t rows=10 placeholder="' . $contact_message . '">' . $filtered_preview_message . '</textarea>' . $n .
 '<button name=preview type=submit class="btn btn-outline-primary float-right mt-3" tabindex=6 accesskey=s id=contact-preview>' . $contact_preview . '</button>' . $n .
+'</div>' . $n .
+'</div>' . $n .
 '</form>' . $n;

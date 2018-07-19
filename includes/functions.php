@@ -994,8 +994,8 @@ $article .= '<div class="clearfix mb-5"></div>';
 
 if ($use_search)
 	$search .=
-	'<form class="form-inline my-2 my-lg-0" method=get action="' . $url . '">' . $n .
-	'<input placeholder="Search..." type=search id=search name=query required class="form-control mr-sm-2" tabindex=1 accesskey=i>' . $n .
+	'<form method=get action="' . $url . '">' . $n .
+	'<input placeholder="Search..." type=search id=search name=query required class=form-control tabindex=1 accesskey=i>' . $n .
 	'</form>' . $n;
 
 if ($use_recents && $recent_dirs = glob($glob_dir, GLOB_ONLYDIR + GLOB_NOSORT))

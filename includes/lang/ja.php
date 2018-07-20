@@ -384,9 +384,9 @@ function color2class($colour)
 		return 'secondary';
 	elseif ($colour === '黒' || $colour === '濃藍')
 		return 'dark';
-	elseif ($colour === '焦茶' || $colour === '珈琲' || $colour === '千歳緑')
+	elseif ($colour === '焦茶' || $colour === '珈琲')
 		return 'muted';
-	elseif ($colour === '薄緑' || $colour === '苔' || $colour === '萌黄')
+	elseif ($colour === '薄緑' || $colour === '苔' || $colour === '萌黄' || $colour === '千歳緑')
 		return 'success';
 	elseif ($colour === '蜜柑' || $colour === '黄水晶' )
 		return 'warning';

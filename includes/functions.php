@@ -317,7 +317,16 @@ $form = 'includes/form.php';
 if (! empty($contents))
 {
 	foreach($contents as $categ)
-		$nav .= '<a ' . (filter_has_var(INPUT_GET, 'categ') && $get_categ == $categ ? 'class="nav-item nav-link active"' : 'class="nav-item nav-link"') . ' href="' . $url . r($categ) . '/">' . h($categ) . '</a>' . $n;
+	{
+		$count = count($contents);
+		if ($categ === reset($contents))
+			$nav .= '<li class=nav-first>';
+		elseif ($categ === end($contents))
+			$nav .= '<li class=nav-last>';
+		else
+			$nav .= '<li>';
+		$nav .= '<a ' . (filter_has_var(INPUT_GET, 'categ') && $get_categ == $categ ? 'class="nav-item nav-link active"' : 'class="nav-item nav-link"') . ' href="' . $url . r($categ) . '/">' . h($categ) . '</a></li>' . $n;
+	}
 }
 if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 {
@@ -498,7 +507,7 @@ elseif (filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'title
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<time class="small card-subtitle mb-2 text-muted">' . timeformat($articles[0]) . '</time>' .
+				'<time class="small card-subtitle mb-2 text-muted" datetime="' . date('c', $articles[0]) . '">' . timeformat($articles[0]) . '</time>' .
 				'<h2 class="h4 card-title"><a href="' . $url . $categ_link . '/' . $title_link . '">' . ht($articles_link[2]);
 
 				if ($total_images > 0)
@@ -960,7 +969,7 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 				'<div class=card>' . $n .
 				$default_image . $default_background_image .
 				'<div class=card-body>' . $n .
-				'<time class="small card-subtitle mb-2 text-muted">' . timeformat($all_articles[0]) . '</time>' . $n .
+				'<time class="small card-subtitle mb-2 text-muted" datetime="' . date('c', $all_articles[0]) . '">' . timeformat($all_articles[0]) . '</time>' . $n .
 				'<h2 class="h4 card-title"><a href="' . $url . $categ_link. '/' . $title_link . '">' . ht($all_link[2]);
 
 				if ($total_images > 0)

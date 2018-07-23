@@ -1009,7 +1009,7 @@ if ($use_search)
 
 if ($use_recents && $recent_dirs = glob($glob_dir, GLOB_ONLYDIR + GLOB_NOSORT))
 {
-	$aside .= '<div class="list-group mb-5"><div class="list-group-item bg-primary title">' . $recents . '</div>' . $n;
+	$aside .= '<div id=recents class="list-group mb-5"><div class="list-group-item bg-primary title">' . $recents . '</div>' . $n;
 
 	foreach($recent_dirs as $recents_name)
 	{
@@ -1038,7 +1038,7 @@ if ($glob_info_files || $dl || $use_contact)
 		unset($glob_info_flips['contents/index.html']);
 
 	$aside .=
-	'<div class="list-group mb-5"><div class="list-group-item bg-primary title">' . $informations . '</div>' . $n;
+	'<div id=informations class="list-group mb-5"><div class="list-group-item bg-primary title">' . $informations . '</div>' . $n;
 
 	if ($info_flips = array_flip($glob_info_flips))
 	{
@@ -1064,7 +1064,7 @@ if ($glob_info_files || $dl || $use_contact)
 
 if ($address)
 	$aside .=
-	'<div class="list-group mb-5">' . $n .
+	'<div id=address class="list-group mb-5">' . $n .
 	'<div class="list-group-item list-group-item-primary">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
 	'<div class="list-group-item wrap">' . $address . '</div>' . $n .
 	'</div>';
@@ -1072,7 +1072,7 @@ if ($address)
 if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter_files = glob($glob_dir . 'counter.txt', GLOB_NOSORT))
 {
 	$aside .=
-	'<div class="list-group mb-5">' . $n .
+	'<div id=popular-articles class="list-group mb-5">' . $n .
 	'<div class="list-group-item list-group-item-primary">' . $popular_articles . '</div>' . $n;
 
 	foreach($glob_all_counter_files as $all_counter_files)
@@ -1092,7 +1092,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glob($glob_dir . 'comments/*-~-*.txt', GLOB_NOSORT))
 {
 	$aside .=
-	'<div class="list-group mb-5">' . $n .
+	'<div id=recent-comments class="list-group mb-5">' . $n .
 	'<div class="list-group-item list-group-item-primary">' . $recent_comments . '</div>';
 
 	foreach($glob_all_comment_files as $all_comment_files)

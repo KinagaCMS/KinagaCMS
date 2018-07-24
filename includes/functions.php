@@ -1065,7 +1065,7 @@ if ($glob_info_files || $dl || $use_contact)
 if ($address)
 	$aside .=
 	'<div id=address class="list-group mb-5">' . $n .
-	'<div class="list-group-item list-group-item-primary">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
+	'<div class="list-group-item list-group-item-primary title">' . ($address_title ? $address_title : $site_name) . '</div>' . $n .
 	'<div class="list-group-item wrap">' . $address . '</div>' . $n .
 	'</div>';
 
@@ -1073,7 +1073,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 {
 	$aside .=
 	'<div id=popular-articles class="list-group mb-5">' . $n .
-	'<div class="list-group-item list-group-item-primary">' . $popular_articles . '</div>' . $n;
+	'<div class="list-group-item list-group-item-primary title">' . $popular_articles . '</div>' . $n;
 
 	foreach($glob_all_counter_files as $all_counter_files)
 		$counter_sort[] = (int)trim(strip_tags(file_get_contents($all_counter_files))) . $all_counter_files;
@@ -1093,7 +1093,7 @@ if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glo
 {
 	$aside .=
 	'<div id=recent-comments class="list-group mb-5">' . $n .
-	'<div class="list-group-item list-group-item-primary">' . $recent_comments . '</div>';
+	'<div class="list-group-item list-group-item-primary title">' . $recent_comments . '</div>';
 
 	foreach($glob_all_comment_files as $all_comment_files)
 		$new_comments_sort[] = $all_comment_files;

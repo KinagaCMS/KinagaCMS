@@ -116,7 +116,10 @@ $n = PHP_EOL;
 
 function r($path)
 {
-	return str_replace(array('%26', '%2F', '%5C', '%3A'), array('&amp;', '/', '/', ':'), rawurlencode($path));
+	if (strpos($path, '%') !== false)
+		return $path;
+	else
+		return str_replace(array('%26', '%2F', '%5C', '%3A'), array('&amp;', '/', '/', ':'), rawurlencode($path));
 }
 
 function h($str)

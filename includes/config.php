@@ -2,6 +2,9 @@
 
 $template = 'bootstrap4';
 
+#See includes/social.php
+$social_medias = array('googleplus', 'facebook', 'twitter', 'hatena', 'line');
+
 ##########################
 
 $lang = 'ja';
@@ -101,9 +104,6 @@ $number_of_pager = 5;
 #Similar articles
 $number_of_similars = 3;
 
-
-#Social icon px size
-$social_icon_size = 150;
 
 ##########################
 

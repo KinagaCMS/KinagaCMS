@@ -76,21 +76,16 @@ function ht($str)
 
 function social($t, $u)
 {
-	global $article, $social, $social_icon_size, $n;
-	$article .=
-	'<section id=social class=mb-5>' . $n .
-	'<h2>' . $social . '</h2><div class="btn-group btn-group-lg">' . $n .
-	'<a class="btn t" href="https://twitter.com/intent/tweet?text=' . $t . '&amp;url=' . $u . '" target="_blank" rel="noopener noreferrer">' . $n .
-	'<svg class="img-fluid w-100" xmlns="http://www.w3.org/2000/svg" height="' . $social_icon_size . '" width="' . $social_icon_size . '" viewBox="0 0 10 10" fill="white"><path d="m7.5146 4.1384c0.075 1.631-1.143 3.45-3.2965 3.45-0.655 0-1.2645-0.19-1.7775-0.521 0.615 0.075 1.2295-0.1 1.717-0.48-0.5075-0.0093-0.9355-0.345-1.083-0.8055 0.18 0.0347 0.36 0.02455 0.5235-0.01975-0.558-0.11-0.9425-0.6145-0.93-1.152 0.155 0.085 0.335 0.14 0.5255 0.145-0.5165-0.345-0.663-1.027-0.36-1.548 0.572 0.7015 1.4265 1.1635 2.39 1.212-0.17-0.7255 0.38-1.424 1.1295-1.424 0.335 0 0.635 0.14 0.8465 0.365 0.265-0.05 0.5125-0.15 0.7365-0.28-0.085 0.27-0.27 0.5-0.51 0.6415 0.235-0.0279 0.46-0.09 0.666-0.185-0.155 0.235-0.35 0.435-0.5785 0.6005m-2.5136-4.1372c-2.7615 0-5 2.2385-5 5s2.2385 5 5 5 5-2.2385 5-5-2.2385-5-5-5"/></svg>' . $n .
-	'</a>' . $n .
-	'<a class="btn g" href="https://plus.google.com/share?url=' . $u . '" target="_blank" rel="noopener noreferrer">' . $n .
-	'<svg class="img-fluid w-100" xmlns="http://www.w3.org/2000/svg" height="' . $social_icon_size . '" width="' . $social_icon_size . '" viewBox="-241.9 332.3 10 10"><path fill="white" d="m-236.9 332.3c-2.7578 0-5 2.2422-5 5s2.2422 5 5 5 5-2.2422 5-5-2.2422-5-5-5zm1.3906 5.0859c0.008 1.5312-1.0078 2.5625-2.5312 2.5625-1.4844 0-2.6953-1.1875-2.6953-2.6484s1.2109-2.6484 2.6953-2.6484c0.64843 0 1.2812 0.23438 1.7656 0.64844l-0.6875 0.77344c-0.29687-0.25782-0.6875-0.39844-1.0859-0.39844-0.91406 0-1.6484 0.72656-1.6484 1.625 0 0.89062 0.74218 1.625 1.6484 1.625 0.77344 0 1.2734-0.36719 1.4375-1.0312h-1.4219v-1.0234h2.5234v0.51563zm2.0391 0.10156v0.78125h-0.625v-0.78125h-0.78125v-0.625h0.78125v-0.78125h0.625v0.78125h0.78125v0.625h-0.78125z"/></svg>' . $n .
-	'</a>' . $n .
-	'<a class="btn f" href="https://www.facebook.com/sharer/sharer.php?u=' . $u . '&amp;title=' . $t . '" target="_blank" rel="noopener noreferrer">' . $n .
-	'<svg class="img-fluid w-100" xmlns="http://www.w3.org/2000/svg" height="' . $social_icon_size . '" width="' . $social_icon_size . '" fill="white" viewBox="0 0 0.2 0.2"><path d="m0.1296 0.05883h-0.01398c-0.004936 0-0.005964 0.00202-0.005964 0.00713v0.012333h0.019939l-0.00192 0.02165h-0.01802v0.064672h-0.025824v-0.0644h-0.013432v-0.021927h0.013431v-0.017264c0-0.016203 0.0086666-0.024664 0.027884-0.024664h0.017881v0.02247zm-0.0296-0.05883c-0.05523 0-0.1 0.04477-0.1 0.1s0.04477 0.1 0.1 0.1 0.1-0.04477 0.1-0.1-0.04477-0.1-0.1-0.1"/></svg>' . $n .
-	'</a>' . $n .
-	'</div>' . $n .
-	'</section>' . $n;
+	global $article, $social, $social_medias, $n;
+	if ($social_medias)
+	{
+		$article .= '<section id=social class=mb-5>' . $n .
+		'<h2>' . $social . '</h2>' . $n;
+		$social_link = include_once 'socials.php';
+		foreach($social_medias as $social_name)
+			$article .= $social_link[$social_name];
+		$article .= '</section>' . $n;
+	}
 }
 
 function permalink($t, $u)

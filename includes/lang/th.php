@@ -40,8 +40,12 @@ $recent_comments = 'ความคิดเห็น';
 $popular_articles = 'บทความยอดนิยม';
 
 $download_contents = 'ดาวน์โหลด';
+$download_subtitle = '';
+$download_notice = '';
 
 $contact_us = 'ติดต่อเรา';
+$contact_subtitle = '';
+$contact_notice = '';
 
 $similar_title = 'บทความคล้ายๆกัน';
 
@@ -53,10 +57,6 @@ $comments_prev = 'ใหม่';
 
 $comments_next = 'เก่า';
 
-// Contact Us
-$contact_subtitle = '';
-
-$download_subtitle = '';
 
 $page_prefix = 'หน้าที่ %s';
 
@@ -104,6 +104,7 @@ $comments_not_allow = 'ปิดการแสดงความคิดเห
 $comments_count_title = ' (%s ความคิดเห็น)';
 
 $comment_title = 'ความคิดเห็น';
+$comment_notice = $contact_notice . '';
 
 $comment_counts = '%s ความคิดเห็น';
 

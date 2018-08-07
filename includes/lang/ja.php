@@ -122,6 +122,8 @@ $comments_count_title = ' （コメント：%s件）';
 
 $comment_title = 'コメント';
 
+$comment_notice = $contact_notice . 'また、コメントが掲載される場合であってもメールアドレスが記載されることはありません。';
+
 $comment_counts = 'コメント：%s';
 
 $contact_caution = '承認されたコメントのみ掲載されます';

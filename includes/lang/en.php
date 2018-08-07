@@ -37,9 +37,12 @@ $recent_comments = 'Comments';
 $popular_articles = 'Popular Articles';
 
 $download_contents = 'Downloads';
+$download_subtitle = '';
+$download_notice = '';
 
 $contact_us = 'Contact Us';
-
+$contact_subtitle = '';
+$contact_notice = '';
 
 $similar_title = 'Similar Articles';
 
@@ -52,14 +55,6 @@ $nav_raquo = '&raquo;';
 $comments_prev = 'Newer';
 
 $comments_next = 'Older';
-
-
-#Contact Us
-$contact_subtitle = '';
-
-
-$download_subtitle = '';
-
 
 $page_prefix = 'Page %s';
 
@@ -110,6 +105,8 @@ $comments_not_allow = 'Comments are closed.';
 $comments_count_title = ' (%s comments)';
 
 $comment_title = 'Comments';
+
+$comment_notice = $contact_notice . '';
 
 $comment_counts = '%s comments';
 

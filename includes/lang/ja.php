@@ -37,8 +37,16 @@ $recent_comments = '最近のコメント';
 $popular_articles = '良く読まれている記事';
 
 $download_contents = 'ダウンロード';
+#ダウンロード小見出し
+$download_subtitle = '';
+#ダウンロード注釈
+$download_notice = '';
 
 $contact_us = 'お問い合わせ';
+#お問い合わせ小見出し
+$contact_subtitle = '';
+#お問い合わせ注釈
+$contact_notice = '当フォームより収集される個人情報は、返信を要する際に使用されるものであり、法令に基づく行政機関等への提供を除き、ご本人の同意を得ずに第三者に提供することはありません。';
 
 
 #類似記事のタイトル
@@ -56,12 +64,6 @@ $comments_prev = '最近のコメント';
 
 $comments_next = '過去のコメント';
 
-
-#お問い合わせ小見出し
-$contact_subtitle = '';
-
-#ダウンロード小見出し
-$download_subtitle = '';
 
 #接頭辞：ページ
 $page_prefix = 'Page %s';

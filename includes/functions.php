@@ -354,6 +354,8 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 		$breadcrumb .= '<li class="breadcrumb-item active">' . $contact_us . '</li>';
 		if ($contact_subtitle)
 			$article .= '<h1 class="h2 mb-4">' . $contact_us . ' <small class="wrap text-muted">' . $contact_subtitle . '</small></h1>' . $n;
+		if ($contact_notice)
+			$article .= '<p class="alert alert-warning wrap">' . $contact_notice . '</p>' . $n;
 		ob_start();
 		include_once $form;
 		$article .= trim(ob_get_clean());
@@ -381,7 +383,8 @@ if (filter_has_var(INPUT_GET, 'page') && ! is_numeric($get_page))
 
 		if ($download_subtitle)
 			$article .= '<h1 class="h2 mb-4">' . $download_contents . ' <small class="wrap text-muted">' . $download_subtitle . '</small></h1>' . $n;
-
+		if ($download_notice)
+			$article .= '<p class="alert alert-warning wrap">' . $download_notice . '</p>' . $n;
 		$dl_files = glob($downloads_dir . '/*.*', GLOB_NOSORT);
 
 		if ($dl_files)
@@ -718,6 +721,8 @@ elseif (filter_has_var(INPUT_GET, 'categ') && filter_has_var(INPUT_GET, 'title')
 		{
 			$article .=
 			'<section class=mb-5 id=comment><h2>' . $comment_title . '</h2>' . $n;
+			if ($comment_notice)
+				$article .= '<p class="alert alert-warning wrap">' . $comment_notice . '</p>' . $n;
 
 			if (isset($glob_comment_files) && $number_of_comments > 0)
 			{

@@ -304,3 +304,19 @@ body
 
 ';
 }
+if (file_exists($header_jpg = '../../../images/header.jpg') && is_file($header_jpg))
+	echo'
+body:before{
+align-items:center;
+background-image:url(' . $header_jpg . ');
+background-repeat:no-repeat;
+background-size:cover;
+content:"' . $meta_description . '";
+display:flex;
+font-size:large;
+height:250px;
+justify-content:center;
+text-shadow:0px 0px 5px white;
+width:100%
+}
+';

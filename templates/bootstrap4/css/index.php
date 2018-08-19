@@ -320,3 +320,12 @@ text-shadow:0px 0px 5px white;
 width:100%
 }
 ';
+?>
+urlset{background-repeat: no-repeat; background:linear-gradient(to left,white,whitesmoke);color:dimgray}
+urlset:before{border-bottom:thick solid dimgray;margin:1em;text-align:center;font-size:xx-large;display:block;content:"Sitemap of <?=$server?>";padding-bottom:1em}
+url:hover{background-color:whitesmoke;color:darkgray}
+url{margin:1em auto;width:95%;display:table;font-size:small;padding:1em}
+loc:before{color:skyblue;content:"\25BA\0020";font-size:large}
+loc{display:table-cell}
+lastmod:before{color:lightskyblue;content:"\25F7\0020";font-size:large}
+lastmod{display:table-cell;text-align:right;white-space:nowrap}

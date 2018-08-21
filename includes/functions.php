@@ -83,7 +83,7 @@ function social($t, $u)
 		'<h2>' . $social . '</h2>' . $n;
 		$social_link = include_once 'socials.php';
 		foreach($social_medias as $social_name)
-			$article .= $social_link[$social_name];
+			$article .= $social_link[$social_name] . $n;
 		$article .= '</section>' . $n;
 	}
 }

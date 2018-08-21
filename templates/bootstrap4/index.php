@@ -19,7 +19,7 @@
 </div>
 </nav>
 
-<ol class="breadcrumb rounded-0"><?=$breadcrumb?></ol>
+<ol class="breadcrumb rounded-0 justify-content-end"><?=$breadcrumb?></ol>
 
 <div class=container-fluid>
 <div class=row>

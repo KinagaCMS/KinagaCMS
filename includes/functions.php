@@ -305,6 +305,17 @@ function not_found()
 	'<div class="article not-found">' . $not_found . '</div>' . $n;
 }
 
+function toc($sticky=true)
+{
+	global $header, $article, $footer, $toc, $fold, $unfold,$get_title, $get_page;
+	if ($get_title || $get_page)
+	{
+		$header .= '<style>.toc:before{content:"' . $toc . '";font-size:large}#toccheckbox:checked~ul{display:none}.toc label{cursor:pointer}.toc label:hover{opacity:.8}#toccheckbox:checked+.toc label:after{content:"\00a0' . $fold. '"}#toccheckbox:not(:checked)+.toc label:after{content:"\00a0' . $unfold. '"}#toc{width:30%}@media(max-width:768px){#toc{width:100%!important}}</style>';
+		$article .= '<div data-spy=scroll data-target=.article data-offset=0 id=toc class="text-truncate d-flex float-md-right card' . ($sticky ? ' sticky-top' : '') . ' mb-3 pr-2" style="overflow:auto"></div>';
+		$footer .= '<script>toc();$("body").scrollspy({target:"#toc"})</script>';
+	}
+}
+
 $contents = get_dirs('contents', false);
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
 $form = 'includes/form.php';

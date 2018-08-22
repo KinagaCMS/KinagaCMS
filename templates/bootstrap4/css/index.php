@@ -50,7 +50,7 @@ if ($use_auto_wrap === true)
 	echo '
 .article,.card-text
 {word-wrap:break-word;white-space:pre-wrap}
-
+.article h1,.article h2,.article h3,.article h4,.article h5,.article h6{margin-bottom:0}
 .article #accordion,
 .article .accordion,
 .article .btn-group,

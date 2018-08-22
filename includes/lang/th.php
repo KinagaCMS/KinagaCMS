@@ -49,6 +49,11 @@ $contact_notice = '';
 
 $similar_title = 'บทความคล้ายๆกัน';
 
+//TOC
+$toc = 'Table of Contents';
+$fold = ' [open]';
+$unfold = ' [close]';
+
 $nav_laquo = '&laquo;';
 
 $nav_raquo = '&raquo;';

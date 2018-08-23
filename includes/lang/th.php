@@ -51,8 +51,6 @@ $similar_title = 'บทความคล้ายๆกัน';
 
 //TOC
 $toc = 'Table of Contents';
-$fold = ' [open]';
-$unfold = ' [close]';
 
 $nav_laquo = '&laquo;';
 

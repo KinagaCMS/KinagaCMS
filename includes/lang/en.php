@@ -46,10 +46,7 @@ $contact_notice = '';
 
 $similar_title = 'Similar Articles';
 
-
 $toc = 'Table of Contents';
-$fold = ' [open]';
-$unfold = ' [close]';
 
 $nav_laquo = '&laquo;';
 

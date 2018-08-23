@@ -307,12 +307,17 @@ function not_found()
 
 function toc($sticky=true)
 {
-	global $header, $article, $footer, $toc, $fold, $unfold,$get_title, $get_page;
+	global $header, $article, $footer, $toc, $get_title, $get_page;
 	if ($get_title || $get_page)
 	{
-		$header .= '<style>.toc:before{content:"' . $toc . '";font-size:large}#toccheckbox:checked~ul{display:none}.toc label{cursor:pointer}.toc label:hover{opacity:.8}#toccheckbox:checked+.toc label:after{content:"\00a0' . $fold. '"}#toccheckbox:not(:checked)+.toc label:after{content:"\00a0' . $unfold. '"}#toc{width:30%}@media(max-width:768px){#toc{width:100%!important}}</style>';
-		$article .= '<div data-spy=scroll data-target=.article data-offset=0 id=toc class="text-truncate d-flex float-md-right card' . ($sticky ? ' sticky-top' : '') . ' mb-3 pr-2" style="overflow:auto"></div>';
-		$footer .= '<script>toc();$("body").scrollspy({target:"#toc"})</script>';
+		$header .= '<style>#toc{display:none;width:30%}@media(max-width:768px){#toc{width:100%!important}}</style>';
+		$article .= '<div id=toc class="text-truncate float-md-right' . ($sticky ? ' sticky-top' : '') . ' mb-3 card" style="overflow:auto">';
+		$article .= '<nav class="navbar navbar-dark bg-primary">';
+		$article .= '<span class="navbar-brand">' . $toc . '</span><button class=navbar-toggler data-toggle=collapse data-target="#toctoggle"><span class=navbar-toggler-icon></span></button>';
+		$article .= '</nav>';
+		$article .= '<div data-spy=scroll data-target=.article data-offset=0 id=toctoggle class="collapse show mr-2 mt-3"></div>';
+		$article .= '</div>';
+		$footer .= '<script>toc()</script>';
 	}
 }
 

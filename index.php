@@ -1,5 +1,9 @@
 <?php
 #exit('Down for Maintenance...');
+
+$time_start = microtime(true);
+$base_mem = memory_get_usage();
+
 error_reporting(-1);
 ob_implicit_flush(true);
 

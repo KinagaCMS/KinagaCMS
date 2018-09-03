@@ -161,6 +161,8 @@ $hours_ago = ' ชั่วโมงที่แล้ว';
 
 $days_ago = ' วันก่อน';
 
+$benchmark_results = '<span class="d-block text-muted text-center small">Total time: %s sec. Memory: %s</span>';
+
 
 // /images/index.php
 $images_title = 'รูปภาพ - %s';

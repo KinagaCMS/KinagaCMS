@@ -178,6 +178,8 @@ $hours_ago = '時間前';
 
 $days_ago = '日前';
 
+$benchmark_results = '<span class="d-block text-muted text-center small">出力速度：%s秒　消費メモリ：%s</span>';
+
 
 #/images/index.php
 $images_title = '画像一覧 - %s';

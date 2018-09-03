@@ -163,6 +163,8 @@ $hours_ago = ' hours ago';
 
 $days_ago = ' days ago';
 
+$benchmark_results = '<span class="d-block text-muted text-center small">Total time: %s sec. Memory: %s</span>';
+
 
 #/images/index.php
 $images_title = 'Images - %s';

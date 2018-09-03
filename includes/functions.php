@@ -1131,8 +1131,10 @@ if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glo
 	$aside .=
 	'</div>' . $n;
 }
-$footer.=
+$footer .=
 '<small><span class="text-muted text-center">&copy; ' . date('Y') . ' ' . $site_name . '. Powered by kinaga.</span></small>' . $n;
+if ($use_benchmark === true)
+	$footer .= sprintf($benchmark_results, round(microtime(true) - $time_start, 6), size_unit(memory_get_usage() - $base_mem));
 $header .=
 '<meta name=application-name content=kinaga>' . $n .
 '<link rel=alternate type="application/atom+xml" href="' . $url . 'atom.php">' . $n .

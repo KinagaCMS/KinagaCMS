@@ -50,6 +50,9 @@ $use_similars = true;
 #Show Summary
 $use_summary = true;
 
+#Benchmark in footer
+$use_benchmark = true;
+
 ##########################
 
 #Sidebox

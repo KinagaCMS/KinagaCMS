@@ -830,12 +830,9 @@ elseif (! filter_has_var(INPUT_GET, 'categ') && ! filter_has_var(INPUT_GET, 'tit
 
 		if ($glob_search && $word)
 		{
-			foreach($glob_search as $search_files)
-				$sort_search[] = $search_files;
+			usort($glob_search, function($a, $b){return filemtime($a) < filemtime($b);});
 
-			sort($sort_search);
-
-			foreach($sort_search as $filename)
+			foreach($glob_search as $filename)
 			{
 				$temp = h(file_get_contents($filename));
 				$file_title = get_title($filename);

@@ -21,7 +21,7 @@ if ($glob = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLO
 		$filetime = date('Y-m-d\TH:i:s', filemtime($files));
 
 		if ($categ !== '.')
-			echo '<url><loc>', $url, r($categ, '/', $title), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
+			echo '<url><loc>', $url, r($categ. '/'. $title), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
 
 		elseif ($files === 'contents/index.html')
 			echo '<url><loc>', $url, '</loc><lastmod>', $filetime, '</lastmod></url>', $n;

@@ -48,7 +48,7 @@ function get_title($str)
 	return $title;
 }
 
-function get_page(int $nr)
+function get_page($nr)
 {
 	global $url, $get_categ, $get_title, $get_page, $current_url, $query, $download_contents;
 	if ($get_categ && $get_title)
@@ -176,7 +176,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 	}
 }
 
-function timeformat(int $time)
+function timeformat($time)
 {
 	global $now, $seconds_ago, $minutes_ago, $hours_ago, $days_ago, $present_format, $time_format;
 	$diff = $now - $time;
@@ -194,7 +194,7 @@ function timeformat(int $time)
 		return date($present_format, $time);
 }
 
-function pager(int $num, int $max)
+function pager($num, $max)
 {
 	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $n;
 	$article .=

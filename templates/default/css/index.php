@@ -1,11 +1,10 @@
 <?php
-if (is_file($config = '../../../includes/config.php'))
-	include_once $config;
+include '../../../includes/config.php';
 
 $last_modified = timestamp(__FILE__);
 
-header('Content-Type: text/css; charset=' . $encoding);
-header('Last-Modified: ' . $last_modified);
+header('Content-Type: text/css; charset='. $encoding);
+header('Last-Modified: '. $last_modified);
 
 if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)
 	header('HTTP/1.1 304 Not Modified');
@@ -13,7 +12,6 @@ if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)
 echo
 file_get_contents('bootstrap.min.css'),
 file_get_contents('magnific-popup.min.css'),
-
 '
 #page-top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
 .article{font-size:large;line-height:1.8}

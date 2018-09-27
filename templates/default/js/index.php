@@ -2,7 +2,7 @@
 $last_modified = gmdate('D, d M Y H:i:s T', filemtime(__FILE__));
 
 header('Content-Type: application/javascript');
-header('Last-Modified: ' . $last_modified);
+header('Last-Modified: '. $last_modified);
 
 if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)
 	header('HTTP/1.1 304 Not Modified');

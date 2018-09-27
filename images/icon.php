@@ -1,8 +1,8 @@
 <?php
-include_once '../includes/config.php';
+include '../includes/config.php';
 $last_modified = timestamp(__FILE__);
 header('Content-type: image/svg+xml');
-header('Last-Modified: ' . $last_modified);
+header('Last-Modified: '. $last_modified);
 if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)
 	header('HTTP/1.1 304 Not Modified');
 ?>

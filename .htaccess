@@ -49,3 +49,6 @@ Header unset ETag
 Header append Vary: Accept-Encoding
 </FilesMatch>
 </IfModule>
+
+SetEnvIf Request_URI "downloads" ng
+Deny from env=ng

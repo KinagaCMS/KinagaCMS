@@ -1,6 +1,6 @@
 <?php
 
-$template = 'bootstrap4';
+$template = 'default';
 
 #See includes/social.php
 $social_medias = array('googleplus', 'facebook', 'twitter', 'hatena', 'line');
@@ -136,7 +136,7 @@ function size_unit($size)
 	if ($size > 0)
 	{
 		$unit = array('B', 'KB', 'MB', 'GB');
-		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
 	}
 }
 
@@ -156,7 +156,8 @@ function is_ssl()
 
 $now = time();
 
-$port = getenv('SERVER_PORT') !== '80' ? ':' . getenv('SERVER_PORT') : '';
+$server_port = getenv('SERVER_PORT');
+$port = $server_port === '80' || $server_port === '443' ? '' : ':'. $server_port;
 
 $server = getenv('SERVER_NAME');
 
@@ -164,11 +165,11 @@ $dir = r(dirname(getenv('SCRIPT_NAME')));
 
 $addslash = $dir !== '/' ? '/' : '';
 
-$script = $dir . $addslash;
+$script = $dir. $addslash;
 
 $scheme = is_ssl() ? 'https://' : 'http://';
 
-$url = $scheme . $server . $port . $script;
+$url = $scheme. $server. $port. $script;
 
 $line_breaks = array("\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;');
 
@@ -182,16 +183,16 @@ $token = bin2hex(openssl_random_pseudo_bytes(16));
 
 $glob_dir = 'contents/*/*/';
 
-$tpl_dir = 'templates/' . $template . '/';
+$tpl_dir = 'templates/'. $template. '/';
 
-$css = $url . $tpl_dir . 'css/';
+$css = $url. $tpl_dir. 'css/';
 
-$js = $url . $tpl_dir . 'js/';
+$js = $url. $tpl_dir. 'js/';
 
 $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 
 ##########################
 
 
-if (is_file($lang_file = __DIR__ . '/lang/' . $lang . '.php'))
-	include_once $lang_file;
+if (is_file($lang_file = __DIR__. '/lang/'. $lang. '.php'))
+	include $lang_file;

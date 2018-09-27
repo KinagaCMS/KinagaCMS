@@ -1,41 +1,39 @@
 <?php
-include_once 'includes/config.php';
-header('Content-Type: application/xml; charset=' . $encoding);
+include 'includes/config.php';
+include 'includes/functions.php';
+header('Content-Type: application/xml; charset='. $encoding);
 $xml = new DOMDocument('1.0', $encoding);
 $insert = $xml->firstChild;
 $style = $xml->createProcessingInstruction('xml-stylesheet', 'type="text/css" href="'. $css. '"');
 $xml->insertBefore($style, $insert);
 echo $xml->saveXML(),
 '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9/">', $n;
-$glob = glob('{' . $glob_dir . 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
 
-if ($glob)
+if ($glob = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT))
 {
+	usort($glob, function($a, $b){return filemtime($a) < filemtime($b);});
+
 	foreach($glob as $files)
-		$sort[] = filemtime($files) . '-~-' . $files;
-
-	$sort = array_filter($sort);
-	rsort($sort);
-	for($i = 0, $c = count($sort); $i < $c; ++$i)
 	{
-		$part = explode('-~-', $sort[$i]);
-		$categ = basename(dirname(dirname($part[1])));
-		$title = basename(dirname($part[1]));
+		$categ = get_categ($files);
+		$title = get_title($files);
+		$page = basename($files, '.html');
+		$filetime = date('Y-m-d\TH:i:s', filemtime($files));
 
-		if ($title === 'contents')
-		{
-			$page = basename($part[1], '.html');
+		if ($categ !== '.')
+			echo '<url><loc>', $url, r($categ, '/', $title), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
 
-			if ($page == 'index')
-				echo '<url><loc>', $url, '</loc></url>', $n;
-			else
-				echo '<url><loc>', $url, rawurlencode($page), '</loc><lastmod>', date('Y-m-d\TH:i:s', $part[0]), '</lastmod></url>', $n;
-		}
-		else
-			echo '<url><loc>', $url, rawurlencode($categ), '/', rawurlencode($title), '</loc><lastmod>', date('Y-m-d\TH:i:s', $part[0]), '</lastmod></url>', $n;
+		elseif ($files === 'contents/index.html')
+			echo '<url><loc>', $url, '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
+
+		elseif (is_file('contents/'. $page. '.html'))
+			echo '<url><loc>', $url, r($page), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
 	}
 }
+if (is_dir('downloads'))
+	echo '<url><loc>', $url, r($download_contents), '</loc></url>', $n;
+
 if ($use_contact === true)
-	echo '<url><loc>', $url, rawurlencode($contact_us), '</loc></url>', $n;
+	echo '<url><loc>', $url, r($contact_us), '</loc></url>', $n;
 
 echo '</urlset>';

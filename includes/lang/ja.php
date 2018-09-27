@@ -123,7 +123,7 @@ $comments_count_title = ' （コメント：%s件）';
 
 $comment_title = 'コメント';
 
-$comment_notice = $contact_notice . 'また、コメントが掲載される場合であってもメールアドレスが記載されることはありません。';
+$comment_notice = $contact_notice . 'また、コメントが掲載される場合であってもメールアドレスが本サイト内に記載されることはありません。';
 
 $comment_counts = 'コメント：%s';
 

@@ -4,13 +4,15 @@ if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 	usort($recent_files, function($a, $b){return filemtime($a) < filemtime($b);});
 
 	$aside .= '<div id=recents class="list-group mb-5"><div class="list-group-item bg-primary title">'. $recents. '</div>'. $n;
-
+	$j = 0;
 	foreach($recent_files as $recents_name)
 	{
+		if ($j === $number_of_recents) break;
 		$recent_categ = get_categ($recents_name);
 		$recent_title = get_title($recents_name);
 		$aside .=
 			'<a class="list-group-item list-group-item-action'. ($get_categ. $get_title === $recent_categ. $recent_title ? ' bg-light' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
+	++$j;
 	}
 	$aside .= '</div>';
 }

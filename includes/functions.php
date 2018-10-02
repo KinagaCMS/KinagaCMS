@@ -224,12 +224,10 @@ function pager($num, $max)
 			else
 				$j = $i;
 
-			$get_page_link = get_page($j);
-
 			if ($j == $num)
 				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
 			else
-				$article .= '<li class=page-item><a class=page-link href="'. $get_page_link. '">'. $j. '</a></li>'. $n;
+				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
 		}
 		else
 		{
@@ -238,7 +236,7 @@ function pager($num, $max)
 			else
 			{
 				$j = $num - $ceil + $i;
-				$article .= '<li class=page-item><a class=page-link href="'. $get_page_link. '">'. $j. '</a></li>'. $n;
+				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
 			}
 		}
 		if ($i == $max)

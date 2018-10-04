@@ -1,10 +1,10 @@
 <?php
-$breadcrumb .=
-'<li class=breadcrumb-item><a href="'. $url. r($get_categ). '/">'. h($get_categ). '</a></li>'. $n.
-'<li class="breadcrumb-item active">'. h($get_title). '</li>';
-
-if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && is_file($current_article = $current_article_dir. '/index.html'))
+if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) && is_file($current_article = $current_article_dir. '/index.html'))
 {
+	$breadcrumb .=
+	'<li class=breadcrumb-item><a href="'. $url. $get_categ. '/">'. h($categ_name). '</a></li>'. $n.
+	'<li class="breadcrumb-item active">'. h($title_name). '</li>';
+
 	if (is_dir($background_images_dir = $current_article_dir. '/background-images') && $glob_background_images = glob($background_images_dir. '/*', GLOB_NOSORT))
 	{
 		$header .= '<style>';
@@ -38,10 +38,10 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 		}
 		$footer .= '</script>'. $n;
 	}
-	$article_encode_title = h($get_title);
+	$article_encode_title = h($title_name);
 	$header .= '<title>'. $article_encode_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 	$article_filemtime = filemtime($current_article);
-	$current_url = $url. r($get_categ. '/'. $get_title);
+	$current_url = $url. $get_categ. '/'. $get_title;
 	$article .=
 	'<small class=text-muted>'. sprintf($last_modified, date($time_format, $article_filemtime)). '</small>';
 
@@ -95,13 +95,13 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 			pager($max_pages, $page_ceil);
 	}
 
-	if ($glob_prev_next = glob('contents/'. $get_categ. '/*/index.html', GLOB_NOSORT))
+	if ($glob_prev_next = glob('contents/'. $categ_name. '/*/index.html', GLOB_NOSORT))
 	{
 		$similar_article = [];
 		foreach($glob_prev_next as $prev_next)
 		{
 			$similar_titles = get_title($prev_next);
-			similar_text($get_title, $similar_titles, $percent);
+			similar_text($title_name, $similar_titles, $percent);
 			$per = round($percent);
 
 			if ($per < 100 && $per >= 20)
@@ -121,7 +121,7 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 
 			if ((int)$prev_next_parts[0] > $article_filemtime)
 			{
-				$prev_href = $url. r($get_categ. '/'. $prev_next_title);
+				$prev_href = $url. $get_categ. '/'. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
 				$header_prev =
 				'<link rel=prev href="'. $prev_href. '">'. $n;
@@ -130,7 +130,7 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 			}
 			if ((int)$prev_next_parts[0] < $article_filemtime)
 			{
-				$next_href = $url. r($get_categ. '/'. $prev_next_title);
+				$next_href = $url. $get_categ. '/'. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
 				$header_next =
 				'<link rel=next href="'. $next_href. '">'. $n;
@@ -159,7 +159,7 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 					$similar = explode('-~-', $similar_article[$i]);
 					$article .=
 					'<div class="progress similar-article mb-2">'. $n.
-					'<a class="progress-bar progress-bar-striped bg-primary" style="width:'. $similar[0]. '%" href="'. $url. r($get_categ. '/'. $similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a>'. $n.
+					'<a class="progress-bar progress-bar-striped bg-primary" style="width:'. $similar[0]. '%" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a>'. $n.
 					'</div>';
 				}
 				$article .= '</section>';
@@ -167,7 +167,7 @@ if (is_dir($current_article_dir = 'contents/'. $get_categ. '/'. $get_title) && i
 		}
 	}
 	if ($use_social)
-		social(rawurlencode($get_title. ' - '. $site_name), rawurlencode($url. $get_categ. '/'. $get_title));
+		social(rawurlencode($title_name. ' - '. $site_name), rawurlencode($url. $categ_name. '/'. $title_name));
 
 	if ($use_permalink)
 		permalink($article_encode_title. ' - '. $site_name, $current_url);

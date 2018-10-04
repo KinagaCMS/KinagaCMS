@@ -11,7 +11,7 @@ if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 		$recent_categ = get_categ($recents_name);
 		$recent_title = get_title($recents_name);
 		$aside .=
-			'<a class="list-group-item list-group-item-action'. ($get_categ. $get_title === $recent_categ. $recent_title ? ' bg-light' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
+			'<a class="list-group-item list-group-item-action'. ($categ_name. $title_name === $recent_categ. $recent_title ? ' bg-light' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
 	++$j;
 	}
 	$aside .= '</div>';
@@ -34,14 +34,14 @@ if ($glob_info_files || $dl || $use_contact)
 	{
 		$info_uri = basename($info_files, '.html');
 		$aside .=
-		'<a class="list-group-item list-group-item-action'. ($get_page === $info_uri ? ' bg-light' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
+		'<a class="list-group-item list-group-item-action'. ($page_name === $info_uri ? ' bg-light' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
 	}
 
 	if ($dl)
-		$aside .= '<a class="list-group-item list-group-item-action'. ($get_page === $download_contents ? ' bg-light' : ''). '" href="'. $url. r($download_contents). '">'. $download_contents. '</a>'. $n;
+		$aside .= '<a class="list-group-item list-group-item-action'. ($page_name === $download_contents ? ' bg-light' : ''). '" href="'. $url. r($download_contents). '">'. $download_contents. '</a>'. $n;
 
 	if ($use_contact)
-		$aside .= '<a class="list-group-item list-group-item-action'. ($get_page === $contact_us ? ' bg-light' : ''). '" href="'. $url. r($contact_us). '">'. $contact_us. '</a>'. $n;
+		$aside .= '<a class="list-group-item list-group-item-action'. ($page_name === $contact_us ? ' bg-light' : ''). '" href="'. $url. r($contact_us). '">'. $contact_us. '</a>'. $n;
 	$aside .= '</div>';
 }
 
@@ -67,7 +67,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 	{
 		$popular_titles = explode('/', $counter_sort[$i]);
 		$aside .=
-		'<a class="list-group-item list-group-item-action'. ($get_categ. $get_title === $popular_titles[1]. $popular_titles[2] ? ' bg-light' : ''). '" href="'. $url. r($popular_titles[1]. '/'. $popular_titles[2]). '">'. h($popular_titles[2]). '</a>'. $n;
+		'<a class="list-group-item list-group-item-action'. ($categ_name. $title_name === $popular_titles[1]. $popular_titles[2] ? ' bg-light' : ''). '" href="'. $url. r($popular_titles[1]. '/'. $popular_titles[2]). '">'. h($popular_titles[2]). '</a>'. $n;
 	}
 	$aside .= '</div>'. $n;
 }

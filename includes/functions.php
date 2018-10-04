@@ -37,27 +37,27 @@ function get_description($str)
 
 function get_categ($str)
 {
-	return strip_tags(basename(dirname(dirname($str))));
+	return basename(dirname(dirname($str)));
 }
 
 function get_title($str)
 {
-	$title = strip_tags(basename(dirname($str)));
+	$title = basename(dirname($str));
 	if ($title === 'contents')
-		$title = strip_tags(basename($str, '.html'));
+		$title = basename($str, '.html');
 	return $title;
 }
 
 function get_page($nr)
 {
-	global $url, $get_categ, $get_title, $get_page, $current_url, $query, $download_contents;
+	global $url, $get_categ, $get_title, $page_name, $current_url, $query, $download_contents;
 	if ($get_categ && $get_title)
 		return $current_url. '&amp;pages='. $nr;
 	elseif ($get_categ && !$get_title)
-		return $url. r($get_categ). '/'. $nr. '/';
+		return $url. $get_categ. '/'. $nr. '/';
 	elseif ($query)
 		return $url. '?query='. r($query). '&amp;pages='. $nr;
-	elseif ($get_page === $download_contents)
+	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
 	else
 		return $url. '?pages='. $nr;
@@ -65,7 +65,7 @@ function get_page($nr)
 
 function ht($str)
 {
-	return h(strip_tags(basename($str)));
+	return h(basename($str));
 }
 
 function social($t, $u)
@@ -95,13 +95,13 @@ function permalink($t, $u)
 	'</ul>'. $n.
 	'<div class=tab-content>'. $n.
 	'<div class="tab-pane active" id=html>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=10 accesskey=h>'. h('<a href="'. $u. '" target="_blank">'. $t. '</a>'). '</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=10 accesskey=h>&lt;a href="'. $u. '" target="_blank"&gt;'. h($t). '&lt;/a&gt;</textarea>'. $n.
 	'</div>'. $n.
 	'<div class=tab-pane id=wiki>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=11 accesskey=w>'. h('['. $u. ' '. $t. ']'). '</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=11 accesskey=w>['. $u. ' '. h($t). ']</textarea>'. $n.
 	'</div>'. $n.
 	'<div class=tab-pane id=forum>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=12 accesskey=f>'. h('[URL='. $u. ']'. $t. '[/URL]'). '</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=12 accesskey=f>[URL='. $u. ']'. h($t). '[/URL]</textarea>'. $n.
 	'</div>'. $n.
 	'</div>'. $n.
 	'</section>'. $n;
@@ -293,9 +293,10 @@ function get_logo()
 
 function not_found()
 {
-	global $header, $article, $error, $site_name, $not_found, $n;
+	global $header, $article, $error, $breadcrumb, $site_name, $not_found, $n;
 	http_response_code(404);
 	$header .= '<title>'. $error. ' - '. $site_name. '</title>'. $n;
+	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>'. $n;
 	$article .=
 	'<h1 class="h2 mb-4">'. $error. '</h1>'. $n.
 	'<div class="article not-found">'. $not_found. '</div>'. $n;
@@ -335,4 +336,12 @@ function session($session_name)
 		session_start();
 		session_regenerate_id(true);
 	}
+}
+
+function get_uri($uri, $get)
+{
+	if (strpos($uri, '%23') !== false || strpos($uri, '%26') !== false)
+		return $uri;
+	else
+		return basename(filter_input(INPUT_GET, $get, FILTER_SANITIZE_ENCODED));
 }

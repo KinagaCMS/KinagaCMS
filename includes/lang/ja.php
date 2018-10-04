@@ -166,7 +166,7 @@ $contact_success = '送信しました';
 
 $contact_error = '送信に失敗しました';
 
-$time_format = 'Y年n月j日';
+$time_format = 'Y年n月j日 H時i分';
 
 $present_format = 'n月j日';
 

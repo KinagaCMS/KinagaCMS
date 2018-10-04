@@ -1,7 +1,7 @@
 <?php
-if (is_dir($current_categ = 'contents/'. $get_categ))
+if (is_dir($current_categ = 'contents/'. $categ_name))
 {
-	$categ_title = h($get_categ);
+	$categ_title = h($categ_name);
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $categ_title. '</li>';
 	$categ_contents = get_dirs($current_categ);
 	$categ_contents_number = $categ_contents ? count($categ_contents) : 0;

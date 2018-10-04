@@ -1,22 +1,23 @@
 <?php
 include 'includes/config.php';
 include 'includes/functions.php';
-header('Content-Type: application/atom+xml; charset='. $encoding);
-$xml = new DOMDocument('1.0', $encoding);
-echo $xml->saveXML(),
-'<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', $lang, '">', $n,
-'<title type="text">', $site_name, '</title>', $n .
-'<updated>', date(DATE_ATOM, getlastmod()), '</updated>', $n,
-'<id>', $url, '</id>', $n,
-'<link rel="alternate" type="text/html" hreflang="', $lang, '" href="', $url, '" />', $n,
-'<link rel="self" type="application/atom+xml" href="', $url, 'atom.php" />', $n,
-'<rights>Copyright ', date('Y'), ', ', $site_name, '.</rights>', $n,
-'<generator>kinaga</generator>', $n;
 
 $atom_files = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
 
 if ($atom_files)
 {
+	header('Content-Type: application/atom+xml; charset='. $encoding);
+	$xml = new DOMDocument('1.0', $encoding);
+	echo $xml->saveXML(),
+	'<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', $lang, '">', $n,
+	'<title type="text">', $site_name, '</title>', $n .
+	'<updated>', date(DATE_ATOM, getlastmod()), '</updated>', $n,
+	'<id>', $url, '</id>', $n,
+	'<link rel="alternate" type="text/html" hreflang="', $lang, '" href="', $url, '" />', $n,
+	'<link rel="self" type="application/atom+xml" href="', $url, 'atom.php" />', $n,
+	'<rights>Copyright ', date('Y'), ', ', $site_name, '.</rights>', $n,
+	'<generator>kinaga</generator>', $n;
+
 	usort($atom_files, function($a, $b){return filemtime($a) < filemtime($b);});
 
 	$i = 0;

@@ -1,7 +1,7 @@
 <?php
-if (is_file($pages_file = 'contents/'. $get_page. '.html'))
+if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 {
-	$basetitle = h($get_page);
+	$basetitle = h($page_name);
 	$header .=
 	'<title>'. $basetitle. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .=
@@ -17,12 +17,12 @@ if (is_file($pages_file = 'contents/'. $get_page. '.html'))
 	$article .= '<div class="article px-2 mb-5">'. $pages_content. '</div>'. $n;
 
 	if ($use_social)
-		social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $basetitle));
+		social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
 
 	if ($use_permalink)
-		permalink($basetitle. ' - '. $site_name, $url. rawurlencode($basetitle));
+		permalink($basetitle. ' - '. $site_name, $url. $get_page);
 }
-elseif ($use_contact && $get_page === $contact_us)
+elseif ($use_contact && $page_name === $contact_us)
 {
 	$header .= '<title>'. $contact_us. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $contact_us. '</li>';
@@ -34,9 +34,10 @@ elseif ($use_contact && $get_page === $contact_us)
 	include $form;
 	$article .= trim(ob_get_clean());
 }
-elseif ($dl && $get_page === $download_contents)
+elseif ($dl && $page_name === $download_contents)
 {
-	if (is_file($dl_file = $downloads_dir. '/'. $get_dl) && pathinfo($dl_file, PATHINFO_EXTENSION))
+	$dl_name = d($get_dl);
+	if (is_file($dl_file = $downloads_dir. '/'. $dl_name) && pathinfo($dl_file, PATHINFO_EXTENSION))
 	{
 		header('Content-Length: '. filesize($dl_file));
 		header('Content-Type: '. mime_content_type($dl_file));
@@ -44,10 +45,10 @@ elseif ($dl && $get_page === $download_contents)
 		if (strpos($user_agent_lang, 'ja') !== false && strpos($user_agent, 'MSIE') !== false && strpos($user_agent, 'rv:11.0') !== false)
 		{
 			header('X-Download-Options: noopen');
-			header('Content-Disposition: attachment; filename="'. mb_convert_encoding($get_dl, $encoding_win, $encoding). '"');
+			header('Content-Disposition: attachment; filename="'. mb_convert_encoding($dl_name, $encoding_win, $encoding). '"');
 		}
 		else
-			header('Content-Disposition: attachment; filename="'. $get_dl. '"');
+			header('Content-Disposition: attachment; filename="'. $dl_name. '"');
 
 		readfile($dl_file);
 		exit;

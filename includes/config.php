@@ -122,7 +122,12 @@ function r($path)
 	if (strpos($path, '%') !== false)
 		return $path;
 	else
-		return str_replace(array('%26', '%2F', '%5C', '%3A'), array('&amp;', '/', '/', ':'), rawurlencode($path));
+		return str_replace(array('%2F', '%3A'), array('/', ':'), rawurlencode($path));
+}
+
+function d($enc)
+{
+	return rawurldecode(html_entity_decode($enc));
 }
 
 function h($str)
@@ -155,44 +160,27 @@ function is_ssl()
 
 
 $now = time();
-
 $server_port = getenv('SERVER_PORT');
 $port = $server_port === '80' || $server_port === '443' ? '' : ':'. $server_port;
-
+$request_uri = getenv('REQUEST_URI');
 $server = getenv('SERVER_NAME');
-
 $dir = r(dirname(getenv('SCRIPT_NAME')));
-
 $addslash = $dir !== '/' ? '/' : '';
-
 $script = $dir. $addslash;
-
 $scheme = is_ssl() ? 'https://' : 'http://';
-
 $url = $scheme. $server. $port. $script;
-
 $line_breaks = array("\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;');
-
 $remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
-
 $user_agent = h(getenv('HTTP_USER_AGENT'));
-
 $user_agent_lang = h(getenv('HTTP_ACCEPT_LANGUAGE'));
-
 $token = bin2hex(openssl_random_pseudo_bytes(16));
-
 $glob_dir = 'contents/*/*/';
-
 $tpl_dir = 'templates/'. $template. '/';
-
 $css = $url. $tpl_dir. 'css/';
-
 $js = $url. $tpl_dir. 'js/';
-
 $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 
 ##########################
-
 
 if (is_file($lang_file = __DIR__. '/lang/'. $lang. '.php'))
 	include $lang_file;

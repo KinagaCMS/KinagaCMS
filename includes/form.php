@@ -48,7 +48,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<tr>'. $n.
 		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
 		'<td>'. $n.
-		'<form method=post action="'. $url. ($get_categ && $get_title ? r($get_categ. '/'. $get_title). '#form_result' : r($contact_us)). '">'. $n.
+		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. '/'. $get_title. '#form_result' : r($contact_us)). '">'. $n.
 		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'. $n.
 		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
 		'<input type=hidden name=token value="'. $token. '">'. $n.
@@ -100,13 +100,13 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$filename = $now. '-~-'. base64_decode($filtered_sending_name). '.txt';
 				$headers .= 'Content-Type: multipart/mixed;'. $n. ' boundary="'. $boundary. '"'. $n;
 				$headers .= 'Content-Transfer-Encoding: 8bit'. $n;
-				$subject = sprintf($comment_subject, $get_categ, $get_title). $site_name;
+				$subject = sprintf($comment_subject, $categ_name, $title_name). $site_name;
 				$body .= '--'. $boundary. $n;
 				$body .= 'Content-Type: text/plain; charset='. $encoding. $n;
 				$body .= 'Content-Transfer-Encoding: 8bit'. $n;
 				$body .= $n;
 				$body .= $separator. $n;
-				$body .= sprintf($comment_acceptance, $filename, $get_categ, $get_title);
+				$body .= sprintf($comment_acceptance, $filename, $categ_name, $title_name);
 				$body .= $n. $separator. $n;
 				$body .= '--'. $boundary. $n;
 				$body .= 'Content-Type: application/octet-stream; name="'. $filename. '"'. $n;
@@ -157,7 +157,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 	}
 }
 $article .=
-'<form id=form method=post action="'. $url. ($get_categ && $get_title ? r($get_categ. '/'. $get_title). '#preview' : r($contact_us)). '">'. $n.
+'<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. '/'. $get_title. '#preview' : r($contact_us)). '">'. $n.
 '<div class=form-row>'. $n.
 '<div class="form-group col-md-6">'. $n.
 '<label for=e1 class="sr-only control-label">'. $contact_name. '</label>'. $n.

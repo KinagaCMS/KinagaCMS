@@ -11,12 +11,12 @@ $breadcrumb = '<li class=breadcrumb-item><a href="'. $url. '">'. $home. '</a></l
 $contents = get_dirs('contents', false);
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
 $form = 'includes/form.php';
+$title_name = d($get_title);
+$categ_name = d($get_categ);
+$page_name = d($get_page);
 
 if (!empty($contents))
 {
-	$title_name = d($get_title);
-	$categ_name = d($get_categ);
-	$page_name = d($get_page);
 	foreach($contents as $categ)
 	{
 		$count = count($contents);

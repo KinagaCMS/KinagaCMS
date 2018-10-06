@@ -133,7 +133,7 @@ function d($enc)
 function h($str)
 {
 	global $encoding;
-	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding);
+	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
 }
 
 function size_unit($size)

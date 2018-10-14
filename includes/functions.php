@@ -302,18 +302,31 @@ function not_found()
 	'<div class="article not-found">'. $not_found. '</div>'. $n;
 }
 
-function toc($sticky=true)
+function toc($sticky=true, $in_article=true)
 {
-	global $header, $article, $footer, $toc, $get_title, $get_page;
+	global $header, $article, $aside, $footer, $toc, $get_title, $get_page;
 	if ($get_title || $get_page)
 	{
-		$header .= '<style>#toc{display:none;width:30%}@media(max-width:768px){#toc{width:100%!important}}</style>';
-		$article .= '<div id=toc class="text-truncate float-md-right'. ($sticky ? ' sticky-top' : ''). ' mb-3 card" style="overflow:auto">';
-		$article .= '<nav class="navbar navbar-dark bg-primary">';
-		$article .= '<span class="navbar-brand">'. $toc. '</span><button class=navbar-toggler data-toggle=collapse data-target="#toctoggle"><span class=navbar-toggler-icon></span></button>';
-		$article .= '</nav>';
-		$article .= '<div data-spy=scroll data-target=.article data-offset=0 id=toctoggle class="collapse show mr-2 mt-3"></div>';
-		$article .= '</div>';
+		$toc_content = '<div class="list-group-item bg-primary navbar-dark d-flex justify-content-between">';
+		$toc_content .= '<a class=navbar-brand href=#TOP>'. $toc. '</a> ';
+		$toc_content .= '<button class=navbar-toggler data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=50><span class=navbar-toggler-icon></span></button>';
+		$toc_content .= '</div>';
+		$toc_content .= '<div data-spy=scroll data-target=".article" data-offset=0 id=toctoggle class="list-group-item collapse show pl-0 pr-3"></div>';
+
+		if ($in_article)
+		{
+			$header .= '<style>#toc{display:none;width:30%;overflow-x:auto}@media(max-width:768px){#toc{width:100%!important}}</style>';
+			$article .= '<div id=toc class="list-group text-truncate float-md-right'. ($sticky ? ' sticky-top' : ''). ' mb-3">';
+			$article .= $toc_content;
+			$article .= '</div>';
+		}
+		else
+		{
+			$header .= '<style>#toc{display:none}</style>';
+			$aside .= '<div id=toc class="list-group  '. ($sticky ? ' sticky-top' : ''). ' mb-5">';
+			$aside .= $toc_content;
+			$aside .= '</div>';
+		}
 		$footer .= '<script>toc()</script>';
 	}
 }

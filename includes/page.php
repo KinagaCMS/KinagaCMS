@@ -27,7 +27,7 @@ elseif ($use_contact && $page_name === $contact_us)
 	$header .= '<title>'. $contact_us. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $contact_us. '</li>';
 	if ($contact_subtitle)
-		$article .= '<h1 class="h2 mb-4">'. $contact_us. ' <small class="wrap text-muted">'. $contact_subtitle. '</small></h1>'. $n;
+		$article .= '<h1 class="h2 mb-4">'. $contact_us. ' <small class="ml-3 wrap text-muted">'. $contact_subtitle. '</small></h1>'. $n;
 	if ($contact_notice)
 		$article .= '<p class="alert alert-warning wrap">'. $contact_notice. '</p>'. $n;
 	ob_start();
@@ -57,7 +57,7 @@ elseif ($dl && $page_name === $download_contents)
 	$header .= '<title>'. $download_contents. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 
 	if ($download_subtitle)
-		$article .= '<h1 class="h2 mb-4">'. $download_contents. ' <small class="wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
+		$article .= '<h1 class="h2 mb-4">'. $download_contents. ' <small class="ml-3 wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
 	if ($download_notice)
 		$article .= '<p class="alert alert-warning wrap">'. $download_notice. '</p>'. $n;
 	$dl_files = glob($downloads_dir. '/*.*', GLOB_NOSORT);
@@ -83,7 +83,7 @@ elseif ($dl && $page_name === $download_contents)
 		{
 			$dl_uri = explode('-~-', $dls_in_page[$i]);
 			$article .=
-			'<a class=list-group-item href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
+			'<a class="list-group-item bg-gradient-primary" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
 			'<span class=mr-3>'. date($time_format, $dl_uri[0]). '</span>'. $n.
 			'<span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.
 			'<span class=mr-3>'. $dl_uri[2]. '</span>'. $n.

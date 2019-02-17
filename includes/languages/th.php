@@ -18,8 +18,8 @@ $mail_address = '';
 $address = '';
 $address_title = '';
 
-// Hue: Red, Rose, Orange, Topaz, SpringGreen, MossGreen, MintGreen, MillennialGreen, Turquoise, LapisLazuli, MidnightBlue, OrientalBlue, Violet, Grape, Chocolate, Coffee, White, Moonlight, WistariaWhite, Gold, LimeWhite, Gray, GreenGray, PinkGray, SandGray, Black or BLANK
-$color = 'Moonlight';
+// Hue:  'สีแดง', 'สีชมพู', 'สีน้ำตาล', 'สีเขียวเหลือง', 'สีเขียว', 'สีน้ำเงิน', 'สีฟ้า', 'สีม่วง',  'Gray', 'สีดำ', or BLANK
+$color = 'สีเขียว';
 
 // Description: Top page
 $meta_description = 'คำอธิบายเกี่ยวกับไซต์';
@@ -32,6 +32,8 @@ $home = 'หน้าหลัก';
 
 // Sideboxes
 $recents = 'บทความล่าสุด';
+
+$category = 'ประเภท';
 
 $informations = 'ข้อมูลการติดต่อ';
 
@@ -90,9 +92,7 @@ $more_link_text = 'อ่านต่อ...';
 
 $ellipsis = '...';
 
-$display_counts = 'เปิดดู %s';
-
-$view = 'ดู %s';
+$views = 'ูเปิดดู %s';
 
 $images_count_title = ' (%s รูปภาพ)';
 
@@ -143,7 +143,7 @@ $cookie_disabled_error = 'กรุณาเปิดใช้งานคุก
 
 $contact_subject_suffix = 'Inquiries from %s - ';
 
-$comment_subject = 'Comment on %s of %s - ';
+$comment_subject = 'มีความคิดเห็นเกี่ยวกับ %s หมวดหมู่บทความ %s - ';
 
 $contact_success = 'ข้อความถูกส่งเรียบร้อยแล้ว';
 
@@ -153,13 +153,13 @@ $time_format = 'F jS, Y h:i';
 
 $present_format = 'F jS';
 
-$seconds_ago = ' วินาทีที่แล้ว';
+$seconds_ago = '%s วินาทีที่แล้ว';
 
-$minutes_ago = ' ไม่กี่นาทีผ่านมา';
+$minutes_ago = '%s ไม่กี่นาทีผ่านมา';
 
-$hours_ago = ' ชั่วโมงที่แล้ว';
+$hours_ago = '%s ชั่วโมงที่แล้ว';
 
-$days_ago = ' วันก่อน';
+$days_ago = '%s วันก่อน';
 
 $benchmark_results = '<span class="d-block text-muted text-center small">Total time: %s sec. Memory: %s</span>';
 
@@ -167,11 +167,11 @@ $benchmark_results = '<span class="d-block text-muted text-center small">Total t
 // /images/index.php
 $images_title = 'รูปภาพ - %s';
 
-$images_heading = 'รูปภาพ <small class=text-muted>สำเนา tag ของรูปภาพไปวางในบทความ</small>';
+$images_heading = 'รูปภาพ <small class="text-muted ml-2">สำเนา tag ของรูปภาพไปวางในบทความ</small>';
 
-$images_aligner = 'จัดเรียงรูปภาพ <small class=text-muted>คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
+$images_aligner = 'จัดเรียงรูปภาพ <small class="text-muted ml-2">คุณสามารถใส่ &lt;div class=clearfix&gt;&lt;/div&gt; เพื่อบังคับให้รูปภาพขึ้นบรรทัดใหม่ได้</small>';
 
-$noscript = 'กรุณาเปิดการใช้งาน <strong>javascript</strong>.';
+$noscript = 'กรุณาเปิดการใช้งาน <strong>Javascript</strong>.';
 
 $align_left = 'ซ้าย';
 
@@ -193,185 +193,88 @@ $imgs_next = 'ถัดไป';
 $imgs_last = 'ในที่สุด';
 
 
-function hsla($h, $cal_s=0, $cal_l=0, $a=1)
+function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 {
-	if ($h === 'Red')
+	if ($colour === 'สีแดง')
 	{
-		$hue = 355;
-		$s = 65;
-		$l = 40;
+		$h = 355;
+		$s = 70;
+		$l = 50;
 	}
-	elseif ($h === 'Rose')
+		elseif ($colour === 'สีชมพู')
 	{
-		$hue = 330;
-		$s = 75;
-		$l = 40;
+		$h = 330;
+		$s = 70;
+		$l = 70;
 	}
-	elseif ($h === 'Orange')
+	elseif ($colour === 'สีน้ำตาล')
 	{
-		$hue = 30;
-		$s = 98;
-		$l = 42;
+		$h = 40;
+		$s = 40;
+		$l = 35;
 	}
-	elseif ($h === 'Topaz')
+	elseif ($colour === 'สีเขียวเหลือง')
 	{
-		$hue = 48;
-		$s = 86;
-		$l = 40;
-	}
-	elseif ($h === 'SpringGreen')
-	{
-		$hue = 80;
-		$s = 75;
-		$l = 40;
-	}
-	elseif ($h === 'MossGreen')
-	{
-		$hue = 70;
-		$s = 65;
-		$l = 30;
-	}
-	elseif ($h === 'MintGreen')
-	{
-		$hue = 131;
-		$s = 45;
-		$l = 40;
-	}
-	elseif ($h === 'MillennialGreen')
-	{
-		$hue = 142;
-		$s = 36;
-		$l = 30;
-	}
-	elseif ($h === 'Turquoise')
-	{
-		$hue = 190;
+		$h = 80;
 		$s = 60;
-		$l = 37;
+		$l = 50;
 	}
-	elseif ($h === 'LapisLazuli')
+	elseif ($colour === 'สีเขียว')
 	{
-		$hue = 214;
-		$s = 69;
-		$l = 38;
+		$h = 120;
+		$s = 60;
+		$l = 40;
 	}
-	elseif ($h === 'MidnightBlue')
+	elseif ($colour === 'สีน้ำเงิน')
 	{
-		$hue = 222;
-		$s = 65;
+		$h = 220;
+		$s = 60;
+		$l = 60;
+	}
+		elseif ($colour === 'สีฟ้า')
+	{
+		$h = 195;
+		$s = 60;
+		$l = 60;
+	}
+	elseif ($colour === 'สีม่วง')
+	{
+		$h = 250;
+		$s = 60;
+		$l = 70;
+	}
+	elseif ($colour === 'Gray')
+	{
+		$h = 200;
+		$s = 5;
+		$l = 60;
+	}
+	elseif ($colour === 'สีดำ')
+	{
+		$h = 0;
+		$s = 0;
 		$l = 10;
 	}
-	elseif ($h === 'OrientalBlue')
-	{
-		$hue = 232;
-		$s = 39;
-		$l = 49;
-	}
-	elseif ($h === 'Violet')
-	{
-		$hue = 259;
-		$s = 40;
-		$l = 40;
-	}
-	elseif ($h === 'Grape')
-	{
-		$hue = 290;
-		$s = 40;
-		$l = 38;
-	}
-	elseif ($h === 'Chocolate')
-	{
-		$hue = 16;
-		$s = 28;
-		$l = 34;
-	}
-	elseif ($h === 'Coffee')
-	{
-		$hue = 39;
-		$s = 56;
-		$l = 30;
-	}
-	elseif ($h === 'White')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 42;
-	}
-	elseif ($h === 'Moonlight')
-	{
-		$hue = 200;
-		$s = 18;
-		$l = 42;
-	}
-	elseif ($h === 'WistariaWhite')
-	{
-		$hue = 270;
-		$s = 18;
-		$l = 42;
-	}
-	elseif ($h === 'Gold')
-	{
-		$hue = 53;
-		$s = 45;
-		$l = 42;
-	}
-	elseif ($h === 'LimeWhite')
-	{
-		$hue = 75;
-		$s = 45;
-		$l = 42;
-	}
-	elseif ($h === 'Gray')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 40;
-	}
-	elseif ($h === 'GreenGray')
-	{
-		$hue = 131;
-		$s = 10;
-		$l = 40;
-	}
-	elseif ($h === 'PinkGray')
-	{
-		$hue = 320;
-		$s = 10;
-		$l = 40;
-	}
-	elseif ($h === 'SandGray')
-	{
-		$hue = 50;
-		$s = 10;
-		$l = 40;
-	}
-	elseif ($h === 'Black')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 0;
-	}
-	if (isset($hue, $s, $l))
-		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
+	else list($h, $s, $l) = get_hsl($colour);
+	if (isset($h, $s, $l))
+		return 'hsla('. $h. ', '. ($s + (int)$cal_s). '%, '. ($l + (int)$cal_l). '%, '. $a. ')';
 }
 
 function color2class($colour)
 {
-	if ($colour === 'White' || $colour === 'Moonlight' || $colour === 'WistariaWhite' || $colour === 'Gold' || $colour === 'LimeWhite' )
-		return 'white';
-	elseif ($colour === 'Gray' || $colour === 'GreenGray' || $colour === 'PinkGray' || $colour === 'SandGray')
+	if ($colour === 'Gray')
 		return 'secondary';
-	elseif ($colour === 'Black' || $colour === 'MidnightBlue')
+	elseif ($colour === 'สีดำ' )
 		return 'dark';
-	elseif ($colour === 'Chocolate' || $colour === 'Coffee' || $colour === 'MillennialGreen')
+	elseif ($colour === 'สีน้ำตาล')
 		return 'muted';
-	elseif ($colour === 'MintGreen' || $colour === 'MossGreen' || $colour === 'SpringGreen')
+	elseif ($colour === 'สีเขียวเหลือง' || $colour === 'สีเขียว')
 		return 'success';
-	elseif ($colour === 'Orange' || $colour === 'Topaz' )
+	elseif ($colour === 'สีแดง' || $colour === 'สีชมพู')
 		return 'warning';
-	elseif ($colour === 'Red' || $colour === 'Rose' || $colour === 'Grape' || $colour === 'Violet')
+	elseif ($colour === 'สีม่วง')
 		return 'danger';
-	elseif ($colour === 'Turquoise' || $colour === 'LapisLazuli' || $colour === 'OrientalBlue')
+	elseif ($colour === 'สีน้ำเงิน' || $colour === 'สีฟ้า')
 		return 'info';
 	else
 		return 'primary';

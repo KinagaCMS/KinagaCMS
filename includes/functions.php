@@ -1,4 +1,101 @@
 <?php
+function r($path)
+{
+	if (strpos($path, '%') !== false)
+		return $path;
+	else
+		return str_replace(array('%2F', '%3A'), array('/', ':'), rawurlencode($path));
+}
+
+function d($enc)
+{
+	return rawurldecode(html_entity_decode($enc));
+}
+
+function h($str)
+{
+	global $encoding;
+	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
+}
+
+function size_unit($size)
+{
+	if ($size > 0)
+	{
+		$unit = array('B', 'KB', 'MB', 'GB');
+		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
+	}
+}
+
+function timestamp($file)
+{
+	return gmdate('D, d M Y H:i:s T', filemtime($file));
+}
+
+function is_ssl()
+{
+	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
+		return true;
+}
+
+function complementary($hsla)
+{
+	if (list($h, $s, $l, $a) = explode(',', str_replace(array(' ', 'hsla', '(', ')', '%'), '', $hsla)))
+	{
+		if ((int)$l === 10) $l = 100;
+		return 'hsla('. ($h += ($h > 180) ? -180 : 180). ', '. $s. '%, '. $l. '%, '. $a. ')';
+	}
+}
+
+function get_hsl($colour)
+{
+	if ($colour[0] === 'h')
+	{
+		if (list($h, $s, $l) = explode(',', str_replace(array('hsl', '(', ')', '%'), '', $colour))) return [$h, $s, $l];
+	}
+	elseif ($colour[0] !== 'r')
+	{
+		$colour = ltrim($colour, '#');
+
+		if (strlen($colour) === 3)
+		{
+			$r = hexdec(substr($colour, 0, 1). substr($colour, 0, 1));
+			$g = hexdec(substr($colour, 1, 1). substr($colour, 1, 1));
+			$b = hexdec(substr($colour, 2, 1). substr($colour, 2, 1));
+		}
+		else
+		{
+			$r = hexdec(substr($colour, 0, 2));
+			$g = hexdec(substr($colour, 2, 2));
+			$b = hexdec(substr($colour, 4, 2));
+		}
+	}
+	else list($r, $g, $b) = explode(',', str_replace(array('rgb', '(', ')'), '', $colour));
+	$r /= 255;
+	$g /= 255;
+	$b /= 255;
+	$max = max($r, $g, $b);
+	$min = min($r, $g, $b);
+	$l = ($max + $min) / 2;
+	if ($max === $min) $h = $s = 0;
+	else
+	{
+		$d = $max - $min;
+		$s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+		switch($max)
+		{
+			case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0); break;
+			case $g: $h = ($b - $r) / $d + 2; break;
+			case $b: $h = ($r - $g) / $d + 4; break;
+		}
+		$h /= 6;
+	}
+	$h = round($h * 360);
+	$s = round($s * 100);
+	$l = round($l * 100);
+	return [$h, $s, $l];
+}
+
 function get_dirs($dir, $nosort=true)
 {
 	if ($dirs = glob($dir. '/*' , !$nosort ? GLOB_ONLYDIR : GLOB_ONLYDIR + GLOB_NOSORT))
@@ -95,13 +192,13 @@ function permalink($t, $u)
 	'</ul>'. $n.
 	'<div class=tab-content>'. $n.
 	'<div class="tab-pane active" id=html>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=10 accesskey=h>&lt;a href="'. $u. '" target="_blank"&gt;'. h($t). '&lt;/a&gt;</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=10 accesskey=h>&lt;a href="'. $u. '" target="_blank"&gt;'. htmlentities(h($t)). '&lt;/a&gt;</textarea>'. $n.
 	'</div>'. $n.
 	'<div class=tab-pane id=wiki>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=11 accesskey=w>['. $u. ' '. h($t). ']</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=11 accesskey=w>['. $u. ' '. htmlentities(h($t)). ']</textarea>'. $n.
 	'</div>'. $n.
 	'<div class=tab-pane id=forum>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control bg-white border-0 rounded-0" rows=3 tabindex=12 accesskey=f>[URL='. $u. ']'. h($t). '[/URL]</textarea>'. $n.
+	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=12 accesskey=f>[URL='. $u. ']'. htmlentities(h($t)). '[/URL]</textarea>'. $n.
 	'</div>'. $n.
 	'</div>'. $n.
 	'</section>'. $n;
@@ -141,16 +238,16 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 					$img = '<img class="align-top '. $class. ' img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. h(basename($src)). '">';
 				else
 					$img = $exif_comment ?
-						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '"><p class="text-center wrap my-2">'. $exif_comment. '</p></figure>' :
-						'<img class="img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '">';
+						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '"><p class="text-center wrap my-2">'. $exif_comment. '</p></figure>'. $n :
+						'<img class="img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '">'. $n;
 				if ($scheme !== false)
-					return '<figure class="img-thumbnail text-center d-inline-block '. $class. '"><a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '"><img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. h(basename($src)). '"></a><small class="blockquote-footer my-2 text-right"><a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a></small></figure>';
+					return '<figure class="img-thumbnail text-center d-inline-block '. $class. '"><a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '"><img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. h(basename($src)). '"></a><small class="blockquote-footer my-2 text-right"><a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a></small></figure>'. $n;
 				else
 				{
 					$expand = strpos($class, 'expand') !== false ? ' class=expand' : '';
 					return $exif_comment ?
-						'<a href="'. $url. r($src). '" target="_blank" onclick="return false" title="'. $exif_comment. '"'. $expand. '>'. $img. '</a>' :
-						'<a href="'. $url. r($src). '" target="_blank" onclick="return false"'. $expand. '>'. $img. '</a>';
+						'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false" title="'. $exif_comment. '"'. $expand. '>'. $img. '</a> '. $n :
+						'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false"'. $expand. '>'. $img. '</a> '. $n;
 				}
 			}
 			else
@@ -181,13 +278,13 @@ function timeformat($time)
 	global $now, $seconds_ago, $minutes_ago, $hours_ago, $days_ago, $present_format, $time_format;
 	$diff = $now - $time;
 	if ($diff < 60)
-		return (int)$diff. $seconds_ago;
+		return sprintf($seconds_ago, (int)$diff);
 	elseif ($diff < 3600)
-		return (int)($diff / 60). $minutes_ago;
+		return sprintf($minutes_ago, (int)($diff / 60));
 	elseif ($diff < 86400)
-		return (int)($diff / 3600). $hours_ago;
+		return sprintf($hours_ago, (int)($diff / 3600));
 	elseif ($diff < 2764800)
-		return (int)($diff / 86400). $days_ago;
+		return sprintf($days_ago, (int)($diff / 86400));
 	elseif (date('Y') !== date('Y', $time))
 		return date($time_format, $time);
 	else
@@ -253,15 +350,20 @@ function pager($num, $max)
 
 function sideless($hide = false)
 {
-	global $header, $get_title, $get_page;
-
-	if (!$hide)
+	global $header, $tpl_dir, $get_title, $get_page;
+	if ($get_title || $get_page)
 	{
-		if ($get_title || $get_page)
-			$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{max-width:100%;flex:0 0 100%}</style>';
+		if (preg_match_all('/col-lg-(\d{1,2})/', file_get_contents($tpl_dir. 'index.php'), $m))
+		{
+			$header .= '<style>';
+			foreach($m[0] as $k => $v)
+			{
+				if ($hide && $m[1][$k] === min($m[1])) $header .= ".$v{display:none}";
+				else $header .= ".$v{max-width:100%;flex:0 0 100%}";
+			}
+			$header .= '</style>';
+		}
 	}
-	else
-		$header .= '<style>.col-lg-9{max-width:100%;flex:0 0 100%}.col-lg-3{display:none}</style>';
 }
 
 function nowrap()
@@ -357,4 +459,9 @@ function get_uri($uri, $get)
 		return $uri;
 	else
 		return basename(filter_input(INPUT_GET, $get, FILTER_SANITIZE_ENCODED));
+}
+
+function sort_time($a, $b)
+{
+	return filemtime($a) < filemtime($b);
 }

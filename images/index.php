@@ -1,4 +1,5 @@
 <?php
+include '../includes/functions.php';
 include '../includes/config.php';
 $img_array = [];
 $page = !filter_has_var(INPUT_GET, 'p') ? 1 : (int)filter_input(INPUT_GET, 'p', FILTER_SANITIZE_NUMBER_INT);
@@ -6,9 +7,8 @@ $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.', Files
 
 foreach($files as $images)
 {
-	if (!$images -> isFile())
-		continue;
-	$sort[] = strpos($images, '.php') === false && strpos($images, '.vtt') === false && strpos($images, '.md') === false ? $images -> getMTime(). '-~-'. trim($images, './') : '';
+	if (!$images->isFile()) continue;
+	$sort[] = strpos($images, '.php') === false && strpos($images, '.vtt') === false && strpos($images, '.md') === false ? $images->getMTime(). '-~-'. trim($images, './') : '';
 }
 
 $sort = array_filter($sort);
@@ -41,8 +41,7 @@ body{font-family:Roboto, "Droid Sans", "Yu Gothic", YuGothic, "Hiragino Sans", s
 <div class=container-fluid>
 <h1 class="h4 mb-4">'. $images_heading. '</h1>'. $n;
 
-if ($page > $maxpage)
-	echo $not_found;
+if ($page > $maxpage) echo $not_found;
 else
 {
 	foreach($sort as $image)
@@ -124,13 +123,10 @@ else
 			'</nav>'. $n.
 			'</div>'. $n;
 		}
-		echo
-		'<div class=card-columns>'. $n;
+		echo '<div class=card-columns>'. $n;
 		$imgs_in_page = array_slice($img_array, ($page - 1) * $number_of_imgs, $number_of_imgs);
 
-		for($i = 0, $c = count($imgs_in_page); $i < $c; ++$i)
-			echo $imgs_in_page[$i];
-
+		for($i = 0, $c = count($imgs_in_page); $i < $c; ++$i) echo $imgs_in_page[$i];
 		echo '</div>'. $n;
 
 		if ($count_imgs > $number_of_imgs)
@@ -147,29 +143,11 @@ else
 		}
 	}
 }
-echo
-'
-<footer class="mb-3 text-center"><small>&copy; '. date('Y'). ' '. $site_name. '. Powered by kinaga.</small></footer>
+echo '
+<footer class="m-3 text-center"><small>&copy; '. date('Y'). ' '. $site_name. '. Powered by kinaga.</small></footer>
 </div>
 <script src="../'. $tpl_dir. 'js/jquery.min.js"></script>
-<script>
-function c(c)
-{
-$(".form-control").val(function(index,value){
-return value.replace(/img-thumbnail(.*?)img-fluid/g,"img-thumbnail "+c+" img-fluid")});
-$(".input-group").fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)
-}
-$("#left").click(function()
-{
-$("#right").removeClass("active");
-$(this).addClass("active");
-c("float-left mr-2")
-});
-$("#right").click(function()
-{
-$("#left").removeClass("active");
-$(this).addClass("active");
-c("float-right ml-2")
-})</script>
+<script>function c(c){$(".form-control").val(function(index,value){return value.replace(/img-thumbnail(.*?)img-fluid/g,"img-thumbnail "+c+" img-fluid")});$(".input-group").fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)}$("#left").click(function()
+{$("#right").removeClass("active");$(this).addClass("active");c("float-left mr-2")});$("#right").click(function(){$("#left").removeClass("active");$(this).addClass("active");c("float-right ml-2")})</script>
 </body>
 </html>';

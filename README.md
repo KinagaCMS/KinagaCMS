@@ -1,4 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br><b>kinaga</b> v6 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br><b>Kinaga</b> v6.5 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
 
 ---
 
@@ -6,14 +6,13 @@
 
 Linux ユーザーに最適化された CMS
 
-ファイルシステムからの管理を特徴とするため、
-簡単なルールに沿ってフォルダやファイルを配置するだけで Web サイトが完成します
+ファイルシステムからのコンテンツ管理を特徴とし、簡単なルールに沿ってフォルダやファイルを配置するだけで Web サイトが完成します
 
 ---
 
 ## 動作環境
 
-- PHP 5.5 以上
+- PHP ７ 以上
 - Apache 2.2 以上
 - .htaccess 及び RewriteEngine が利用可能であること
 
@@ -39,15 +38,15 @@ Linux ユーザーに最適化された CMS
 
 　　テンプレート、表示言語、文字コードなどを設定することができます
 
-2.  /includes/lang/○○.php
+2.  /includes/languages/○○.php
 
-　　サイト名やメールアドレスなどを設定することができます
+　　サイト名やメールアドレス、テーマカラーなどを設定することができます
 
 ---
 
 ## 簡単な使い方
 
-1.  ファイルマネージャでサーバーに接続します
+1.  ファイルマネージャまたは[WinSCP](https://winscp.net/)でサーバーに接続します
 2.  contents フォルダの中に「<b>カテゴリ名</b>」のフォルダを作成して下さい
 3.  カテゴリ名フォルダの中に「<b>記事名</b>」のフォルダを作成して下さい
 4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい

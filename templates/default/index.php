@@ -7,7 +7,6 @@
 <?=$header?>
 </head>
 <body id=TOP>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 <a class=navbar-brand href="<?=$url?>"><?=get_logo()?></a>
 <button class=navbar-toggler type=button data-toggle=collapse data-target="#nav" accesskey=n tabindex=100>
@@ -18,16 +17,13 @@
 <?=$search?>
 </div>
 </nav>
-
 <ol class="breadcrumb rounded-0 justify-content-end"><?=$breadcrumb?></ol>
-
 <div class=container-fluid>
 <div class=row>
 <div class=col-lg-9><?=$article?></div>
 <div class=col-lg-3><?=$aside?></div>
 </div>
 </div>
-
 <footer class=text-center>
 <a href="#TOP" id=page-top class="btn btn-outline-primary">&uarr;</a>
 <script src="<?=$js?>"></script>

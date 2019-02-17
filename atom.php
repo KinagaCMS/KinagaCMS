@@ -1,6 +1,6 @@
 <?php
-include 'includes/config.php';
 include 'includes/functions.php';
+include 'includes/config.php';
 
 $atom_files = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
 
@@ -18,7 +18,7 @@ if ($atom_files)
 	'<rights>Copyright ', date('Y'), ', ', $site_name, '.</rights>', $n,
 	'<generator>kinaga</generator>', $n;
 
-	usort($atom_files, function($a, $b){return filemtime($a) < filemtime($b);});
+	usort($atom_files, 'sort_time');
 
 	$i = 0;
 	foreach($atom_files as $atoms)

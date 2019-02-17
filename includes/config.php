@@ -3,7 +3,12 @@
 $template = 'default';
 
 #See includes/social.php
-$social_medias = array('googleplus', 'facebook', 'twitter', 'hatena', 'line');
+$social_medias = array('facebook', 'twitter', 'hatena', 'line');
+
+#!contents/index.html and set 1 to 4
+$index_type = 4;
+#Links per category
+$index_items = 5;
 
 ##########################
 
@@ -107,58 +112,9 @@ $number_of_pager = 5;
 #Similar articles
 $number_of_similars = 3;
 
-
 ##########################
-
 
 $n = PHP_EOL;
-
-
-##########################
-
-
-function r($path)
-{
-	if (strpos($path, '%') !== false)
-		return $path;
-	else
-		return str_replace(array('%2F', '%3A'), array('/', ':'), rawurlencode($path));
-}
-
-function d($enc)
-{
-	return rawurldecode(html_entity_decode($enc));
-}
-
-function h($str)
-{
-	global $encoding;
-	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
-}
-
-function size_unit($size)
-{
-	if ($size > 0)
-	{
-		$unit = array('B', 'KB', 'MB', 'GB');
-		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
-	}
-}
-
-function timestamp($file)
-{
-	return gmdate('D, d M Y H:i:s T', filemtime($file));
-}
-
-function is_ssl()
-{
-	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
-		return true;
-}
-
-##########################
-
-
 $now = time();
 $server_port = getenv('SERVER_PORT');
 $port = $server_port === '80' || $server_port === '443' ? '' : ':'. $server_port;
@@ -182,5 +138,4 @@ $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE
 
 ##########################
 
-if (is_file($lang_file = __DIR__. '/lang/'. $lang. '.php'))
-	include $lang_file;
+if (is_file($lang_file = __DIR__. '/languages/'. $lang. '.php')) include $lang_file;

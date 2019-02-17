@@ -1,5 +1,5 @@
 <?php
-if($query)
+if ($query)
 {
 	$no_results = '';
 	$result_title = sprintf($result, $query);
@@ -11,7 +11,7 @@ if($query)
 
 	if ($glob_search)
 	{
-		usort($glob_search, function($a, $b){return filemtime($a) < filemtime($b);});
+		usort($glob_search, 'sort_time');
 
 		foreach($glob_search as $filename)
 		{

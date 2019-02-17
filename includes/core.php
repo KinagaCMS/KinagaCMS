@@ -8,26 +8,16 @@ $pages = !filter_has_var(INPUT_GET, 'pages') ? 1 : (int)filter_input(INPUT_GET, 
 $query = !filter_has_var(INPUT_GET, 'query') ? '' : trim(mb_convert_kana(filter_input(INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS), 'rnsK', $encoding));
 $comment_pages = !filter_has_var(INPUT_GET, 'comments') ? 1 : (int)filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT);
 $breadcrumb = '<li class=breadcrumb-item><a href="'. $url. '">'. $home. '</a></li>';
-$contents = get_dirs('contents', false);
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
 $form = 'includes/form.php';
 $title_name = d($get_title);
 $categ_name = d($get_categ);
 $page_name = d($get_page);
 
-if (!empty($contents))
+if ($contents = get_dirs('contents', false))
 {
 	foreach($contents as $categ)
-	{
-		$count = count($contents);
-		if ($categ === reset($contents))
-			$nav .= '<li class=nav-first>';
-		elseif ($categ === end($contents))
-			$nav .= '<li class=nav-last>';
-		else
-			$nav .= '<li>';
-		$nav .= '<a'. ($categ_name === $categ ? ' class="nav-item nav-link active"' : ' class="nav-item nav-link"'). ' href="'. $url. r($categ). '/">'. h($categ). '</a></li>'. $n;
-	}
+		$nav .= '<li><a'. ($categ_name === $categ ? ' class="nav-item nav-link active"' : ' class="nav-item nav-link"'). ' href="'. $url. r($categ). '/">'. h($categ). '</a></li>'. $n;
 }
 if ($get_page && !is_numeric($get_page))
 	include 'page.php';

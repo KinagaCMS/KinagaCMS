@@ -1,18 +1,44 @@
 <?php
+include '../../../includes/functions.php';
 include '../../../includes/config.php';
 
 $last_modified = timestamp(__FILE__);
+$bootstrap = file_get_contents('bootstrap.min.css');
+
+if ($color)
+{
+	#primary
+	$bootstrap = str_replace('#007bff', hsla($color, 5.5, -7, .9), $bootstrap);
+	#secondary
+	$bootstrap = str_replace('#6c757d', hsla($color, -30, -10), $bootstrap);
+	#light
+	$bootstrap = str_replace('#f8f9fa', hsla($color, 5, 5, .1), $bootstrap);
+	#dark
+	$bootstrap = str_replace('#343a40', hsla($color, -20, -10), $bootstrap);
+	#*-primary
+	$bootstrap = str_replace('#b8daff', hsla($color, -5, -5, .9), $bootstrap);
+	#breadcrumb, focus
+	$bootstrap = str_replace(array('#dae0e5', '#e9ecef', 'rgba(0,123,255,.5)', 'rgba(0,123,255,.25)', 'rgba(128,189,255,.5)', 'rgba(38,143,255,.5)'), hsla($color, 0, 0, .05), $bootstrap);
+	#hover
+	$bootstrap = str_replace('#0056b3', hsla($color, 0, 0, .9), $bootstrap);
+	#btnhover
+	$bootstrap = str_replace(array('#0069d9', '#0062cc'), hsla($color, 0, -5), $bootstrap);
+	#list link
+	$bootstrap = str_replace(array('#495057', '#004085', '#002752'), hsla($color, -15, -15), $bootstrap);
+	#alert
+	$bootstrap = str_replace('#cce5ff', hsla($color, 0, 10), $bootstrap);
+	#border
+	$bootstrap = str_replace(array('#7abaff', '#80bdff', '#005cbf'), hsla($color, 0, 20), $bootstrap);
+}
 
 header('Content-Type: text/css; charset='. $encoding);
 header('Last-Modified: '. $last_modified);
 
-if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)
-	header('HTTP/1.1 304 Not Modified');
+if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)	header('HTTP/1.1 304 Not Modified');
 
 echo
-file_get_contents('bootstrap.min.css'),
-file_get_contents('magnific-popup.min.css'),
-'
+$bootstrap,
+file_get_contents('magnific-popup.min.css'), '
 #page-top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
 .article{font-size:large;line-height:1.8}
 .bg-danger.text-danger{background-color:#f2dede!important;color:#a94442!important}
@@ -37,15 +63,13 @@ file_get_contents('magnific-popup.min.css'),
 ::-moz-selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 ::selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 a:hover img,a:hover svg,.social:hover{opacity:0.8}
-body{font-family:"Droid Sans","Yu Gothic",YuGothic,"Hiragino Sans",sans-serif;color:#555}
+body{color:#888}
 time:before{content:"\25F7\0020";font-size:large;vertical-align:0}
 h1,h2,h3,h4,h5,h6{border-bottom:thin dotted;padding:.1em}
 .breadcrumb-item+.breadcrumb-item:before{content:">"}
 @media(max-width:767px){.card-columns{column-count:1}}
 ';
-
-if ($use_auto_wrap === true)
-	echo '
+if ($use_auto_wrap === true) echo '
 .article,.card-text
 {word-wrap:break-word;white-space:pre-wrap}
 .article h1,.article h2,.article h3,.article h4,.article h5,.article h6{margin-bottom:0}
@@ -72,251 +96,45 @@ if ($use_auto_wrap === true)
 .article table,
 .article ul
 {white-space:normal!important}
-
 ';
-else
-	echo '.page-top{padding-top:2rem!important;margin-bottom:2rem!important}';
 
-if ($color)
-{
-	echo '
-.badge-light,
-.btn-link,
-.btn-outline-primary,
-.custom-file-label,
-.custom-select,
-.form-control:focus,
-.page-link,
-a
-{color:'.hsla($color).'}
+else echo '.page-top{padding-top:2rem!important;margin-bottom:2rem!important}';
 
-.custom-file-label:after,
-.form-control,
-.input-group-text,
-.list-group-item-action,
-.list-group-item-primary,
-.nav-tabs .nav-item.show .nav-link,
-.nav-tabs .nav-link.active,
-body
-{color:'.hsla($color, -10, -10, .9).'}
-
-.breadcrumb-item+.breadcrumb-item:before,
-.text-muted
-{color:'.hsla($color, -10, 3, .8).'!important}
-
-.blockquote-footer,
-.breadcrumb-item.active,
-.btn-link:hover,
-.list-group-item-action:focus,
-.list-group-item-action:hover,
-.page-link:hover,
-a:hover,
-input.color
-{color:'.hsla($color, 5, 10, .8).'}
-
-.form-control::placeholder
-{color:'.hsla($color, 0, 0, .6).'}
-
-.nav-link.disabled
-{color:'.hsla($color, -5, -5, .5).'}
-
-.page-item.active .page-link,
-.btn-outline-primary:hover
-{color:white!important}
-
-.badge-primary,
-.bg-primary,
-.btn-outline-primary:active:not(:disabled):not(.disabled),
-.btn-outline-primary:hover,
-.btn-primary,
-.dropdown-item:active,
-.nav-pills .nav-link.active,
-.nav-pills .show > .nav-link,
-.page-item.active .page-link,
-.progress-bar.bg-primary,
-.title
-{background-color:'.hsla($color).'!important}
-
-.btn-primary:hover,
-.list-group-item.active
-{background-color:'.hsla($color, -5, -5).'!important}
-
-.border-primary,
-.btn-outline-primary,
-.btn-outline-primary:hover,
-.btn-primary,
-.btn-primary:active:not(:disabled):not(.disabled),
-.list-group-item-primary,
-.page-item.active .page-link,
-.page-link
-{border-color:'.hsla($color).'!important}
-
-.btn-outline-primary,
-.btn-primary:hover,
-.card,
-.card-footer,
-.card-header,
-.custom-file-label,
-.custom-file-label:after,
-.custom-select,
-.form-control,
-.img-thumbnail,
-.input-group-text,
-.list-group-item,
-.list-group-item-primary,
-.nav-tabs .nav-item.show .nav-link,
-.nav-tabs,
-.page-link,
-.table td,
-.table th
-{border-color:'.hsla($color, -10, -15, .3).'!important}
-
-.nav-tabs
-{border-bottom:1px solid '.hsla($color, 0, 0, .3).'!important}
-
-.nav-tabs .nav-link.active
-{border-color:'.hsla($color, -5, 5, .2).' '.hsla($color, 0, 0, .2).' white!important}
-
-.nav-tabs .nav-link:hover
-{border-color:'.hsla($color, 0, 0, .1).'}
-
-.btn-outline-primary:active:focus:not(:disabled):not(.disabled),
-.btn-outline-primary:focus,
-.btn-primary.dropdown-toggle:focus,
-.btn-primary:active:focus:not(:disabled):not(.disabled),
-.btn-primary:active:not(:disabled):not(.disabled), .show > .btn-primary.dropdown-toggle,
-.btn-primary:focus,
-.custom-select:focus,
-.form-control:focus,
-.page-link:focus
-{box-shadow: 0 0 0 .2rem '.hsla($color, 5, 5, .2).'!important}
-
+if ($color) echo '
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{background-color:'. hsla($color, 0, 0, .05). ';border-color:#dee2e6 #dee2e6 inherit!important}
 ::selection, .highlight, .comment:target{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
 ::-moz-selection, .highlight, .comment:target{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
 ';
 
-if (color2class($color) === 'dark')
-	echo '
-.breadcrumb,
-.bg-light,
-.card-footer,
-.list-group-item-action:focus,
-.list-group-item-primary,
-.progress
-{background-color:'.hsla($color, -10, 88).'!important}
-
-.card-header,
-.custom-file-label:after,
-.dropdown-item:hover,
-.input-group-text,
-.jumbotron,
-.list-group-item-action:hover,
-.page-link:hover,
-.table-primary,
-a.bg-light:focus,
-a.bg-light:hover,
-a.bg-primary:focus,
-a.bg-primary:hover
-{background-color:'.hsla($color, -40, 80).'!important}
-
-';
-else
-	echo '
-.breadcrumb,
-.card-footer,
-.list-group-item-action:focus,
-.list-group-item-primary,
-.progress
-{background-color:'.hsla($color, -5, 55).'!important}
-
-.bg-light
-{background-color:'.hsla($color, 0, 0, .03).'!important}
-
-.card-header,
-.custom-file-label:after,
-.dropdown-item:hover,
-.input-group-text,
-.jumbotron,
-.table-primary, .table-primary > td, .table-primary > th,
-.list-group-item-action:hover,
-.page-link:hover,
-a.bg-primary:focus,
-a.bg-primary:hover
-{background-color:'.hsla($color, -15, 55).'!important}
-
-a.bg-light:focus,
-a.bg-light:hover
-{background-color:'.hsla($color, 0, 0, .05).'!important}
-';
-
-if (color2class($color) === 'white')
-	echo '
-.list-group-item-primary,
-.navbar-dark .navbar-brand,
-.navbar-dark .navbar-nav .active > .nav-link,
-.navbar-dark .navbar-nav .nav-link.active,
-.navbar-dark .navbar-nav .nav-link.show,
-.navbar-dark .navbar-nav .show > .nav-link,
-.title
-{color:'.hsla($color).'!important}
-
-.navbar-dark .navbar-nav .nav-link
-{color:'.hsla($color, -2, -3, .8).'!important}
-
-.navbar-dark .navbar-nav .nav-link:hover
-{color:'.hsla($color, 3, 3, .5).'!important}
-
-.navbar-dark .navbar-toggler
-{border-color:'.hsla($color).'}
-
-.navbar-dark .navbar-toggler:hover
-{opacity:0.5}
-
-.navbar-toggler-icon
-{background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\''.hsla($color).'\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E")!important}
-
-.breadcrumb,
-.card-header,
-.list-group-item-primary,
-.navbar-dark.bg-primary,
-.table-primary, .table-primary > td, .table-primary > th,
-.title
-{background-color:white!important}
-
-.col-lg-3 .card,
-.col-lg-3 .list-group-item
-{border-left:0;border-right:0;border-radius:0}
-
-.col-lg-3 .card,
-.col-lg-3 .list-group-item:first-child
-{border-top:0}
-
-.custom-file-label:after,
-.form-control,
-.input-group-text,
-.list-group-item-action,
-.nav-tabs .nav-item.show .nav-link,
-.nav-tabs .nav-link.active,
-body
-{color:'.hsla($color, 0, -10, .9).'}
-
-';
-}
-if (file_exists($header_jpg = '../../../images/header.jpg') && is_file($header_jpg))
-	echo'
+if (is_file($header_jpg = '../../../images/header.jpg')) echo'
 body:before{
-align-items:center;
-background-image:url(' . $header_jpg . ');
+background-image:url('. $header_jpg. ');
+background-position:bottom;
 background-repeat:no-repeat;
 background-size:cover;
-content:"' . $meta_description . '";
-display:flex;
-font-size:large;
-height:250px;
-justify-content:center;
-text-shadow:0px 0px 5px white;
+content:"";
+display:block;
+height:100px;
 width:100%
 }
+body:after{
+align-items:center;
+color:'. ($color ? hsla($color, 0, -30, .9) : 'inherit'). ';
+display:flex;
+font-size:large;
+background-color:'. ($color ? hsla($color, 0, -30, .1) : 'rgba(0,0,0,.1)'). ';
+content:"'. $meta_description. '";
+justify-content:center;
+text-shadow:0px 0px 5px white;
+letter-spacing:0.15em;
+position:relative;
+height:100px;
+left:0;
+position:absolute;
+top:0;
+width:100%;
+}
+div.container-fluid{color:'. ($color ? hsla($color, -50, -50, .7) : 'inherit'). ';}
 ';
 ?>
 urlset{background-repeat: no-repeat; background:linear-gradient(to left,white,whitesmoke);color:dimgray}
@@ -327,3 +145,15 @@ loc:before{color:skyblue;content:"\25BA\0020";font-size:large}
 loc{display:table-cell}
 lastmod:before{color:lightskyblue;content:"\25F7\0020";font-size:large}
 lastmod{display:table-cell;text-align:right;white-space:nowrap}
+
+div.list-group-item.bg-primary.title, div.list-group-item.list-group-item-primary.title{
+	background-image:linear-gradient(to bottom, rgba(0,0,0, .05), rgba(0,0,0, .2));}
+
+.col-md-6.mb-5 ul.list-group.list-group-flush li.list-group-item a{color:<?=$color ? hsla($color, -50, -50, .75) : 'inherit'?> }
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.7);}
+
+  .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
+  color: rgba(255, 255, 255, 0.9);
+}

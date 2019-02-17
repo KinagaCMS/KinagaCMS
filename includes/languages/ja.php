@@ -13,8 +13,9 @@ $address = '';
 #空欄の場合はサイト名を表示
 $address_title = '';
 
-#色相：'緋', '薔薇', '甚三紅', '蜜柑', '黄水晶', '萌黄', '苔', '薄緑', '千歳緑', '青碧', '瑠璃', '濃藍', '紺桔梗', '菫', '葡萄', '焦茶', '珈琲', '白', '月白', '白藤', '金色', '白柳', '灰', '青鈍', '紺鼠', '源氏鼠', '砂鼠', '黒', または空欄
-$color = '紺鼠';
+#色：'赤', '桃', '茶', '黄緑', '緑', '青', '水', '紫', '灰', '黒', または空欄
+#hex, rgb, hsl も指定可。但し、テンプレートによっては明度が高すぎると可読性低下
+$color = '青';
 
 #キャッチコピー：トップページのメタ情報とヘッダーに表示
 $meta_description = 'ここにはサイトの概要を記入して下さい。';
@@ -29,6 +30,8 @@ $home = 'ホーム';
 
 #サイドボックスのタイトル
 $recents = '新着記事';
+
+$category = 'カテゴリ';
 
 $informations = 'インフォメーション';
 
@@ -103,9 +106,7 @@ $more_link_text = '続きを読む…';
 
 $ellipsis = '…';
 
-$display_counts = '閲覧回数：%s';
-
-$view = '%s Views';
+$views = '閲覧回数：%s';
 
 $images_count_title = ' （画像：%s枚）';
 
@@ -170,25 +171,25 @@ $time_format = 'Y年n月j日 H時i分';
 
 $present_format = 'n月j日';
 
-$seconds_ago = '秒前';
+$seconds_ago = '%s秒前';
 
-$minutes_ago = '分前';
+$minutes_ago = '%s分前';
 
-$hours_ago = '時間前';
+$hours_ago = '%s時間前';
 
-$days_ago = '日前';
+$days_ago = '%s日前';
 
-$benchmark_results = '<span class="d-block text-muted text-center small">出力速度：%s秒　消費メモリ：%s</span>';
+$benchmark_results = '<span class="d-block text-muted text-center small">処理時間：%s秒　消費メモリ：%s</span>';
 
 
 #/images/index.php
 $images_title = '画像一覧 - %s';
 
-$images_heading = '画像一覧 <small class=text-muted>タグをコピーしてお使い下さい</small>';
+$images_heading = '画像一覧 <small class="text-muted ml-2">タグをコピーしてお使い下さい</small>';
 
-$images_aligner = '画像の位置指定 <small class=text-muted>回り込み解除には「&lt;div class=clearfix&gt;&lt;/div&gt;」を必要とする場合があります</small>';
+$images_aligner = '画像の位置指定 <small class="text-muted ml-2">回り込み解除には「&lt;div class=clearfix&gt;&lt;/div&gt;」を必要とする場合があります</small>';
 
-$noscript = '<strong>javascript</strong> を有効にして下さい';
+$noscript = '<strong>Javascript</strong> を有効にして下さい';
 
 $align_left = '左寄せ';
 
@@ -209,197 +210,89 @@ $imgs_prev = '前';
 $imgs_next = '次';
 $imgs_last = '最後';
 
-function hsla($h, $cal_s=0, $cal_l=0, $a=1)
+function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 {
-	if ($h === '緋')
+
+	if ($colour === '赤')
 	{
-		$hue = 355;
-		$s = 65;
-		$l = 40;
+		$h = 355;
+		$s = 70;
+		$l = 50;
 	}
-	elseif ($h === '薔薇')
+		elseif ($colour === '桃')
 	{
-		$hue = 330;
-		$s = 75;
-		$l = 40;
+		$h = 330;
+		$s = 70;
+		$l = 70;
 	}
-	elseif ($h === '甚三紅')
+	elseif ($colour === '茶')
 	{
-		$hue = 3;
-		$s = 77;
-		$l = 71;
+		$h = 40;
+		$s = 40;
+		$l = 35;
 	}
-	elseif ($h === '蜜柑')
+	elseif ($colour === '黄緑')
 	{
-		$hue = 30;
-		$s = 98;
-		$l = 42;
-	}
-	elseif ($h === '黄水晶')
-	{
-		$hue = 48;
-		$s = 86;
-		$l = 40;
-	}
-	elseif ($h === '萌黄')
-	{
-		$hue = 80;
-		$s = 75;
-		$l = 40;
-	}
-	elseif ($h === '苔')
-	{
-		$hue = 70;
-		$s = 65;
-		$l = 30;
-	}
-	elseif ($h === '薄緑')
-	{
-		$hue = 131;
-		$s = 45;
-		$l = 40;
-	}
-	elseif ($h === '千歳緑')
-	{
-		$hue = 142;
-		$s = 36;
-		$l = 30;
-	}
-	elseif ($h === '青碧')
-	{
-		$hue = 190;
+		$h = 80;
 		$s = 60;
-		$l = 37;
+		$l = 50;
 	}
-	elseif ($h === '瑠璃')
+	elseif ($colour === '緑')
 	{
-		$hue = 214;
-		$s = 69;
-		$l = 38;
+		$h = 120;
+		$s = 60;
+		$l = 40;
 	}
-	elseif ($h === '濃藍')
+	elseif ($colour === '青')
 	{
-		$hue = 222;
-		$s = 65;
+		$h = 220;
+		$s = 60;
+		$l = 60;
+	}
+		elseif ($colour === '水')
+	{
+		$h = 195;
+		$s = 60;
+		$l = 60;
+	}
+	elseif ($colour === '紫')
+	{
+		$h = 250;
+		$s = 60;
+		$l = 70;
+	}
+	elseif ($colour === '灰')
+	{
+		$h = 200;
+		$s = 5;
+		$l = 60;
+	}
+	elseif ($colour === '黒')
+	{
+		$h = 0;
+		$s = 0;
 		$l = 10;
 	}
-	elseif ($h === '紺桔梗')
-	{
-		$hue = 232;
-		$s = 44;
-		$l = 40;
-	}
-	elseif ($h === '菫')
-	{
-		$hue = 259;
-		$s = 40;
-		$l = 40;
-	}
-	elseif ($h === '葡萄')
-	{
-		$hue = 290;
-		$s = 40;
-		$l = 38;
-	}
-	elseif ($h === '焦茶')
-	{
-		$hue = 16;
-		$s = 28;
-		$l = 34;
-	}
-	elseif ($h === '珈琲')
-	{
-		$hue = 39;
-		$s = 56;
-		$l = 30;
-	}
-	elseif ($h === '白')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 42;
-	}
-	elseif ($h === '月白')
-	{
-		$hue = 200;
-		$s = 18;
-		$l = 42;
-	}
-	elseif ($h === '白藤')
-	{
-		$hue = 270;
-		$s = 18;
-		$l = 42;
-	}
-	elseif ($h === '金色')
-	{
-		$hue = 53;
-		$s = 45;
-		$l = 42;
-	}
-	elseif ($h === '白柳')
-	{
-		$hue = 75;
-		$s = 45;
-		$l = 42;
-	}
-	elseif ($h === '灰')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 40;
-	}
-	elseif ($h === '青鈍')
-	{
-		$hue = 131;
-		$s = 10;
-		$l = 40;
-	}
-			elseif ($h === '紺鼠')
-	{
-		$hue = 210;
-		$s = 30;
-		$l = 40;
-	}
-	elseif ($h === '源氏鼠')
-	{
-		$hue = 320;
-		$s = 10;
-		$l = 40;
-	}
-	elseif ($h === '砂鼠')
-	{
-		$hue = 50;
-		$s = 10;
-		$l = 40;
-	}
-	elseif ($h === '黒')
-	{
-		$hue = 0;
-		$s = 0;
-		$l = 0;
-	}
-	if (isset($hue, $s, $l))
-		return 'hsla(' . $hue . ', ' . ($s + (int)$cal_s) . '%, ' . ($l + (int)$cal_l) . '%, ' . $a . ')';
+	else list($h, $s, $l) = get_hsl($colour);
+	if (isset($h, $s, $l))
+		return 'hsla('. $h. ', '. ($s + (int)$cal_s). '%, '. ($l + (int)$cal_l). '%, '. $a. ')';
 }
 
 function color2class($colour)
 {
-	if ($colour === '白' || $colour === '月白' || $colour === '白藤'|| $colour === '金色' || $colour === '白柳' )
-		return 'white';
-	elseif ($colour === '灰' || $colour === '青鈍' || $colour === '紺鼠' || $colour === '源氏鼠' || $colour === '砂鼠')
+	if ($colour === '灰')
 		return 'secondary';
-	elseif ($colour === '黒' || $colour === '濃藍')
+	elseif ($colour === '黒' )
 		return 'dark';
-	elseif ($colour === '焦茶' || $colour === '珈琲')
+	elseif ($colour === '茶')
 		return 'muted';
-	elseif ($colour === '薄緑' || $colour === '苔' || $colour === '萌黄' || $colour === '千歳緑')
+	elseif ($colour === '黄緑' || $colour === '緑')
 		return 'success';
-	elseif ($colour === '蜜柑' || $colour === '黄水晶' )
+	elseif ($colour === '赤' || $colour === '桃')
 		return 'warning';
-	elseif ($colour === '緋' || $colour === '薔薇' || $colour === '甚三紅' || $colour === '葡萄' || $colour === '菫')
+	elseif ($colour === '紫')
 		return 'danger';
-	elseif ($colour === '青碧' || $colour === '瑠璃' || $colour === '紺桔梗')
+	elseif ($colour === '青' || $colour === '水')
 		return 'info';
 	else
 		return 'primary';

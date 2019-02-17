@@ -10,7 +10,6 @@ return
 	'facebook' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#3b5998" href="https://www.facebook.com/sharer.php?u='. $u. '">Facebook</a>',
 	'flipboard' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#e12828" href="https://share.flipboard.com/bookmarklet/popout?v=2&amp;title='. $t. '&amp;url='. $u. '">Flipboard</a>',
 	'pocket' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#ef4056" href="https://getpocket.com/edit?url='. $u. '">Pocket</a>',
-	'googleplus' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#dd4b39" href="https://plus.google.com/share?url='. $u. '&amp;text='. $t. '">Google+</a>',
 	'hatena' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#00a4de" href="https://b.hatena.ne.jp/entry/'. $u. '">B!</a>',
 	'line' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#00c300" href="https://social-plugins.line.me/lineit/share?url='. $u. '">Line</a>',
 	'linkedin' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#0077b5" href="https://www.linkedin.com/shareArticle?mini=true&amp;url='. $u. '">LinkedIn</a>',

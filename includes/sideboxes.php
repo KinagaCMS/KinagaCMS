@@ -1,7 +1,7 @@
 <?php
 if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 {
-	usort($recent_files, function($a, $b){return filemtime($a) < filemtime($b);});
+	usort($recent_files, 'sort_time');
 
 	$aside .= '<div id=recents class="list-group mb-5"><div class="list-group-item bg-primary title">'. $recents. '</div>'. $n;
 	$j = 0;
@@ -10,37 +10,30 @@ if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 		if ($j === $number_of_recents) break;
 		$recent_categ = get_categ($recents_name);
 		$recent_title = get_title($recents_name);
-		$aside .=
-			'<a class="list-group-item list-group-item-action'. ($categ_name. $title_name === $recent_categ. $recent_title ? ' bg-light' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
-	++$j;
+		$aside .= '<a class="list-group-item list-group-item-action'. ($categ_name. $title_name === $recent_categ. $recent_title ? ' bg-light' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
+		++$j;
 	}
 	$aside .= '</div>';
 }
 
 $glob_info_files = glob('contents/*.html', GLOB_NOSORT);
-if ($glob_info_files || $dl || $use_contact)
+if ($glob_info_files || $dl || $use_contact && $mail_address)
 {
-	usort($glob_info_files, function($a, $b){return filemtime($a) < filemtime($b);});
+	usort($glob_info_files, 'sort_time');
 
-	$glob_info_flips = array_flip($glob_info_files);
+	$aside .= '<div id=informations class="list-group mb-5"><div class="list-group-item bg-primary title">'. $informations. '</div>'. $n;
 
-	if (isset($glob_info_flips['contents/index.html']))
-		unset($glob_info_flips['contents/index.html']);
-
-	$aside .=
-	'<div id=informations class="list-group mb-5"><div class="list-group-item bg-primary title">'. $informations. '</div>'. $n;
-
-	foreach(array_flip($glob_info_flips) as $info_files)
+	foreach($glob_info_files as $info_files)
 	{
+		if ($info_files === 'contents/index.html') continue;
 		$info_uri = basename($info_files, '.html');
-		$aside .=
-		'<a class="list-group-item list-group-item-action'. ($page_name === $info_uri ? ' bg-light' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
+		$aside .= '<a class="list-group-item list-group-item-action'. ($page_name === $info_uri ? ' bg-light' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
 	}
 
 	if ($dl)
 		$aside .= '<a class="list-group-item list-group-item-action'. ($page_name === $download_contents ? ' bg-light' : ''). '" href="'. $url. r($download_contents). '">'. $download_contents. '</a>'. $n;
 
-	if ($use_contact)
+	if ($use_contact && $mail_address)
 		$aside .= '<a class="list-group-item list-group-item-action'. ($page_name === $contact_us ? ' bg-light' : ''). '" href="'. $url. r($contact_us). '">'. $contact_us. '</a>'. $n;
 	$aside .= '</div>';
 }
@@ -74,7 +67,7 @@ if ($use_popular_articles && $number_of_popular_articles > 0 &&$glob_all_counter
 
 if ($use_comment && $number_of_new_comments > 0 && $glob_all_comment_files = glob($glob_dir. 'comments/*-~-*.txt', GLOB_NOSORT))
 {
-	usort($glob_all_comment_files, function($a, $b){return basename($a) < basename($b);});
+	usort($glob_all_comment_files, 'sort_time');
 
 	$aside .=
 	'<div id=recent-comments class="list-group mb-5">'. $n.

@@ -11,7 +11,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		ob_start();
 		include $categ_file;
 		$categ_content = trim(ob_get_clean());
-		$article .= '<h1 class="h2 mb-4">'. $categ_title. ' <small class="wrap text-muted">'. $categ_content. '</small></h1>';
+		$article .= '<h1 class="h2 mb-4">'. $categ_title. ' <small class="ml-3 wrap text-muted">'. $categ_content. '</small></h1>';
 		$header .= '<meta name=description content="'. get_description($categ_content). '">'. $n;
 	}
 	if ($categ_contents_number > 0)
@@ -40,7 +40,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			$article_dir = dirname($articles[1]);
 			$count_images = '';
 			$counter = is_file($counter_txt = $article_dir. '/counter.txt') ?
-			'<span class=card-link>'. sprintf($display_counts, (int)trim(strip_tags(file_get_contents($counter_txt)))). '</span>' : '';
+			'<span class=card-link>'. sprintf($views, (int)file_get_contents($counter_txt)). '</span>' : '';
 			$comments = $use_comment && is_dir($comments_dir = $article_dir. '/comments') ?
 			'<a class=card-link href="'. $url. $categ_link. '/'. $title_link. '#comment">'. $n.
 			sprintf($comment_counts, count(glob($comments_dir. '/*-~-*.txt', GLOB_NOSORT))) .

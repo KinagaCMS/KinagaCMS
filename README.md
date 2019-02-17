@@ -1,4 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/25574701/37443256-5780494c-284e-11e8-9ea1-aedb8b40ceb9.png" alt="kinaga" width="300"><br><b>Kinaga</b> v6.5 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/25574701/52907838-fc4a4400-32ac-11e9-8099-d4b7eaa042a8.png" alt="kinaga" width="300"><br><b>Kinaga</b> v6.5 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
 
 ---
 

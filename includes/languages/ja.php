@@ -288,9 +288,9 @@ function color2class($colour)
 		return 'muted';
 	elseif ($colour === '黄緑' || $colour === '緑')
 		return 'success';
-	elseif ($colour === '赤' || $colour === '桃')
+	elseif ($colour === '桃')
 		return 'warning';
-	elseif ($colour === '紫')
+	elseif ($colour === '赤' || $colour === '紫')
 		return 'danger';
 	elseif ($colour === '青' || $colour === '水')
 		return 'info';

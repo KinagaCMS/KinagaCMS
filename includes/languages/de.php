@@ -271,9 +271,9 @@ function color2class($colour)
 		return 'muted';
 	elseif ($colour === 'Gelbgrün' || $colour === 'Grün')
 		return 'success';
-	elseif ($colour === 'Rot' || $colour === 'Rosa')
+	elseif ($colour === 'Rosa')
 		return 'warning';
-	elseif ($colour === 'Purpur')
+	elseif ($colour === 'Rot' || $colour === 'Purpur')
 		return 'danger';
 	elseif ($colour === 'Blau' || $colour === 'Hellblau')
 		return 'info';

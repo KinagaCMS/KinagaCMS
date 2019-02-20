@@ -270,9 +270,9 @@ function color2class($colour)
 		return 'muted';
 	elseif ($colour === 'สีเขียวเหลือง' || $colour === 'สีเขียว')
 		return 'success';
-	elseif ($colour === 'สีแดง' || $colour === 'สีชมพู')
+	elseif ($colour === 'สีชมพู')
 		return 'warning';
-	elseif ($colour === 'สีม่วง')
+	elseif ($colour === 'สีแดง' || $colour === 'สีม่วง')
 		return 'danger';
 	elseif ($colour === 'สีน้ำเงิน' || $colour === 'สีฟ้า')
 		return 'info';

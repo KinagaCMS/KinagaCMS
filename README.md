@@ -26,7 +26,7 @@ Linux ユーザーに最適化された CMS
 
 ## インストール
 
-- [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/releases)
+- [ダウンロード](https://github.com/KinagaCMS/KinagaCMS/archive/master.zip)
 
 - パーミッションなどを適宜変更してから公開ディレクトリにアップロードして下さい
 
@@ -46,7 +46,7 @@ Linux ユーザーに最適化された CMS
 
 ## 簡単な使い方
 
-1.  ファイルマネージャまたは[WinSCP](https://winscp.net/)でサーバーに接続します
+1.  ファイルマネージャまたは[WinSCP](https://winscp.net/)などでサーバーに接続します
 2.  contents フォルダの中に「<b>カテゴリ名</b>」のフォルダを作成して下さい
 3.  カテゴリ名フォルダの中に「<b>記事名</b>」のフォルダを作成して下さい
 4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Geany](https://github.com/geany/geany/)などのテキストエディタで文章を作成して下さい

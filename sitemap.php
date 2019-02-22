@@ -25,18 +25,14 @@ if ($glob = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLO
 
 		if ($categ !== '.')
 			echo '<url><loc>', $url, r($categ. '/'. $title), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
-
 		elseif ($files === 'contents/index.html')
 			echo '<url><loc>', $url, '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
-
 		elseif (is_file('contents/'. $page. '.html'))
 			echo '<url><loc>', $url, r($page), '</loc><lastmod>', $filetime, '</lastmod></url>', $n;
 	}
 }
 if (is_dir('downloads'))
 	echo '<url><loc>', $url, r($download_contents), '</loc></url>', $n;
-
 if ($use_contact && $mail_address)
 	echo '<url><loc>', $url, r($contact_us), '</loc></url>', $n;
-
 echo '</urlset>';

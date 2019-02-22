@@ -14,6 +14,10 @@ include 'includes/core.php';
 header('Content-Type: text/html; charset='. $encoding);
 
 if (is_file($tpl = $tpl_dir. 'index.php'))
+{	
 	include $tpl;
+}
 else
+{
 	include 'includes/index.php';
+}

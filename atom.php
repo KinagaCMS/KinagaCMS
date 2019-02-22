@@ -10,7 +10,7 @@ if ($atom_files)
 	$xml = new DOMDocument('1.0', $encoding);
 	echo $xml->saveXML(),
 	'<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', $lang, '">', $n,
-	'<title type="text">', $site_name, '</title>', $n .
+	'<title type="text">', $site_name, '</title>', $n,
 	'<updated>', date(DATE_ATOM, getlastmod()), '</updated>', $n,
 	'<id>', $url, '</id>', $n,
 	'<link rel="alternate" type="text/html" hreflang="', $lang, '" href="', $url, '" />', $n,
@@ -44,7 +44,6 @@ if ($atom_files)
 			$atom_link_title = h($atom_title);
 			$id = $url. r($atom_title);
 		}
-
 		if (is_dir($atom_imgs_dir = 'contents/'. $atom_categ. '/'. $atom_title. '/images'))
 		{
 			if ($glob_atom_imgs = glob($atom_imgs_dir. '/*'))
@@ -55,7 +54,6 @@ if ($atom_files)
 		}
 		else
 			$atom_image = '';
-
 		if (is_dir($atom_background_imgs_dir = 'contents/'. $atom_categ. '/'. $atom_title. '/background-images'))
 		{
 			if ($glob_atom_background_imgs = glob($atom_background_imgs_dir. '/*'))
@@ -66,12 +64,11 @@ if ($atom_files)
 		}
 		else
 			$atom_background_image = '';
-
 		echo
-		'<entry>', $n .
+		'<entry>', $n,
 		'<title>', $atom_link_title, '</title>', $n,
 		'<link rel="alternate" type="text/html" href="', $id, '" />', $n,
-		'<id>', $id, '</id>', $n .
+		'<id>', $id, '</id>', $n,
 		'<updated>', date(DATE_ATOM, $atom_filetime), '</updated>', $n,
 		'<content type="xhtml" xml:lang="', $lang, '">', $n,
 		'<div xmlns="http://www.w3.org/1999/xhtml">', $n,
@@ -82,7 +79,6 @@ if ($atom_files)
 		'<author><name>', $site_name, '</name></author>', $n,
 		'</entry>', $n;
 		++$i;
-
 	}
 	echo '</feed>';
 }

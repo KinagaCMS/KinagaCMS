@@ -113,7 +113,7 @@ function get_dirs($dir, $nosort=true)
 function get_summary($file)
 {
 	global $summary_length, $encoding, $n, $ellipsis;
-	error_reporting(~E_NOTICE);
+	error_reporting(~E_NOTICE && ~E_WARNING);
 	ob_start();
 	include $file;
 	$text = ob_get_clean();
@@ -219,15 +219,14 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 function img($src, $class='', $comment=true, $thumbnail=true)
 {
 	global $url, $source, $n, $get_title, $get_page, $use_thumbnails, $line_breaks;
-	$info = pathinfo($src);
-
-	if (isset($info['extension']))
+	if ($extension = get_extension($src))
 	{
-		if ($scheme = strpos($src, '://'))
-			$addr = parse_url($src);
-		$extension = strtolower($info['extension']);
-		if (array_search($extension, array('gif', 'jpg', 'jpeg', 'png', 'svg')) !== false)
+		$image_extensions = array('.gif', '.jpg', '.jpeg', '.png', '.svg');
+		$video_extensions = array('.mp4', '.ogg', '.webm');
+		if ($scheme = strpos($src, '://')) $addr = parse_url($src);
+		if (array_search($extension, $image_extensions) !== false)
 		{
+			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
 			$exif_thumbnail = isset($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
 			$exif_comment = isset($exif['COMMENT']) && $comment ? str_replace($line_breaks, '&#10;', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
@@ -235,40 +234,69 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			if ($get_title || $get_page)
 			{
 				if ($use_thumbnails && $exif_thumbnail && $thumbnail)
-					$img = '<img class="align-top '. $class. ' img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. h(basename($src)). '">';
+					$img = '<img class="align-top '. $class. ' img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '">';
 				else
 					$img = $exif_comment ?
-						'<figure class="align-top img-thumbnail text-center d-inline-block mb-5"><img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '"><p class="text-center wrap my-2">'. $exif_comment. '</p></figure>'. $n :
-						'<img class="img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '">'. $n;
+					'<figure class="align-top img-thumbnail text-center d-inline-block mb-5 nowrap">'. $n.
+					'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '">'. $n.
+					'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
+					'</figure>'. $n :
+					'<img class="img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '">'. $n;
 				if ($scheme !== false)
-					return '<figure class="img-thumbnail text-center d-inline-block '. $class. '"><a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '"><img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. h(basename($src)). '"></a><small class="blockquote-footer my-2 text-right"><a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a></small></figure>'. $n;
+					return
+					'<figure class="img-thumbnail text-center d-inline-block nowrap '. $class. '">'. $n.
+					'<a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '">'. $n.
+					'<img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '">'. $n.
+					'</a>'. $n.
+					'<small class="blockquote-footer my-2 text-right">'. $n.
+					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
+					'</small>'. $n.
+					'</figure>'. $n;
 				else
 				{
 					$expand = strpos($class, 'expand') !== false ? ' class=expand' : '';
-					return $exif_comment ?
-						'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false" title="'. $exif_comment. '"'. $expand. '>'. $img. '</a> '. $n :
-						'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false"'. $expand. '>'. $img. '</a> '. $n;
+					return
+					$exif_comment ?
+					'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false" title="'. $exif_comment. '"'. $expand. '>'. $img. '</a> '. $n :
+					'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false"'. $expand. '>'. $img. '</a> '. $n;
 				}
 			}
 			else
 			{
 				$dirname = dirname(dirname($src));
 				$img_size = @getimagesize($src);
-				return '<a href="'. $url. r(basename(dirname($dirname)). '/'. basename($dirname)). '"><img class="d-block mx-auto img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. h(basename($src)). '"'. (isset($img_size[0]) && $img_size[0] < 450 ? ' style="width:'. $img_size[0]. 'px"' : ''). '></a>';
+				return
+				'<a href="'. $url. r(basename(dirname($dirname)). '/'. basename($dirname)). '">'. $n.
+				'<img class="d-block mx-auto img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '"'. (isset($img_size[0]) && $img_size[0] < 450 ? ' style="width:'. $img_size[0]. 'px"' : ''). '>'. $n.
+				'</a>';
 			}
 		}
-		elseif (array_search($extension, array('mp4', 'ogg', 'webm')) !== false)
+		elseif (array_search($extension, $video_extensions) !== false)
 		{
-			$vtt = str_replace($extension, 'vtt', $src);
+			$vtt = str_replace($extension, '.vtt', $src);
 			if ($get_title || $get_page)
 			{
 				if ($scheme !== false)
-					return '<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '"><video controls preload=none><source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '"><track src="'. str_replace($extension, 'vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '"></video><small class="blockquote-footer my-2 text-right"><a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a></small></figure>'. $n;
+					return
+					'<figure class="align-top img-thumbnail text-center d-inline-block nowrap '. $class. '">'. $n.
+					'<video controls preload=none>'. $n.
+					'<source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '">'. $n.
+					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '" default=default>'. $n.
+					'</video>'. $n.
+					'<small class="blockquote-footer my-2 text-right">'. $n.
+					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
+					'</small>'. $n.
+					'</figure>'. $n;
 				else
-					return '<a href="'. $url. r($src). '" class="sr-only mfp-iframe">video-iframe</a><video class="align-top img-thumbnail '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '"></video>';
+					return
+					'<a href="'. $url. r($src). '" class="sr-only mfp-iframe">video-iframe</a>'. $n.
+					'<video class="align-top img-thumbnail '. $class. '" controls preload=none>'. $n.
+					'<source src="'. $url. r($src). '">'. $n.
+					'<track src="'. $url. r($vtt). '" default=default>'. $n.
+					'</video>';
 			}
 			else
-				return '<video class="align-top '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '"></video>'. $n;
+				return '<video class="align-top '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>'. $n;
 		}
 	}
 }
@@ -464,4 +492,10 @@ function get_uri($uri, $get)
 function sort_time($a, $b)
 {
 	return filemtime($a) < filemtime($b);
+}
+
+function get_extension($f)
+{
+	$info = pathinfo($f);
+	if (isset($info['extension'])) return '.'. strtolower($info['extension']);
 }

@@ -13,9 +13,9 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		{
 			if (list($width, $height) = @getimagesize($background_images))
 			{
-				$info = pathinfo($background_images);
+				$extention = get_extension($background_images);
 				$exif = @exif_read_data($background_images, '', '', true);
-				$classname = '.'. basename($background_images, '.'. $info['extension']);
+				$classname = '.'. basename($background_images, $extention);
 				$aspect = round($height / $width * 100, 1);
 				$header .= '@media(max-width:'. ($width * 1.5). 'px){'. $classname. '{'. ($height > 400 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}}'. $classname. '{max-width:'. $width. 'px;background-image:url('. $url. r($background_images). ');background-size:100%;background-repeat:no-repeat;'. ($height > 1000 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}'. (isset($exif['COMMENT']) ? $classname. ':after{background-color:rgba(0,0,0,.3);color:white;content:"'. str_replace($line_breaks, '\00a', h(trim(strip_tags($exif['COMMENT'][0])))). '";display:block;line-height:1.1;padding:.7% 1%;word-wrap:break-word;white-space:pre-wrap}' : '');
 			}
@@ -31,8 +31,8 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		{
 			if (list($width, $height) = @getimagesize($popup_images))
 			{
-				$info = pathinfo($popup_images);
-				$classname = basename($popup_images, '.'. $info['extension']);
+				$extention = get_extension($popup_images);
+				$classname = basename($popup_images, $extention);
 				$footer .= '$("#'. $classname. '").attr("data-html", true).attr("title", "<img src=\"'. $url. r($popup_images). '\" style=\"max-width:600px\">").tooltip();';
 			}
 		}

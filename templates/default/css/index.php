@@ -34,7 +34,7 @@ if ($color)
 header('Content-Type: text/css; charset='. $encoding);
 header('Last-Modified: '. $last_modified);
 
-if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified)	header('HTTP/1.1 304 Not Modified');
+if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified) header('HTTP/1.1 304 Not Modified');
 
 echo
 $bootstrap,
@@ -102,7 +102,7 @@ if ($use_auto_wrap === true) echo '
 else echo '.page-top{padding-top:2rem!important;margin-bottom:2rem!important}';
 
 if ($color) echo '
-.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{background-color:'. hsla($color, 0, 0, .05). ';border-color:#dee2e6 #dee2e6 inherit!important}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{background-color:'. hsla($color, 0, 0, .05). '}
 ::selection, .highlight, .comment:target{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
 ::-moz-selection, .highlight, .comment:target{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
 ';

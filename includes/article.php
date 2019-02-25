@@ -22,18 +22,18 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		}
 		$header .= '</style>'. $n;
 	}
-	if (is_dir($popup_images_dir = $current_article_dir. '/popup-images') && $glob_popup_images = glob($popup_images_dir. '/*', GLOB_NOSORT))
+	if (is_dir($tooltip_images_dir = $current_article_dir. '/tooltip-images') && $glob_tooltip_images = glob($tooltip_images_dir. '/*', GLOB_NOSORT))
 	{
-		$header .= '<style>.tooltip-inner{max-width:inherit}</style>';
+		$tooltip_color = $color ? hsla($color) : 'black';
+		$header .= '<style>.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';max-width:inherit}</style>';
 		$footer .= '<script>';
-
-		foreach($glob_popup_images as $popup_images)
+		foreach($glob_tooltip_images as $tooltip_images)
 		{
-			if (list($width, $height) = @getimagesize($popup_images))
+			if (list($width, $height) = @getimagesize($tooltip_images))
 			{
-				$extention = get_extension($popup_images);
-				$classname = basename($popup_images, $extention);
-				$footer .= '$("#'. $classname. '").attr("data-html", true).attr("title", "<img src=\"'. $url. r($popup_images). '\" style=\"max-width:600px\">").tooltip();';
+				$extention = get_extension($tooltip_images);
+				$id = basename($tooltip_images, $extention);
+				$footer .= '$("#'. $id. '").attr({"style":"border-bottom:thin dotted;cursor:pointer"}).tooltip({html:true,placement:"auto",title:"<img src=\"'. $url. r($tooltip_images). '\" class=\"img-fluid rounded\">"});';
 			}
 		}
 		$footer .= '</script>'. $n;

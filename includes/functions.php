@@ -497,5 +497,5 @@ function sort_time($a, $b)
 function get_extension($f)
 {
 	$info = pathinfo($f);
-	if (isset($info['extension'])) return '.'. strtolower($info['extension']);
+	if (isset($info['extension'])) return '.'. $info['extension'];
 }

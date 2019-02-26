@@ -38,22 +38,22 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<td colspan=2 class=text-center><strong class=text-danger>'. $cookie_disabled_error. '</strong></td>'. $n.
 		'</tr>'. $n.
 		'<tr>'. $n.
-		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
-		'<td><button disabled class="btn btn-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-outline-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
 	{
 		$_SESSION['token'] = $token;
 		$article .=
 		'<tr>'. $n.
-		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-outline-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
 		'<td>'. $n.
 		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. '/'. $get_title. '#form_result' : r($contact_us)). '">'. $n.
 		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'. $n.
 		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
 		'<input type=hidden name=token value="'. $token. '">'. $n.
 		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'. $n.
-		'<button name=send type=submit class="btn btn-success btn-lg btn-block" tabindex=7 accesskey=z>'. $contact_send. '</button>'. $n.
+		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" tabindex=7 accesskey=z>'. $contact_send. '</button>'. $n.
 		'</form>'. $n.
 		'</td>'. $n.
 		'</tr>';
@@ -61,8 +61,8 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	else
 		$article .=
 		'<tr>'. $n.
-		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
-		'<td><button disabled class="btn btn-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
+		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-outline-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
 		'</tr>';
 	$article .=
 	'</table>'. $n;

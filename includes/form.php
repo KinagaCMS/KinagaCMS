@@ -16,7 +16,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	$filtered_preview_message = str_replace($line_breaks, $n, $filtered_previews['message']);
 
 	$article .=
-	'<table id=preview class="table mb-5">'. $n.
+	'<table id=preview class="table mb-5 text-primary">'. $n.
 	'<tr class="table-active text-center"><th colspan=2>'. $contact_preview. '</th></tr>'. $n.
 	'<tr>'. $n.
 	'<th class=w-25>'. $contact_name. '</th>'. $n.

@@ -77,13 +77,13 @@ elseif ($dl && $page_name === $download_contents)
 		if ($dls_number > $number_of_downloads)
 			pager($max_pages, $page_ceil);
 
-		$article .= '<div class="list-group list-group-flush">';
+		$article .= '<div class=list-group>';
 
 		for($i = 0, $c = count($dls_in_page); $i < $c; ++$i)
 		{
 			$dl_uri = explode('-~-', $dls_in_page[$i]);
 			$article .=
-			'<a class="list-group-item bg-gradient-primary" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
+			'<a class="list-group-item bg-transparent" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
 			'<span class=mr-3>'. date($time_format, $dl_uri[0]). '</span>'. $n.
 			'<span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.
 			'<span class=mr-3>'. $dl_uri[2]. '</span>'. $n.

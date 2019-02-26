@@ -25,7 +25,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	if (is_dir($tooltip_images_dir = $current_article_dir. '/tooltip-images') && $glob_tooltip_images = glob($tooltip_images_dir. '/*', GLOB_NOSORT))
 	{
 		$tooltip_color = $color ? hsla($color) : 'black';
-		$header .= '<style>.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';max-width:inherit}</style>';
+		$header .= '<style>.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';padding:2px;max-width:inherit}</style>';
 		$footer .= '<script>';
 		foreach($glob_tooltip_images as $tooltip_images)
 		{

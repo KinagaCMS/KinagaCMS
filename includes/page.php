@@ -14,7 +14,7 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 	include $pages_file;
 	$pages_content = trim(ob_get_clean());
 	$header .= '<meta name=description content="'. get_description($pages_content). '">'. $n;
-	$article .= '<div class="article px-2 mb-5">'. $pages_content. '</div>'. $n;
+	$article .= '<div class="article px-2 mb-5 clearfix">'. $pages_content. '</div>'. $n;
 
 	if ($use_social)
 		social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));

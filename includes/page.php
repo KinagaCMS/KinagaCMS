@@ -42,7 +42,7 @@ elseif ($dl && $page_name === $download_contents)
 		header('Content-Length: '. filesize($dl_file));
 		header('Content-Type: '. mime_content_type($dl_file));
 
-		if (strpos($user_agent_lang, 'ja') !== false && strpos($user_agent, 'MSIE') !== false || strpos($user_agent, 'rv:11.0') !== false)
+		if (strpos($user_agent_lang, 'ja') !== false && strpos($user_agent, 'MSIE') !== false || strpos($user_agent, 'rv:11.0') !== false || strpos($user_agent, 'Edge') !== false)
 		{
 			header('X-Download-Options: noopen');
 			header('Content-Disposition: attachment; filename="'. mb_convert_encoding($dl_name, $encoding_win, $encoding). '"');

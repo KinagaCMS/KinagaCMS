@@ -25,7 +25,7 @@
 </div>
 </div>
 <footer class=text-center>
-<a href="#TOP" id=page-top class="btn btn-outline-primary">&uarr;</a>
+<a href="#TOP" id=page-top class="btn btn-outline-primary pb-3">&uarr;</a>
 <script src="<?=$js?>"></script>
 <?=$footer?>
 </footer>

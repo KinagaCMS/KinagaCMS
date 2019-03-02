@@ -49,7 +49,7 @@ if ($use_search)
 include 'sideboxes.php';
 
 $footer .=
-'<small><span class="text-muted text-center">&copy; '. date('Y'). ' '. $site_name. '. Powered by kinaga.</span></small>'. $n;
+'<small><span class="text-muted text-center">&copy; '. date('Y'). ' '. $site_name. '. Powered by <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 137.97 106.13" width="1em"><title>K</title><g transform="translate(-391.01 -556.44)"><path fill="currentColor" d="m391.01 556.44h42.453v21.227l-35.355 26.533 7.0314 5.3064 28.324-21.227 42.453-31.84h53.064l-63.681 53.064 63.681 53.064h-53.064l-42.453-31.84-28.324-21.227-7.0314 5.3064 35.355 26.533v21.227h-42.453v-42.453l7.0978-5.3064-7.0978-5.3064 7.0978-5.3065-7.0978-5.3064v-42.453z"/></g></svg>inaga.</span></small>'. $n;
 if ($use_benchmark === true)
 	$footer .= sprintf($benchmark_results, round(microtime(true) - $time_start, 6), size_unit(memory_get_usage() - $base_mem));
 $header .=

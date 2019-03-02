@@ -24,8 +24,8 @@
 <div class=col-lg-3><?=$aside?></div>
 </div>
 </div>
-<footer class=text-center>
-<a href="#TOP" id=page-top class="btn btn-outline-primary pb-3">&uarr;</a>
+<footer class="text-center pb-3">
+<a href="#TOP" id=page-top class="btn btn-outline-primary">&uarr;</a>
 <script src="<?=$js?>"></script>
 <?=$footer?>
 </footer>

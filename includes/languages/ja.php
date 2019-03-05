@@ -222,9 +222,9 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 	}
 	elseif ($colour === '茶')
 	{
-		$h = 40;
-		$s = 40;
-		$l = 35;
+		$h = 10;
+		$s = 70;
+		$l = 50;
 	}
 	elseif ($colour === '黄緑')
 	{

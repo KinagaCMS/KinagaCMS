@@ -201,7 +201,7 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 		$s = 70;
 		$l = 50;
 	}
-		elseif ($colour === 'สีชมพู')
+	elseif ($colour === 'สีชมพู')
 	{
 		$h = 330;
 		$s = 70;
@@ -209,9 +209,9 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 	}
 	elseif ($colour === 'สีน้ำตาล')
 	{
-		$h = 40;
-		$s = 40;
-		$l = 35;
+		$h = 10;
+		$s = 70;
+		$l = 50;
 	}
 	elseif ($colour === 'สีเขียวเหลือง')
 	{
@@ -231,7 +231,7 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 		$s = 60;
 		$l = 60;
 	}
-		elseif ($colour === 'สีฟ้า')
+	elseif ($colour === 'สีฟ้า')
 	{
 		$h = 195;
 		$s = 60;

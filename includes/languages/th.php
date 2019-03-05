@@ -1,7 +1,5 @@
 <?php
 /*
- * @copyright  Copyright (C) 2017 Gari-Hari LLC. All rights reserved.
- * @license    GPL 3.0 or later; see LICENSE file for details.
  * @author     Translate by Goragod Wiriya http://kotchasan.com
  */
 
@@ -76,7 +74,8 @@ $for_wiki = 'Wiki';
 $for_forum = 'Forum';
 
 // Separator
-$top = '<a class="text-primary page-top" href="#TOP"><span class="glyphicon glyphicon-chevron-up"></span></a>';
+$top = '<a class="page-top text-right d-block p-0 small" href="#TOP"> </a>';
+$pagetop = 'Go to Top';
 
 $last_modified = 'อัปเดท: %s';
 

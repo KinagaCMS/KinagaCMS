@@ -148,5 +148,5 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 else
 {
 	$header .= '<title>'. $site_name. '</title>'. $n;
-	$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 mt-2 mx-auto d-block" style="opacity:.2">';
+	$footer .= '<img src="'. $url. 'images/icon.php" class="d-block w-50 mb-5 mx-auto d-block" style="opacity:.2">';
 }

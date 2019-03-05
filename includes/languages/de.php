@@ -202,7 +202,7 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 		$s = 70;
 		$l = 50;
 	}
-		elseif ($colour === 'Rosa')
+	elseif ($colour === 'Rosa')
 	{
 		$h = 330;
 		$s = 70;
@@ -210,9 +210,9 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 	}
 	elseif ($colour === 'Braun')
 	{
-		$h = 40;
-		$s = 40;
-		$l = 35;
+		$h = 10;
+		$s = 70;
+		$l = 50;
 	}
 	elseif ($colour === 'Gelbgrün')
 	{
@@ -232,7 +232,7 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 		$s = 60;
 		$l = 60;
 	}
-		elseif ($colour === 'Hellblau')
+	elseif ($colour === 'Hellblau')
 	{
 		$h = 195;
 		$s = 60;

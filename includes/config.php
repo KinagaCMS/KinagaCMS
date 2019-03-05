@@ -6,8 +6,8 @@ $template = 'default';
 $social_medias = array('facebook', 'twitter', 'hatena', 'line');
 
 #!contents/index.html and set 1 to 4
-$index_type = 4;
-#Links per category
+$index_type = 2;
+#if set 2 to 4, set the number of links in each category
 $index_items = 5;
 
 ##########################
@@ -83,7 +83,7 @@ $number_of_results = 5;
 $number_of_feeds = 10;
 
 
-#Article images
+#Sets the number of images per page in Article
 $number_of_images = 10;
 
 #Comments

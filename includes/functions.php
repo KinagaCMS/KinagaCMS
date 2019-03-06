@@ -224,7 +224,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 		$image_extensions = array('.gif', '.jpg', '.jpeg', '.png', '.svg');
 		$video_extensions = array('.mp4', '.ogg', '.webm');
 		if ($scheme = strpos($src, '://')) $addr = parse_url($src);
-		if (array_search($extension, $image_extensions) !== false)
+		if (array_search(strtolower($extension), $image_extensions) !== false)
 		{
 			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
@@ -271,7 +271,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 				'</a>';
 			}
 		}
-		elseif (array_search($extension, $video_extensions) !== false)
+		elseif (array_search(strtolower($extension), $video_extensions) !== false)
 		{
 			$vtt = str_replace($extension, '.vtt', $src);
 			if ($get_title || $get_page)

@@ -416,7 +416,7 @@ function get_logo()
 {
 	global $site_name, $url;
 	if (is_file($logo = 'images/logo.png'))
-		return '<img src="'. $url. $logo. '" alt="'. $site_name. '">';
+		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '">';
 	else
 		return $site_name;
 }

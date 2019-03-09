@@ -83,6 +83,8 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 ## ライセンス
 -  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)
 
+---
+
 ## 今後の課題
 
 - 導入事例

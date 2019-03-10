@@ -150,7 +150,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					$similar = explode('-~-', $similar_article[$i]);
 					$article .=
 					'<div class="progress similar-article mb-2">'. $n.
-					'<a class="progress-bar progress-bar-striped bg-primary" style="width:'. $similar[0]. '%" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a>'. $n.
+					'<span class="progress-bar progress-bar-striped bg-primary" style="position:relative;width:'. $similar[0]. '%"><a class="p-2 text-white" style="position:absolute" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a></span>'. $n.
 					'</div>';
 				}
 				$article .= '</section>';

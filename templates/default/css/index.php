@@ -41,7 +41,7 @@ $bootstrap,
 file_get_contents('magnific-popup.min.css'), '
 #kinaga{width:2.1em;vertical-align:text-top}
 #kinaga:hover{cursor:pointer;fill-opacity:.6}
-#page-top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
+#page-top{bottom:.8em;position:fixed;right:.8em;display:none;z-index:10}
 #page-top svg{width:1em}
 .article{font-size:large;line-height:1.8}
 .badge-light{background-color:#f8f9fa}
@@ -72,7 +72,7 @@ body{color:#888}
 time:before{content:"\25F7\0020";font-size:large;vertical-align:0}
 h1,h2,h3,h4,h5,h6{border-bottom:thin dotted;padding:.1em}
 .breadcrumb-item+.breadcrumb-item:before{content:">"}
-@media(max-width:767px){.card-columns{column-count:1}}
+@media(max-width:991px){input[type="search"]{margin-top:1em}.card-columns{column-count:1}}
 ';
 if ($use_auto_wrap === true) echo '
 .article,.card-text

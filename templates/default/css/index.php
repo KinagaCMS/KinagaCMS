@@ -39,7 +39,10 @@ if (filter_input(INPUT_SERVER, 'HTTP_IF_MODIFIED_SINCE') === $last_modified) hea
 echo
 $bootstrap,
 file_get_contents('magnific-popup.min.css'), '
+#kinaga{width:2.1em;vertical-align:text-top}
+#kinaga:hover{cursor:pointer;fill-opacity:.6}
 #page-top{bottom:1em;position:fixed;right:2em;display:none;z-index:10}
+#page-top svg{width:1em}
 .article{font-size:large;line-height:1.8}
 .badge-light{background-color:#f8f9fa}
 .bg-danger.text-danger{background-color:#f2dede!important;color:#a94442!important}

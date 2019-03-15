@@ -150,7 +150,7 @@ else
 	$header .= '<title>'. $site_name. '</title>'. $n;
 	if (!glob('contents/*.html', GLOB_NOSORT))
 	{
-		$header .= '<style>.container-fluid{display:none}</style>'. $n;
+		$header .= '<style>.container-fluid,#wrapper{display:none!important}</style>'. $n;
 		$footer .= '<img src="'. $url. 'images/icon.php" class="d-block w-50 mb-5 mx-auto d-block" style="opacity:.2">';
 	}
 }

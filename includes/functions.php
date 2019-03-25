@@ -437,23 +437,23 @@ function toc($sticky=true, $in_article=true)
 	global $header, $article, $aside, $footer, $toc, $get_title, $get_page;
 	if ($get_title || $get_page)
 	{
-		$toc_content = '<div class="list-group-item bg-primary navbar-dark d-flex justify-content-between">';
-		$toc_content .= '<a class=navbar-brand href=#TOP>'. $toc. '</a> ';
-		$toc_content .= '<button class=navbar-toggler data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=50><span class=navbar-toggler-icon></span></button>';
+		$toc_content = '<div class="list-group-item bg-primary navbar-dark d-flex align-items-center justify-content-between py-2 text-white title">';
+		$toc_content .= $toc;
+		$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=50><span class=navbar-toggler-icon></span></button>';
 		$toc_content .= '</div>';
 		$toc_content .= '<div data-spy=scroll data-target=".article" data-offset=0 id=toctoggle class="list-group-item collapse show pl-0 pr-3"></div>';
 
 		if ($in_article)
 		{
-			$header .= '<style>#toc{display:none;width:30%;overflow-x:auto}@media(max-width:768px){#toc{width:100%!important}}</style>';
-			$article .= '<div id=toc class="list-group text-truncate float-md-right'. ($sticky ? ' sticky-top' : ''). ' mb-3">';
+			$header .= '<style>#toc{display:none;overflow-x:auto}</style>';
+			$article .= '<div id=toc class="list-group text-truncate float-md-right'. ($sticky ? ' sticky-top' : ''). ' mb-5 w-100">';
 			$article .= $toc_content;
 			$article .= '</div>';
 		}
 		else
 		{
 			$header .= '<style>#toc{display:none}</style>';
-			$aside .= '<div id=toc class="list-group  '. ($sticky ? ' sticky-top' : ''). ' mb-5">';
+			$aside .= '<div id=toc class="list-group'. ($sticky ? ' sticky-top' : ''). ' mb-5">';
 			$aside .= $toc_content;
 			$aside .= '</div>';
 		}

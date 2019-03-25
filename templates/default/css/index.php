@@ -68,7 +68,7 @@ file_get_contents('magnific-popup.min.css'), '
 ::-moz-selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 ::selection,.highlight,.comment:target{background-color:#d9edf7;color:#31708f}
 a:hover img,a:hover svg,.social:hover{opacity:0.8}
-body{color:#888}
+body{color:#555555}
 time:before{content:"\25F7\0020";font-size:large;vertical-align:0}
 h1,h2,h3,h4,h5,h6{border-bottom:thin dotted;padding:.1em}
 .breadcrumb-item+.breadcrumb-item:before{content:">"}

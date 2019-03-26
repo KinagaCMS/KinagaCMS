@@ -19,7 +19,7 @@
 </nav>
 <ol class="breadcrumb rounded-0 justify-content-end"><?=$breadcrumb?></ol>
 <div class=container-fluid>
-<div class="row px-md-5">
+<div class="row px-md-3">
 <div class=col-lg-9><?=$article?></div>
 <div class=col-lg-3><?=$aside?></div>
 </div>

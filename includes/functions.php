@@ -376,21 +376,17 @@ function pager($num, $max)
 	'</ul>'. $n;
 }
 
-function sideless($hide = false)
+function sideless($hide=false, $force=false)
 {
-	global $header, $tpl_dir, $get_title, $get_page;
-	if ($get_title || $get_page)
+	global $header, $get_title, $get_page;
+	if ($get_title || $get_page || $force)
 	{
-		if (preg_match_all('/col-lg-(\d{1,2})/', file_get_contents($tpl_dir. 'index.php'), $m))
-		{
-			$header .= '<style>';
-			foreach($m[0] as $k => $v)
-			{
-				if ($hide && $m[1][$k] === min($m[1])) $header .= ".$v{display:none}";
-				else $header .= ".$v{max-width:100%;flex:0 0 100%}";
-			}
-			$header .= '</style>';
-		}
+		$header .= '<style>';
+		if ($hide)
+			$header .= '#side{display:none}#main{max-width:100%;flex:0 0 100%}';
+		else
+			$header .= '#main,#side{max-width:100%;flex:0 0 100%}';
+		$header .= '</style>';
 	}
 }
 

@@ -20,8 +20,8 @@
 <ol class="breadcrumb rounded-0 justify-content-end"><?=$breadcrumb?></ol>
 <div class=container-fluid>
 <div class="row px-md-3">
-<div class=col-lg-9><?=$article?></div>
-<div class=col-lg-3><?=$aside?></div>
+<div id=main class=col-lg-9><?=$article?></div>
+<div id=side class=col-lg-3><?=$aside?></div>
 </div>
 </div>
 <footer class="text-center pb-3">

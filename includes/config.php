@@ -3,10 +3,10 @@
 $template = 'default';
 
 #See includes/social.php
-$social_medias = array('facebook', 'twitter', 'hatena', 'line');
+$social_medias = ['facebook', 'twitter', 'hatena', 'line'];
 
 #!contents/index.html and set 1 to 4
-$index_type = 2;
+$index_type = 3;
 #if set 2 to 4, set the number of links in each category
 $index_items = 5;
 
@@ -48,6 +48,9 @@ $use_popular_articles = true;
 
 #Show Thumbnails
 $use_thumbnails = true;
+
+#Show Thumbnails in categ
+$use_categ_thumbnails = true;
 
 #Show Similar articles
 $use_similars = true;
@@ -125,7 +128,7 @@ $addslash = $dir !== '/' ? '/' : '';
 $script = $dir. $addslash;
 $scheme = is_ssl() ? 'https://' : 'http://';
 $url = $scheme. $server. $port. $script;
-$line_breaks = array("\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;');
+$line_breaks = ["\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;'];
 $remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
 $user_agent = h(getenv('HTTP_USER_AGENT'));
 $user_agent_lang = h(getenv('HTTP_ACCEPT_LANGUAGE'));

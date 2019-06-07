@@ -9,7 +9,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	{
 		$header .= '<style>';
 
-		foreach($glob_background_images as $background_images)
+		foreach ($glob_background_images as $background_images)
 		{
 			if (list($width, $height) = @getimagesize($background_images))
 			{
@@ -27,7 +27,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		$tooltip_color = $color ? hsla($color) : 'black';
 		$header .= '<style>.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';padding:2px;max-width:inherit}</style>';
 		$footer .= '<script>';
-		foreach($glob_tooltip_images as $tooltip_images)
+		foreach ($glob_tooltip_images as $tooltip_images)
 		{
 			if (list($width, $height) = @getimagesize($tooltip_images))
 			{
@@ -83,7 +83,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 
 		$article .= '<div class="gallery text-center">'. $n;
 		for($i = 0, $c = count($images_in_page); $i < $c; ++$i)
-			$article .= img($images_in_page[$i]);
+			$article .= img($images_in_page[$i], '', true);
 		$article .= '</div>'. $n;
 
 		if ($glob_images_number > $number_of_images)
@@ -93,7 +93,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	if ($glob_prev_next = glob('contents/'. $categ_name. '/*/index.html', GLOB_NOSORT))
 	{
 		$similar_article = [];
-		foreach($glob_prev_next as $prev_next)
+		foreach ($glob_prev_next as $prev_next)
 		{
 			$similar_titles = get_title($prev_next);
 			similar_text($title_name, $similar_titles, $percent);
@@ -173,7 +173,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		{
 			rsort($glob_comment_files);
 
-			foreach($glob_comment_files as $comment_files)
+			foreach ($glob_comment_files as $comment_files)
 			{
 				$pos_comment_files = stripos($comment_files, '-~-');
 

@@ -36,11 +36,11 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 
 1.  /includes/config.php
 
-　　テンプレート、表示言語、文字コードなどを設定することができます
+　　テンプレート、表示言語、文字コードなどを設定
 
 2.  /includes/languages/○○.php
 
-　　サイト名やメールアドレス、テーマカラーなどを設定することができます
+　　サイト名、メールアドレス、テーマカラーなどを設定
 
 ---
 
@@ -83,14 +83,4 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 ## ライセンス
 -  [GPL v3](https://github.com/KinagaCMS/KinagaCMS/blob/master/LICENSE)
 
----
 
-## 今後の課題
-
-- 導入事例
-
-- [daddy テンプレート](https://github.com/KinagaCMS/templates/tree/master/daddy) のようなアマチュアっぽいデザインを多数募集する
-
-- 現行、翻訳サイトを利用して作成した他言語の精度向上と未対応言語の追加
-
-- 現在、日本語ドメインへの対応を確認するため、「 (https://紀永.がりはり.com/) 」でデモサイトを公開しているものの、Github における Organization profile の URL を Verified にするのに必要な DNS TXT レコードが「お名前.com」では日本語ドメインに対応していなかったことから、「[.dev](https://get.dev/)」などのドメイン取得やサーバー移転を検討すると同時に、それらの費用が捻出できなくなった場合に、サービス停止もしくは[連絡不能開発者](https://jvn.jp/reply/index.html)とならないようにするにはどうすればよいかを考える

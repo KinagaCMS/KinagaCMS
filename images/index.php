@@ -49,7 +49,7 @@ else
 		$img = explode('-~-', $image);
 		$info = pathinfo($img[1]);
 		$formats = strtolower($info['extension']);
-		$extensions = array('gif', 'jpg', 'jpeg', 'png', 'svg', 'pdf', 'mp4', 'ogg', 'webm');
+		$extensions = ['gif', 'jpg', 'jpeg', 'png', 'svg', 'pdf', 'mp4', 'ogg', 'webm'];
 
 		if (array_search($formats, $extensions) !== false)
 		{

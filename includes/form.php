@@ -5,11 +5,11 @@ session($session_name);
 
 if (filter_has_var(INPUT_POST, 'preview'))
 {
-	$previews = array(
+	$previews = [
 		'name' => FILTER_SANITIZE_STRIPPED,
 		'email' => FILTER_VALIDATE_EMAIL,
 		'message' => FILTER_SANITIZE_SPECIAL_CHARS
-	);
+	];
 	$filtered_previews = filter_input_array(INPUT_POST, $previews);
 	$filtered_preview_name = trim($filtered_previews['name']);
 	$filtered_preview_email = trim($filtered_previews['email']);
@@ -39,7 +39,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'</tr>'. $n.
 		'<tr>'. $n.
 		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-outline-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" accesskey=z>'. $contact_send. '</button></td>'. $n.
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
 	{
@@ -53,7 +53,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
 		'<input type=hidden name=token value="'. $token. '">'. $n.
 		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'. $n.
-		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" tabindex=7 accesskey=z>'. $contact_send. '</button>'. $n.
+		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" accesskey=z>'. $contact_send. '</button>'. $n.
 		'</form>'. $n.
 		'</td>'. $n.
 		'</tr>';
@@ -62,7 +62,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		$article .=
 		'<tr>'. $n.
 		'<td><a onclick="$(\'#preview\').hide()" href=#comment class="btn btn-outline-warning btn-lg btn-block">'. $contact_cancel. '</a></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" tabindex=7 accesskey=z>'. $contact_send. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block disabled" accesskey=z>'. $contact_send. '</button></td>'. $n.
 		'</tr>';
 	$article .=
 	'</table>'. $n;
@@ -71,11 +71,11 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 {
 	if (isset($_SESSION['token']) && filter_has_var(INPUT_POST, 'token') && $_SESSION['token'] === $_POST['token'])
 	{
-		$sendings = array(
+		$sendings = [
 			'preview_name' => FILTER_SANITIZE_STRIPPED,
 			'preview_email' => FILTER_SANITIZE_STRIPPED,
 			'preview_message' => FILTER_SANITIZE_STRIPPED
-		);
+		];
 
 		$filtered_sendings = filter_input_array(INPUT_POST, $sendings);
 		$filtered_sending_name = $filtered_sendings['preview_name'];
@@ -161,16 +161,16 @@ $article .=
 '<div class=form-row>'. $n.
 '<div class="form-group col-md-6">'. $n.
 '<label for=e1 class="sr-only control-label">'. $contact_name. '</label>'. $n.
-'<input required id=e1 name=name type=text value="'. $filtered_preview_name. '" class=form-control tabindex=3 accesskey=n placeholder="'. $contact_name. '">'. $n.
+'<input required id=e1 name=name type=text value="'. $filtered_preview_name. '" class=form-control accesskey=n placeholder="'. $contact_name. '">'. $n.
 '</div>'. $n.
 '<div class="form-group col-md-6">'. $n.
 '<label for=e2 class="sr-only control-label">'. $contact_mail. '</label>'. $n.
-'<input required id=e2 name=email type=email value="'. $filtered_preview_email. '" class=form-control tabindex=4 accesskey=m placeholder="'. $contact_mail. '">'. $n.
+'<input required id=e2 name=email type=email value="'. $filtered_preview_email. '" class=form-control accesskey=m placeholder="'. $contact_mail. '">'. $n.
 '</div>'. $n.
 '<div class="form-group col-md-12">'. $n.
 '<label for=e4 class="sr-only control-label">'. $contact_message. '</label>'. $n.
-'<textarea required id=e4 name=message class=form-control tabindex=5 accesskey=t rows=10 placeholder="'. $contact_message. '">'. $filtered_preview_message. '</textarea>'. $n.
-'<button name=preview type=submit class="btn btn-outline-primary float-right mt-3" tabindex=6 accesskey=s id=contact-preview>'. $contact_preview. '</button>'. $n.
+'<textarea required id=e4 name=message class=form-control accesskey=t rows=10 placeholder="'. $contact_message. '">'. $filtered_preview_message. '</textarea>'. $n.
+'<button name=preview type=submit class="btn btn-outline-primary float-right mt-3" accesskey=s id=contact-preview>'. $contact_preview. '</button>'. $n.
 '</div>'. $n.
 '</div>'. $n.
 '</form>'. $n;

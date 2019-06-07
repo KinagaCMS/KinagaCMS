@@ -16,24 +16,23 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 	}
 	if ($categ_contents_number > 0)
 	{
-		for($i = 0; $i < $categ_contents_number; ++$i)
-			$articles_sort[] = is_file($article_files = $current_categ. '/'. $categ_contents[$i]. '/index.html') ? filemtime($article_files). '-~-'. $article_files : '';
+		foreach ($categ_contents as $articles_name)
+			$articles_sort[] = is_file($article_files = $current_categ. '/'. $articles_name. '/index.html') ? filemtime($article_files). '-~-'. $article_files : '';
 
 		$articles_sort = array_filter($articles_sort);
 		rsort($articles_sort);
 		$page_ceil = ceil($categ_contents_number / $number_of_categ_sections);
 		$max_pages = min($pages, $page_ceil);
-		$sections_in_categ_page = array_slice($articles_sort, ($max_pages - 1) * $number_of_categ_sections, $number_of_categ_sections);
+		$sections_in_categ = array_slice($articles_sort, ($max_pages - 1) * $number_of_categ_sections, $number_of_categ_sections);
 
 		$header .= '<title>'. $categ_title. ' - '. ($max_pages > 1 ? sprintf($page_prefix, $max_pages). ' - ' : ''). $site_name. '</title>'. $n;
 
-		if ($categ_contents_number > $number_of_categ_sections)
-			pager($max_pages, $page_ceil);
+		if ($categ_contents_number > $number_of_categ_sections) pager($max_pages, $page_ceil);
 
 		$article .= '<div class=card-columns>';
-		for($i = 0, $c = count($sections_in_categ_page); $i < $c; ++$i)
+		foreach ($sections_in_categ as $sections)
 		{
-			$articles = explode('-~-', $sections_in_categ_page[$i]);
+			$articles = explode('-~-', $sections);
 			$articles_link = explode('/', $articles[1]);
 			$categ_link = r($articles_link[1]);
 			$title_link = r($articles_link[2]);
@@ -49,50 +48,40 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			if (is_dir($default_imgs_dir = $article_dir. '/images') && $glob_default_imgs = glob($default_imgs_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 			{
 				sort($glob_default_imgs);
-				$default_image = img($glob_default_imgs[0], 'card-img-top', false, false);
+				$default_image = img($glob_default_imgs[0]);
 				$count_images = count($glob_default_imgs);
 			}
 			else
 				$default_image = $count_images = '';
 
-			if (is_dir($default_background_dir = $article_dir. '/background-images') && $glob_default_background_imgs = glob($default_background_dir. '/*', GLOB_NOSORT))
-			{
-				sort($glob_default_background_imgs);
-				$default_background_image = img($glob_default_background_imgs[0], 'card-img-top', false, false);
-				$count_background_images = count($glob_default_background_imgs);
-			}
+			if (is_dir($default_background_dir = $article_dir. '/background-images'))
+				$count_background_images = count(glob($default_background_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE));
 			else
-				$default_background_image = $count_background_images = '';
+				$count_background_images = 0;
 
-			if (is_dir($default_popup_dir = $article_dir. '/popup-images') && $glob_default_popup_imgs = glob($default_popup_dir. '/*', GLOB_NOSORT))
-				$count_popup_images = count($glob_default_popup_imgs);
+			if (is_dir($default_popup_dir = $article_dir. '/popup-images'))
+				$count_popup_images = count(glob($default_popup_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE));
 			else
 				$count_popup_images = 0;
 
-			$total_images = (int)$count_images + (int)$count_background_images + (int)$count_popup_images;
+			$total_images = (int)$count_images + $count_background_images + $count_popup_images;
+
 			$article .=
 			'<div class=card>'. $n.
-			$default_image. $default_background_image .
+			$default_image.
 			'<div class=card-body>'. $n.
-			'<time class="small card-subtitle mb-2 text-muted" datetime="'. date('c', $articles[0]). '">'. timeformat($articles[0]). '</time>' .
-			'<h2 class="h4 card-title"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($articles_link[2]);
-
+			'<h2 class="h5 card-title"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($articles_link[2]);
 			if ($total_images > 0)
 				$article .= '<small>'. sprintf($images_count_title, $total_images). '</small>';
+			$article .= '</a></h2>'. $n;
 
+			if ($use_summary) $article .= '<p class=wrap>'. get_summary($articles[1]). '</p>'. $n;
 			$article .=
-			'</a></h2>'. $n;
-			if ($use_summary)
-				$article .=
-				'<p class=wrap>'. get_summary($articles[1]). '</p>'. $n;
-			$article .= '</div>'. $n;
-			if ($counter || $comments)
-				$article .=
-				'<div class="card-footer bg-transparent">'. $n.
-				$counter. $comments.
-				'</div>'. $n;
-			$article .= '</div>'. $n;
-
+			'</div>'. $n.
+			'<div class="card-footer bg-transparent">'. $n.
+			'<time class=card-link datetime="'. date('c', $articles[0]). '">'. timeformat($articles[0]). '</time>';
+			if ($counter || $comments) $article .= $counter. $comments;
+			$article .= '</div></div>'. $n;
 		}
 		$article .= '</div>';
 

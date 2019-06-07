@@ -4,7 +4,7 @@ function r($path)
 	if (strpos($path, '%') !== false)
 		return $path;
 	else
-		return str_replace(array('%2F', '%3A'), array('/', ':'), rawurlencode($path));
+		return str_replace(['%2F', '%3A'], ['/', ':'], rawurlencode($path));
 }
 
 function d($enc)
@@ -22,14 +22,14 @@ function size_unit($size)
 {
 	if ($size > 0)
 	{
-		$unit = array('B', 'KB', 'MB', 'GB');
+		$unit = ['B', 'KB', 'MB', 'GB'];
 		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
 	}
 }
 
-function timestamp($file)
+function timestamp()
 {
-	return gmdate('D, d M Y H:i:s T', filemtime($file));
+	return gmdate('D, d M Y H:i:s T', getlastmod());
 }
 
 function is_ssl()
@@ -40,7 +40,7 @@ function is_ssl()
 
 function complementary($hsla)
 {
-	if (list($h, $s, $l, $a) = explode(',', str_replace(array(' ', 'hsla', '(', ')', '%'), '', $hsla)))
+	if (list($h, $s, $l, $a) = explode(',', str_replace([' ', 'hsla', '(', ')', '%'], '', $hsla)))
 	{
 		if ((int)$l === 10) $l = 100;
 		return 'hsla('. ($h += ($h > 180) ? -180 : 180). ', '. $s. '%, '. $l. '%, '. $a. ')';
@@ -51,7 +51,7 @@ function get_hsl($colour)
 {
 	if ($colour[0] === 'h')
 	{
-		if (list($h, $s, $l) = explode(',', str_replace(array('hsl', '(', ')', '%'), '', $colour))) return [$h, $s, $l];
+		if (list($h, $s, $l) = explode(',', str_replace(['hsl', '(', ')', '%'], '', $colour))) return [$h, $s, $l];
 	}
 	elseif ($colour[0] !== 'r')
 	{
@@ -70,7 +70,7 @@ function get_hsl($colour)
 			$b = hexdec(substr($colour, 4, 2));
 		}
 	}
-	else list($r, $g, $b) = explode(',', str_replace(array('rgb', '(', ')'), '', $colour));
+	else list($r, $g, $b) = explode(',', str_replace(['rgb', '(', ')'], '', $colour));
 	$r /= 255;
 	$g /= 255;
 	$b /= 255;
@@ -118,7 +118,7 @@ function get_summary($file)
 	include $file;
 	$text = ob_get_clean();
 	$text = strip_tags(preg_replace('/<script.*?\/script>/s', '', $text));
-	$text = str_replace(array($n. $n. $n, $n. $n), $n, $text);
+	$text = str_replace([$n. $n. $n, $n. $n], $n, $text);
 	$text = mb_strimwidth($text, 0, $summary_length, $ellipsis, $encoding);
 	return trim($text);
 }
@@ -216,13 +216,13 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 	'</a>';
 }
 
-function img($src, $class='', $comment=true, $thumbnail=true)
+function img($src, $class='', $comment=false)
 {
-	global $url, $source, $n, $get_title, $get_page, $use_thumbnails, $line_breaks;
+	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks;
 	if ($extension = get_extension($src))
 	{
-		$image_extensions = array('.gif', '.jpg', '.jpeg', '.png', '.svg');
-		$video_extensions = array('.mp4', '.ogg', '.webm');
+		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
+		$video_extensions = ['.mp4', '.ogg', '.webm'];
 		if ($scheme = strpos($src, '://')) $addr = parse_url($src);
 		if (array_search(strtolower($extension), $image_extensions) !== false)
 		{
@@ -230,44 +230,54 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			$exif = @exif_read_data($src, '', '', true);
 			$exif_thumbnail = isset($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
 			$exif_comment = isset($exif['COMMENT']) && $comment ? str_replace($line_breaks, '&#10;', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
+			list($width, $height, $type, $attr) = @getimagesize($src);
+			if ($exif_thumbnail) list($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
+
+			$img = $exif_comment ?
+				'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
+				'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+				'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
+				'</figure>'. $n
+			:
+				'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
 
 			if ($get_title || $get_page)
 			{
-				if ($use_thumbnails && $exif_thumbnail && $thumbnail)
-					$img = '<img class="align-top '. $class. ' img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '">';
-				else
-					$img = $exif_comment ?
-					'<figure class="align-top img-thumbnail text-center d-inline-block mb-5 nowrap">'. $n.
-					'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '">'. $n.
-					'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
-					'</figure>'. $n :
-					'<img class="img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '">'. $n;
 				if ($scheme !== false)
 					return
-					'<figure class="img-thumbnail text-center d-inline-block nowrap '. $class. '">'. $n.
+					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'. $n.
 					'<a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '">'. $n.
-					'<img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '">'. $n.
+					'<img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
 					'</a>'. $n.
 					'<small class="blockquote-footer my-2 text-right">'. $n.
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
 					'</small>'. $n.
 					'</figure>'. $n;
 				else
-				{
-					$expand = strpos($class, 'expand') !== false ? ' class=expand' : '';
 					return
-					$exif_comment ?
-					'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false" title="'. $exif_comment. '"'. $expand. '>'. $img. '</a> '. $n :
-					'<a class=m-1 href="'. $url. r($src). '" target="_blank" onclick="return false"'. $expand. '>'. $img. '</a> '. $n;
-				}
+					'<a class="m-1 d-inline-block'. (strpos($class, 'expand') !== false ? ' expand' : ''). '" href="'. $url. r($src). '" target="_blank" onclick="return false"'. ($exif_comment ? ' title="'. $exif_comment. '"':''). '>'.
+					($exif_thumbnail && $use_thumbnails ? '<img class="'. $class. ' align-top img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' : $img).
+					'</a> '. $n;
 			}
 			else
 			{
 				$dirname = dirname(dirname($src));
-				$img_size = @getimagesize($src);
+				switch($index_type)
+				{
+					case 2: $class .= 'd-block mx-auto rounded-circle'; break;
+					case 3: $class .= 'd-block mx-auto rounded'; break;
+					case 4: $class .= 'd-block mx-auto mr-4 rounded'; break;
+				}
 				return
 				'<a href="'. $url. r(basename(dirname($dirname)). '/'. basename($dirname)). '">'. $n.
-				'<img class="d-block mx-auto img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '"'. (isset($img_size[0]) && $img_size[0] < 450 ? ' style="width:'. $img_size[0]. 'px"' : ''). '>'. $n.
+
+				($exif_thumbnail && $use_categ_thumbnails ?
+					$get_categ || $index_type === 1 ?
+						'<span class="card-header d-block"><img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '></span>'
+					:
+						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '><img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '></span>'
+				:
+				'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '><img class="img-fluid '. $class. ' card-img-top" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '></span>'). $n.
 				'</a>';
 			}
 		}
@@ -278,7 +288,7 @@ function img($src, $class='', $comment=true, $thumbnail=true)
 			{
 				if ($scheme !== false)
 					return
-					'<figure class="align-top img-thumbnail text-center d-inline-block nowrap '. $class. '">'. $n.
+					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'. $n.
 					'<video controls preload=none>'. $n.
 					'<source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '">'. $n.
 					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '" default=default>'. $n.
@@ -460,7 +470,7 @@ function toc($sticky=true, $in_article=true)
 function unsession()
 {
 	global $url, $session_name;
-	$_SESSION = array();
+	$_SESSION = [];
 	setcookie(session_name(), '', 1);
 	session_destroy();
 	session($session_name);

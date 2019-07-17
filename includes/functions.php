@@ -237,8 +237,7 @@ function img($src, $class='', $comment=false)
 				'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
 				'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
 				'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
-				'</figure>'. $n
-			:
+				'</figure>' :
 				'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
 
 			if ($get_title || $get_page)
@@ -255,8 +254,12 @@ function img($src, $class='', $comment=false)
 					'</figure>'. $n;
 				else
 					return
-					'<a class="m-1 d-inline-block'. (strpos($class, 'expand') !== false ? ' expand' : ''). '" href="'. $url. r($src). '" target="_blank" onclick="return false"'. ($exif_comment ? ' title="'. $exif_comment. '"':''). '>'.
-					($exif_thumbnail && $use_thumbnails ? '<img class="'. $class. ' align-top img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' : $img).
+					'<a '. (strpos($class, 'expand') !== false || $exif_comment ?
+					'class="d-inline-block expand mb-2 mr-1" title="'. $exif_comment. '"' :
+					'class="d-block mb-3"'). ' href="'. $url. r($src). '" target="_blank" onclick="return false">'.
+					($exif_thumbnail && $use_thumbnails ?
+					'<img class="'. $class. ' align-top img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
+					$img).
 					'</a> '. $n;
 			}
 			else

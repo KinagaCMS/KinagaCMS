@@ -119,14 +119,14 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				$prev_href = $url. $get_categ. '/'. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
 				$header_prev = '<link rel=prev href="'. $prev_href. '">'. $n;
-				$prev_link = '<a class="btn btn-outline-primary" title="'. $prev_next_encode_title. '" href="'. $prev_href. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</a>'. $n;
+				$prev_link = '<a class="btn btn-outline-primary m-2" title="'. $prev_next_encode_title. '" href="'. $prev_href. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</a>'. $n;
 			}
 			if ((int)$prev_next_parts[0] < $article_filemtime)
 			{
 				$next_href = $url. $get_categ. '/'. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
 				$header_next = '<link rel=next href="'. $next_href. '">'. $n;
-				$article .= '<a class="float-right btn btn-outline-primary" title="'. $prev_next_encode_title. '" href="'. $next_href. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</a>'. $n;
+				$article .= '<a class="float-right btn btn-outline-primary m-2" title="'. $prev_next_encode_title. '" href="'. $next_href. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</a>'. $n;
 				break;
 			}
 		}
@@ -149,8 +149,10 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				{
 					$similar = explode('-~-', $similar_article[$i]);
 					$article .=
-					'<div class="progress similar-article mb-2">'. $n.
-					'<span class="progress-bar progress-bar-striped bg-primary" style="position:relative;width:'. $similar[0]. '%"><a class="p-2 text-white" style="position:absolute" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a></span>'. $n.
+					'<div class="mb-2 progress similar-article">'. $n.
+					'<span class="bg-primary position-relative progress-bar progress-bar-striped" style="width:'. $similar[0]. '%">'. $n.
+					'<a class="h6 p-2 position-absolute text-white" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). ' - '. $similar[0]. '%</a>'. $n.
+					'</span>'. $n.
 					'</div>';
 				}
 				$article .= '</section>';

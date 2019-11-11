@@ -113,11 +113,9 @@ function get_dirs($dir, $nosort=true)
 function get_summary($file)
 {
 	global $summary_length, $encoding, $n, $ellipsis;
-	error_reporting(~E_NOTICE && ~E_WARNING);
 	ob_start();
-	include $file;
-	$text = ob_get_clean();
-	$text = strip_tags(preg_replace('/<script.*?\/script>/s', '', $text));
+	echo preg_replace('/<script.*?\/script>/s', '', file_get_contents($file));
+	$text = strip_tags(ob_get_clean());
 	$text = str_replace([$n. $n. $n, $n. $n], $n, $text);
 	$text = mb_strimwidth($text, 0, $summary_length, $ellipsis, $encoding);
 	return trim($text);
@@ -167,41 +165,41 @@ function ht($str)
 
 function social($t, $u)
 {
-	global $article, $social, $social_medias, $n;
+	global $aside, $sidebox_order, $sidebox_title, $social_medias, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $n;
 	if ($social_medias)
 	{
-		$article .= '<section id=social class=mb-5>'. $n.
-		'<h2>'. $social. '</h2>'. $n;
+		$aside .=
+		'<div id=social class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[2]. '">'. $n.
+		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[7]. '</div>'. $n.
+		'<div class="'. $sidebox_content_class[3]. '">'. $n;
 		$social_link = include 'socials.php';
 		foreach($social_medias as $social_name)
-			$article .= $social_link[$social_name]. $n;
-		$article .= '</section>'. $n;
+			$aside .= $social_link[$social_name]. $n;
+		$aside .= '</div></div>'. $n;
 	}
 }
 
 function permalink($t, $u)
 {
-	global $article, $permalink, $for_html, $for_wiki, $for_forum, $n;
-	$article .=
-	'<section id=permalink class=mb-5>'. $n.
-	'<h2>'. $permalink. '</h2>'. $n.
-	'<ul class="nav nav-tabs" role=tablist>'. $n.
-	'<li class=nav-item><a class="nav-link active" href=#html data-toggle=tab aria-controls=html role=tab>'. $for_html. '</a></li>'. $n.
-	'<li class=nav-item><a class=nav-link href=#wiki data-toggle=tab aria-controls=wiki role=tab>'. $for_wiki. '</a></li>'. $n.
-	'<li class=nav-item><a class=nav-link href=#forum data-toggle=tab aria-controls=forum role=tab>'. $for_forum. '</a></li>'. $n.
-	'</ul>'. $n.
-	'<div class=tab-content>'. $n.
-	'<div class="tab-pane active" id=html>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=10 accesskey=h>&lt;a href="'. $u. '" target="_blank"&gt;'. htmlentities(h($t)). '&lt;/a&gt;</textarea>'. $n.
+	global $aside, $sidebox_order, $sidebox_title, $permalink, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $n;
+	$aside .=
+	'<div id=permalink class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[3]. '">'. $n.
+	'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[8]. '</div>'. $n.
+	'<div class="'. $sidebox_content_class[3]. '">'. $n.
+	'<div class="input-group input-group-sm mb-3">'. $n.
+	'<div class=input-group-prepend><label class=input-group-text for=html>'. $permalink[0]. '</label></div>'. $n.
+	'<input readonly onclick="this.select()" id=html type=text class=form-control value="&lt;a href=&quot;'. $u. '&quot; target=&quot;_blank&quot;&gt;'. htmlentities(h($t)). '&lt;/a&gt;">'. $n.
 	'</div>'. $n.
-	'<div class=tab-pane id=wiki>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=11 accesskey=w>['. $u. ' '. htmlentities(h($t)). ']</textarea>'. $n.
+	'<div class="input-group input-group-sm mb-3">'. $n.
+	'<div class=input-group-prepend><label class=input-group-text for=wiki>'. $permalink[1]. '</label></div>'. $n.
+	'<input readonly onclick="this.select()" id=wiki type=text class=form-control value="['. $u. ' '. htmlentities(h($t)). ']">'. $n.
 	'</div>'. $n.
-	'<div class=tab-pane id=forum>'. $n.
-	'<textarea readonly onclick="this.select()" class="form-control border-0 rounded-0" rows=3 tabindex=12 accesskey=f>[URL='. $u. ']'. htmlentities(h($t)). '[/URL]</textarea>'. $n.
+	'<div class="input-group input-group-sm mb-2">'. $n.
+	'<div class=input-group-prepend><label class=input-group-text for=forum>'. $permalink[2]. '</label></div>'. $n.
+	'<input readonly onclick="this.select()" id=forum type=text class=form-control value="[URL='. $u. ']'. htmlentities(h($t)). '[/URL]">'. $n.
 	'</div>'. $n.
 	'</div>'. $n.
-	'</section>'. $n;
+	'</div>'. $n;
 }
 
 function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
@@ -216,7 +214,7 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 	'</a>';
 }
 
-function img($src, $class='', $comment=false)
+function img($src, $class='', $show_exif_comment=false)
 {
 	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks;
 	if ($extension = get_extension($src))
@@ -229,59 +227,76 @@ function img($src, $class='', $comment=false)
 			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
 			$exif_thumbnail = isset($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
-			$exif_comment = isset($exif['COMMENT']) && $comment ? str_replace($line_breaks, '&#10;', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
+			$exif_comment = isset($exif['COMMENT']) && $show_exif_comment ? str_replace($line_breaks, '<br>', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
 			list($width, $height, $type, $attr) = @getimagesize($src);
 			if ($exif_thumbnail) list($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
-
 			$img = $exif_comment ?
-				'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
-				'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
-				'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
-				'</figure>' :
-				'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
-
+			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
+			'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+			'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
+			'</figure>'. $n :
+			'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
 			if ($get_title || $get_page)
 			{
 				if ($scheme !== false)
 					return
 					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'. $n.
-					'<a class=expand href="'. $src. '" target="_blank" onclick="return false" title="'. $exif_comment. '">'. $n.
-					'<img class="img-fluid" src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
+					'<a data-fancybox=gallery href="'. $src. '">'. $n.
+					'<img class=img-fluid src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
 					'</a>'. $n.
 					'<small class="blockquote-footer my-2 text-right">'. $n.
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
 					'</small>'. $n.
 					'</figure>'. $n;
+				elseif ($exif_comment && !$exif_thumbnail)
+					return
+					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
+					'<a data-fancybox=gallery class="d-inline-block mb-2 mr-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
+					'<img class="align-top img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
+					'</a>'. $n.
+					'<figcaption class="text-center mb-2">'. $exif_comment. '</figcaption>'. $n.
+					'</figure>'. $n;
 				else
 					return
-					'<a '. (strpos($class, 'expand') !== false || $exif_comment ?
-					'class="d-inline-block expand mb-2 mr-1" title="'. $exif_comment. '"' :
-					'class="d-block mb-3"'). ' href="'. $url. r($src). '" target="_blank" onclick="return false">'.
+					'<figure class="d-inline-block m-2">'. $n.
+					'<a data-fancybox=gallery href="'. $url. r($src). '" data-caption="'. $exif_comment. '">'. $n.
 					($exif_thumbnail && $use_thumbnails ?
 					'<img class="'. $class. ' align-top img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
 					$img).
-					'</a> '. $n;
+					'</a>'. $n.
+					'</figure>'. $n;
 			}
 			else
 			{
-				$dirname = dirname(dirname($src));
-				switch($index_type)
+				if (!$get_categ && !$get_title)
 				{
-					case 2: $class .= 'd-block mx-auto rounded-circle'; break;
-					case 3: $class .= 'd-block mx-auto rounded'; break;
-					case 4: $class .= 'd-block mx-auto mr-4 rounded'; break;
+					switch($index_type)
+					{
+						case 2: $class .= 'd-block mx-auto rounded-circle'; break;
+						case 3: $class .= 'rounded-sm'; break;
+						case 4: $class .= 'd-block mx-auto mr-4 rounded-lg'; break;
+					}
 				}
-				return
-				'<a href="'. $url. r(basename(dirname($dirname)). '/'. basename($dirname)). '">'. $n.
+				if ($exif_thumbnail && $use_categ_thumbnails)
+				{
+					if ($get_categ || $index_type === 1)
+						$img =
+						'<span class="card-header d-block text-center">'. $n.
+						'<img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'</span>';
+					else
+						$img =
+						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '>'. $n.
+						'<img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'</span>';
+				}
+				else
+					$img =
+					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'. $n.
+					'<img class="img-fluid '. $class. ' card-img-top" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+					'</span>';
 
-				($exif_thumbnail && $use_categ_thumbnails ?
-					$get_categ || $index_type === 1 ?
-						'<span class="card-header d-block"><img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '></span>'
-					:
-						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '><img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '></span>'
-				:
-				'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '><img class="img-fluid '. $class. ' card-img-top" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '></span>'). $n.
-				'</a>';
+				return '<a href="'. $url. r(basename(dirname($dirname = dirname(dirname($src)))). '/'. basename($dirname)). '">'. $img. '</a>';
 			}
 		}
 		elseif (array_search(strtolower($extension), $video_extensions) !== false)
@@ -314,29 +329,27 @@ function img($src, $class='', $comment=false)
 	}
 }
 
-function timeformat($time)
+function timeformat($time, array $intervals)
 {
-	global $now, $seconds_ago, $minutes_ago, $hours_ago, $days_ago, $present_format, $time_format;
-	$diff = $now - $time;
-	if ($diff < 60)
-		return sprintf($seconds_ago, (int)$diff);
-	elseif ($diff < 3600)
-		return sprintf($minutes_ago, (int)($diff / 60));
-	elseif ($diff < 86400)
-		return sprintf($hours_ago, (int)($diff / 3600));
-	elseif ($diff < 2764800)
-		return sprintf($days_ago, (int)($diff / 86400));
-	elseif (date('Y') !== date('Y', $time))
-		return date($time_format, $time);
-	else
-		return date($present_format, $time);
+	$now = new DateTime;
+	$ago = new DateTime('@'. $time);
+	$diff = $now->diff($ago);
+	$diff->w = floor($diff->d/7);
+	$diff->d -= $diff->w*7;
+	foreach ($intervals as $k => &$v)
+	{
+		if ($diff->$k)
+			$v = $diff->$k. $v;
+		else
+			unset($intervals[$k]);
+	}
+	return implode('', array_slice($intervals, 0, 1));
 }
 
 function pager($num, $max)
 {
 	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $n;
-	$article .=
-	'<ul class="justify-content-center pagination my-4">'. $n;
+	$article .= '<ul class="justify-content-center pagination my-4">'. $n;
 
 	if($num > 2)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page(1). '">'. $nav_laquo. $nav_laquo. '</a></li>';
@@ -377,16 +390,14 @@ function pager($num, $max)
 				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
 			}
 		}
-		if ($i == $max)
-			break;
+		if ($i == $max) break;
 		++$i;
 	}
 	if ($num < $max)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page($num+1). '">'. $nav_raquo. '</a></li>'. $n;
 	if ($num < $max - 1)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page($max). '">'. $nav_raquo. $nav_raquo. '</a></li>'. $n;
-	$article .=
-	'</ul>'. $n;
+	$article .= '</ul>'. $n;
 }
 
 function sideless($hide=false, $force=false)
@@ -396,7 +407,7 @@ function sideless($hide=false, $force=false)
 	{
 		$header .= '<style>';
 		if ($hide)
-			$header .= '#side{display:none}#main{max-width:100%;flex:0 0 100%}';
+			$header .= '#side{display:none!important}#main{max-width:100%;flex:0 0 100%}';
 		else
 			$header .= '#main,#side{max-width:100%;flex:0 0 100%}';
 		$header .= '</style>';
@@ -421,71 +432,65 @@ function redirect($link)
 	}
 }
 
-function get_logo()
+function get_logo($name=false, $class='')
 {
 	global $site_name, $url;
 	if (is_file($logo = 'images/logo.png'))
-		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '">';
+		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '">'.
+		(!$name ? '' : '<span class="'. (!$class ? 'border-0 d-block h1 mt-4' : $class). '">'. $site_name. '</span>');
 	else
 		return $site_name;
 }
 
 function not_found()
 {
-	global $header, $article, $error, $breadcrumb, $site_name, $not_found, $n;
+	global $article, $breadcrumb, $header, $site_name, $not_found, $n;
 	http_response_code(404);
-	$header .= '<title>'. $error. ' - '. $site_name. '</title>'. $n;
+	$header .= '<title>'. $not_found[0]. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>'. $n;
 	$article .=
-	'<h1 class="h2 mb-4">'. $error. '</h1>'. $n.
-	'<div class="article not-found">'. $not_found. '</div>'. $n;
+	'<h1 class="h3 mb-4">'. $not_found[0]. '</h1>'. $n.
+	'<div class="article not-found">'. $not_found[1]. '</div>'. $n;
 }
 
-function toc($sticky=true, $in_article=true)
+function toc($in_article=false)
 {
-	global $header, $article, $aside, $footer, $toc, $get_title, $get_page;
+	global $header, $article, $aside, $footer, $sidebox_title, $sidebox_order, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $get_title, $get_page;
 	if ($get_title || $get_page)
 	{
-		$toc_content = '<div class="list-group-item bg-primary navbar-dark d-flex align-items-center justify-content-between py-2 text-white title">';
-		$toc_content .= $toc;
-		$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=50><span class=navbar-toggler-icon></span></button>';
-		$toc_content .= '</div>';
-		$toc_content .= '<div data-spy=scroll data-target=".article" data-offset=0 id=toctoggle class="list-group-item collapse show pl-0 pr-3"></div>';
+		$toc_content = '<div class="'. $sidebox_title_class[4]. '">'. $sidebox_title[9];
+		if ($in_article)
+			$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=0><span class=navbar-toggler-icon></span></button>';
+		$toc_content .= '</div><div data-spy=scroll data-target=".article" data-offset=0 id=toctoggle class="'. $sidebox_wrapper_class[1]. '"></div>';
 
 		if ($in_article)
-		{
-			$header .= '<style>#toc{display:none;overflow-x:auto}</style>';
-			$article .= '<div id=toc class="list-group text-truncate float-md-right'. ($sticky ? ' sticky-top' : ''). ' mb-5 w-100">';
-			$article .= $toc_content;
-			$article .= '</div>';
-		}
+			$article .= '<div id=toc class="'. $sidebox_wrapper_class[2]. '">'. $toc_content. '</div>';
 		else
-		{
-			$header .= '<style>#toc{display:none}</style>';
-			$aside .= '<div id=toc class="list-group'. ($sticky ? ' sticky-top' : ''). ' mb-5">';
-			$aside .= $toc_content;
-			$aside .= '</div>';
-		}
-		$footer .= '<script>toc()</script>';
+			$aside .= '<div id=toc class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[8]. '">'. $toc_content. '</div>';
+		$footer .= '<script>let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toc").fadeIn("slow");$("#toctoggle").html(toc);$("body").scrollspy({target:"#toc"})</script>';
 	}
 }
 
 function unsession()
 {
-	global $url, $session_name;
-	$_SESSION = [];
-	setcookie(session_name(), '', 1);
-	session_destroy();
-	session($session_name);
+	if (isset($_SESSION['l'],$_SESSION['h']))
+	{
+		global $session_name;
+		session_unset();
+		setcookie(session_name(), '', 1);
+		session_destroy();
+		session($session_name);
+	}
 }
 
 function session($session_name)
 {
-	if (!isset($_SESSION[$session_name]) && session_name() === 'kinaga')
+	if (!isset($_SESSION[$session_name]))
 	{
 		global $dir, $server;
-		session_set_cookie_params('8640', $dir === '/' ? '/' : $dir. '/', $server, is_ssl(), true);
-		session_start();
+		session_name($session_name);
+		session_set_cookie_params(86400, $dir === '/' ? '/' : $dir. '/', $server, is_ssl(), true);
+		session_start((['cookie_lifetime' => 86400]));
 		session_regenerate_id(true);
 	}
 }
@@ -503,8 +508,99 @@ function sort_time($a, $b)
 	return filemtime($a) < filemtime($b);
 }
 
+function sort_name($a, $b)
+{
+	return explode_delimiter($a, 0) < explode_delimiter($b, 0);
+}
+
+function explode_delimiter($str, int $i)
+{
+	global $delimiter;
+	return explode($delimiter, basename($str))[$i];
+}
+
 function get_extension($f)
 {
 	$info = pathinfo($f);
 	if (isset($info['extension'])) return '.'. $info['extension'];
+}
+
+function enc($str)
+{
+	global $session_txt;
+	if ($str && isset($session_txt))
+		return trim(strtr(base64_encode(openssl_encrypt(serialize(basename($str)), 'AES-256-CBC', hash('whirlpool', file_get_contents($session_txt)), OPENSSL_RAW_DATA, substr(sha1_file($session_txt), 5, 16))), '+/', '-_'), '=');
+}
+
+function dec($str)
+{
+	global $session_txt;
+	if ($str && isset($session_txt))
+		return @unserialize(rtrim(openssl_decrypt(base64_decode(strtr(basename($str), '-_', '+/')), 'AES-256-CBC', hash('whirlpool', file_get_contents($session_txt)), OPENSSL_RAW_DATA, substr(sha1_file($session_txt), 5, 16)), "\0"));
+}
+
+function sess_err($str)
+{
+	global $aside, $footer, $login_try_again, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $ticket_warning, $​ask_admin, $n;
+	$aside .=
+	'<div id=login class="'. $sidebox_wrapper_class[0]. '">'. $n.
+	'<div class="'. $sidebox_title_class[3]. '">'. $str. '</div>'. $n.
+	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $​ask_admin : $login_try_again). '</p>'. $n.
+	'</div>'. $n;
+	$footer .= '<script>location.hash="login"</script>';
+}
+
+function handle($dir)
+{
+	global $mail_address, $admin_suffix;
+	if (is_file($handle = $dir. 'handle') && filesize($handle))
+		$handle = h(file_get_contents($handle));
+	else
+	{
+		$lp = explode('@', dec(basename(dirname($dir))));
+		$handle = h($lp[0]);
+	}
+	if (dec(basename(dirname($dir))) === $mail_address)
+		$handle .= $admin_suffix;
+	return $handle;
+
+}
+
+function avatar($dir)
+{
+	if (is_file($img = $dir. 'avatar') && filesize($img) && strpos($base64_img = file_get_contents($img), 'base64') !== false)
+		return '<img src="'. strip_tags($base64_img). '" class=rounded alt="">';
+	else
+		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+}
+
+function flow($a, $b, $c, $d)
+{
+	global $n;
+	return
+	'<h3>'. $a[0]. '</h3>'. $n.
+	'<ol class=flow>'. $n.
+	'<li'. ($d === 1 ? ' class=active' : ''). '>'. sprintf($a[1], $b, $c). '</li>'. $n.
+	'<li'. ($d === 2 ? ' class=active' : ''). '>'. sprintf($a[2], $c). '</li>'. $n.
+	'<li'. ($d === 3 ? ' class=active' : ''). '>'. sprintf($a[3], $b). '</li>'. $n.
+	'<li'. ($d === 4 ? ' class=active' : ''). '>'. sprintf($a[4], $c). '</li>'. $n.
+	'</ol>';
+}
+
+function counter($txt, $put=false)
+{
+	if (is_file($txt) && is_writeable($txt))
+	{
+		$counter = (int)file_get_contents($txt);
+		++$counter;
+		file_put_contents($txt, $counter, LOCK_EX);
+		return $counter;
+	}
+	elseif ($put)
+		return file_put_contents($txt, 1, LOCK_EX);
+}
+
+function is_permitted($dir)
+{
+	if (is_dir($dir) && substr(decoct(fileperms($dir)), 2) !== '700') return true;
 }

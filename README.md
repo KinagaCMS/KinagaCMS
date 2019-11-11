@@ -1,4 +1,4 @@
-<p align="center"><a href="https://xn--5rwx17a.xn--v8jtdudb.com/"><img src="https://user-images.githubusercontent.com/25574701/52907838-fc4a4400-32ac-11e9-8099-d4b7eaa042a8.png" alt="kinaga" width="300"></a><br><b>Kinaga</b> v6.5 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
+<p align="center"><a href="https://xn--5rwx17a.xn--v8jtdudb.com/"><img src="https://user-images.githubusercontent.com/25574701/68562174-d6dd1600-048b-11ea-9e72-c82b51ae28e6.png" alt="kinaga" width="300"></a><br><b>KinagaCMS</b> Ver.7 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
 
 ---
 
@@ -13,14 +13,14 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 ## 動作環境
 
 - PHP ７ 以上
-- Apache 2.2 以上
+- <a href="https://www.php.net/manual/ja/book.exif.php">Exif</a> 並びに <a href="https://www.php.net/manual/ja/book.image.php">GD</a> がインストールされていること
 - .htaccess 及び RewriteEngine が利用可能であること
 
 ---
 
 ## スクリーンショット
 
-![screenshot](https://user-images.githubusercontent.com/25574701/54064868-324f6800-425c-11e9-9afd-765b198375e6.png)
+![screenshot](https://user-images.githubusercontent.com/25574701/68562364-ae095080-048c-11ea-8131-b73f9f074141.png)
 
 ---
 
@@ -46,7 +46,7 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 
 ## 簡単な使い方
 
-1.  Linux ユーザーはファイルマネージャ、Windows ユーザーは [WinSCP](https://winscp.net/) などでサーバーに接続
+1.  Linux ユーザーはファイルマネージャでサーバーに接続
 2.  contents フォルダ内に「<b>カテゴリ名</b>」フォルダを作成
 3.  カテゴリ名フォルダ内に「<b>記事名</b>」フォルダを作成
 4.  記事名フォルダの中に「<b>index.html</b>」ファイルを作成し、[ReText](https://github.com/retext-project/retext)、[Geany](https://github.com/geany/geany/) などのテキストエディタで文章を作成
@@ -65,11 +65,15 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 		│	│	│
 		│	│	├── images (または background-images など。必須ではありません)
 		│	│	│	│
-		│	│	│	├── sample01.jpg (名前の順で自動掲載されます)			
+		│	│	│	├── sample01.jpg (名前の順で自動掲載されます)
 		│	│	│	│
-		│	│	│	└── sample02.jpg	
+		│	│	│	└── sample02.jpg
+		│	│	│
+		│	│	├── login.txt (記事を会員制限します。必須ではありません)
 		│	│	│
 		│	│	└── index.html (ここに記事を書いて下さい。必須)
+		│	│
+		│	├── login.txt (カテゴリ全体を会員制限します。必須ではありません)
 		│	│
 		│	└── index.html (カテゴリのサブタイトルです。必須ではありません)
 		│

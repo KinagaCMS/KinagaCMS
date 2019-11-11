@@ -16,7 +16,7 @@ if ($glob = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLO
 {
 	usort($glob, 'sort_time');
 
-	foreach($glob as $files)
+	foreach ($glob as $files)
 	{
 		$categ = get_categ($files);
 		$title = get_title($files);

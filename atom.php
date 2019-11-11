@@ -6,7 +6,7 @@ $atom_files = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + G
 
 if ($atom_files)
 {
-	header('Content-Type: application/atom+xml; charset='. $encoding);
+	header('Content-Type: application/xml; charset='. $encoding);
 	$xml = new DOMDocument('1.0', $encoding);
 	echo $xml->saveXML(),
 	'<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', $lang, '">', $n,
@@ -21,7 +21,7 @@ if ($atom_files)
 	usort($atom_files, 'sort_time');
 
 	$i = 0;
-	foreach($atom_files as $atoms)
+	foreach ($atom_files as $atoms)
 	{
 		if ($i === $number_of_feeds) break;
 		$atom_title = get_title($atoms);

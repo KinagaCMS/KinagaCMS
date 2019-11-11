@@ -5,10 +5,10 @@ $template = 'default';
 #See includes/social.php
 $social_medias = ['facebook', 'twitter', 'hatena', 'line'];
 
-#!contents/index.html and set 1 to 4
-$index_type = 3;
-#if set 2 to 4, set the number of links in each category
-$index_items = 5;
+#if !contents/index.html, set 1 to 4
+$index_type = 1;
+#$index_type is 2 to 4, set the number of links in each category
+$index_items = 4;
 
 ##########################
 
@@ -43,6 +43,9 @@ $use_permalink = true;
 #Show Recent articles
 $use_recents = true;
 
+#Show Prev Next link in articles
+$use_prevnext = true;
+
 #Show Popular articles
 $use_popular_articles = true;
 
@@ -58,12 +61,50 @@ $use_similars = true;
 #Show Summary
 $use_summary = true;
 
+#Show approach menu in user profile
+$use_user_approach = true;
+
 #Benchmark in footer
 $use_benchmark = true;
 
 ##########################
 
 #Sidebox
+
+$sidebox_order = [
+	1, #login
+	7, #similar
+	2, #social
+	3, #permalink
+	5, #recent
+	1, #information
+	4, #popular
+	6, #comments
+	1, #toc
+	9, #address
+	1 #category
+	];
+
+$sidebox_wrapper_class = [
+	'list-group mb-5',
+	'list-group-item collapse show pl-0 pr-3',
+	'list-group mb-5 w-100' #toc
+	];
+$sidebox_title_class = [
+	'list-group-item bg-primary title', #sidebox 1
+	'list-group-item list-group-item-primary title', #sidebox 2
+	'list-group-item bg-success title', # login success
+	'list-group-item bg-danger title', #login error
+	'list-group-item bg-info navbar-dark d-flex align-items-center justify-content-between py-2 title', #toc
+	];
+$sidebox_content_class = [
+	'list-group-item list-group-item-action',
+	'list-group-item-text wrap',
+	'list-group-item wrap',
+	'list-group-item',
+	'p-1 border-0 d-block list-group-item list-group-item-action'
+	];
+
 $number_of_recents = 5;
 
 $number_of_popular_articles = 5;
@@ -73,24 +114,24 @@ $number_of_new_comments = 5;
 $comment_length = 100;
 
 
-#Top page
-$number_of_default_sections = 5;
+#Top page: if $index_type = 1;
+$default_sections_per_page = 6;
 
 #Category
-$number_of_categ_sections = 5;
+$categ_sections_per_page = 6;
 
 #Search
-$number_of_results = 5;
+$results_per_page = 6;
 
 #Atom
 $number_of_feeds = 10;
 
 
-#Sets the number of images per page in Article
-$number_of_images = 10;
+#Images in Article
+$images_per_page = 10;
 
 #Comments
-$number_of_comments = 10;
+$comments_per_page = 10;
 
 
 #Category and Search results
@@ -102,7 +143,7 @@ $description_length = 150;
 
 
 #Prev Next link title length
-$prev_next_length = 50;
+$prev_next_length = 100;
 
 
 #Download files
@@ -114,6 +155,10 @@ $number_of_pager = 5;
 
 #Similar articles
 $number_of_similars = 3;
+
+
+#Approached users per page
+$users_per_page = 4;
 
 ##########################
 
@@ -138,6 +183,9 @@ $tpl_dir = 'templates/'. $template. '/';
 $css = $url. $tpl_dir. 'css/';
 $js = $url. $tpl_dir. 'js/';
 $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
+$tmpdir = ini_get('upload_tmp_dir') ?? sys_get_temp_dir();
+$mime = 'MIME-Version: 1.0'. $n. 'X-Date: '. date('c'). $n. 'X-Host: '. gethostbyaddr($remote_addr). $n. 'X-IP: '. $remote_addr. $n. 'X-Mailer: kinaga'. $n. 'X-UA: '. $user_agent. $n;
+$delimiter = '-~-';
 
 ##########################
 

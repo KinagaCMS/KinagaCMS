@@ -5,8 +5,7 @@ if ($query)
 	$result_title = sprintf($result, $query);
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $result_title. '</li>';
 	$header .= '<title>'. $result_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
-	$article .= '<h1 class="h2 mb-4">'. $result_title. '</h1>'. $n;
-	$outputs = [];
+	$article .= '<h1 class="h3 mb-4">'. $result_title. '</h1>'. $n;
 	$glob_search = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
 
 	if ($glob_search)
@@ -26,19 +25,19 @@ if ($query)
 				$start = max(0, $first_pos - 150);
 				$length = $summary_length + mb_strlen($query, $encoding);
 				$str = mb_substr($temp, $start, $length, $encoding);
-				$str = $str === null ? mb_strimwidth($temp, 0, $summary_length, $ellipsis, $encoding) : mb_strimwidth($str, 0, $summary_length, $ellipsis, $encoding);
+				$str = $str === '' ? mb_strimwidth($temp, 0, $summary_length, $ellipsis, $encoding) : mb_strimwidth($str, 0, $summary_length, $ellipsis, $encoding);
 				$str = str_replace($query, '<span class=highlight>'. $query. '</span>', $str);
-				$outputs[] = array($timestamp, $filename, $str);
+				$outputs[] = [$timestamp, $filename, $str];
 			}
 		}
-		if ($outputs)
+		if (isset($outputs))
 		{
 			$results_number = count($outputs);
-			$page_ceil = ceil($results_number / $number_of_results);
+			$page_ceil = ceil($results_number / $results_per_page);
 			$max_pages = min($pages, $page_ceil);
-			$results_in_page = array_slice($outputs, ($max_pages - 1) * $number_of_results, $number_of_results);
+			$results_in_page = array_slice($outputs, ($max_pages - 1) * $results_per_page, $results_per_page);
 
-			if ($results_number > $number_of_results)
+			if ($results_number > $results_per_page)
 				pager($max_pages, $page_ceil);
 
 			for($i = 0, $c = count($results_in_page); $i < $c; ++$i)
@@ -52,26 +51,26 @@ if ($query)
 
 				if ($output_title === 'index')
 					$article .=
-					'<h2 class=h3><a href="'. $url. '">'. $home. '</a></h2>'. $n.
+					'<h2 class=h4><a href="'. $url. '">'. $home. '</a></h2>'. $n.
 					'<div class="wrap p-2">'. $output[2]. '</div>'. $n.
 					'<small class="blockquote-footer text-right">'. $output[0].'</small>';
 
 				elseif ($pagename !== 'index')
 					$article .=
-					'<h2 class=h3><a href="'. $url. r($pagename). '">'. h($pagename). '</a></h2>'. $n.
+					'<h2 class=h4><a href="'. $url. r($pagename). '">'. h($pagename). '</a></h2>'. $n.
 					'<div class="wrap p-2">'. $output[2]. '</div>'. $n.
 					'<small class="blockquote-footer text-right">'. $output[0].'</small>';
 
 				else
 					$article .=
-					'<h2 class=h3><a href="'. $url. r($output_categ. '/'. $output_title). '">'. h($output_title). '</a></h2>'. $n.
+					'<h2 class=h4><a href="'. $url. r($output_categ. '/'. $output_title). '">'. h($output_title). '</a></h2>'. $n.
 					'<div class="wrap p-2">'. $output[2]. '</div>'. $n.
 					'<small class="blockquote-footer text-right">'. $output[0]. ' - '. h($output_categ). '</small>';
 
 				$article .= '</section>'. $n;
 
 			}
-			if ($results_number > $number_of_results)
+			if ($results_number > $results_per_page)
 				pager($max_pages, $page_ceil);
 		}
 		else
@@ -81,5 +80,5 @@ if ($query)
 		$no_results = true;
 
 	if ($no_results)
-		$article .= '<h2 class=h3>'. $no_results_found. '</h2>'. $n;
+		$article .= '<h2 class=h4>'. $no_results_found. '</h2>'. $n;
 }

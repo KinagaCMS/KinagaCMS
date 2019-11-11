@@ -8,7 +8,7 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 	'<li class="breadcrumb-item active">'. $basetitle. '</li>';
 	$article .=
 	'<small class=text-muted>'. sprintf($last_modified, date($time_format, filemtime($pages_file))). '</small>'. $n.
-	'<h1 class="h2 mb-4">'. $basetitle. '</h1>';
+	'<h1 class="h3 mb-4">'. $basetitle. '</h1>';
 
 	ob_start();
 	include $pages_file;
@@ -27,9 +27,9 @@ elseif ($use_contact && $page_name === $contact_us)
 	$header .= '<title>'. $contact_us. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $contact_us. '</li>';
 	if ($contact_subtitle)
-		$article .= '<h1 class="h2 mb-4">'. $contact_us. ' <small class="ml-3 wrap text-muted">'. $contact_subtitle. '</small></h1>'. $n;
-	if ($contact_notice)
-		$article .= '<p class="alert alert-warning wrap">'. $contact_notice. '</p>'. $n;
+		$article .= '<h1 class="h3 mb-4">'. $contact_us. ' <small class="ml-3 wrap text-muted">'. $contact_subtitle. '</small></h1>'. $n;
+	if ($privacy_policy)
+		$article .= '<p class="alert alert-warning wrap">'. $privacy_policy. '</p>'. $n;
 	ob_start();
 	include $form;
 	$article .= trim(ob_get_clean());
@@ -50,14 +50,13 @@ elseif ($dl && $page_name === $download_contents)
 		else
 			header('Content-Disposition: attachment; filename="'. $dl_name. '"');
 
-		readfile($dl_file);
-		exit;
+		exit(readfile($dl_file));
 	}
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $download_contents. '</li>';
 	$header .= '<title>'. $download_contents. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 
 	if ($download_subtitle)
-		$article .= '<h1 class="h2 mb-4">'. $download_contents. ' <small class="ml-3 wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
+		$article .= '<h1 class="h3 mb-4">'. $download_contents. ' <small class="ml-3 wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
 	if ($download_notice)
 		$article .= '<p class="alert alert-warning wrap">'. $download_notice. '</p>'. $n;
 	$dl_files = glob($downloads_dir. '/*.*', GLOB_NOSORT);
@@ -65,7 +64,7 @@ elseif ($dl && $page_name === $download_contents)
 	if ($dl_files)
 	{
 		for($i = 0, $c = count($dl_files); $i < $c; ++$i)
-			$dls_sort[] = ($di_filesize = filesize($dl_files[$i])) > 0 ? filemtime($dl_files[$i]). '-~-'. $dl_files[$i]. '-~-'. size_unit($di_filesize) : '';
+			$dls_sort[] = ($di_filesize = filesize($dl_files[$i])) > 0 ? filemtime($dl_files[$i]). $delimiter. $dl_files[$i]. $delimiter. size_unit($di_filesize) : '';
 
 		$dls_sort = array_filter($dls_sort);
 		rsort($dls_sort);
@@ -81,12 +80,12 @@ elseif ($dl && $page_name === $download_contents)
 
 		for($i = 0, $c = count($dls_in_page); $i < $c; ++$i)
 		{
-			$dl_uri = explode('-~-', $dls_in_page[$i]);
+			$dl_uri = explode($delimiter, $dls_in_page[$i]);
 			$article .=
-			'<a class="list-group-item bg-transparent" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
-			'<span class=mr-3>'. date($time_format, $dl_uri[0]). '</span>'. $n.
-			'<span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.
-			'<span class=mr-3>'. $dl_uri[2]. '</span>'. $n.
+			'<a class="list-group-item list-group-item-action list-group-item-lightprimary d-flex justify-content-between align-items-center" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
+			'<span><span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.
+			'<span class=mr-3>'. date($time_format, $dl_uri[0]). '</span></span>'. $n.
+			'<span class="badge badge-primary badge-pill">'. $dl_uri[2]. '</span>'. $n.
 			'</a>'. $n;
 		}
 		$article .= '</div>';

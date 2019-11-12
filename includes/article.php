@@ -181,70 +181,70 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		'<section class=my-5 id=comment>'. $n.
 		'<h2 class=mb-4>'. $comment. '</h2>'. $n;
 
-		if (is_file($ticket) && (is_file($login_txt) || is_file($categ_login_txt)) && !isset($_SESSION['l']))
-			$article .= '<p class="alert alert-warning my-3">'. $login_required[1]. '</p>';
-		else
+		if (isset($glob_comment_files) && $comments_per_page > 0)
 		{
-			if (isset($glob_comment_files) && $comments_per_page > 0)
+			rsort($glob_comment_files);
+
+			foreach ($glob_comment_files as $comment_files)
 			{
-				rsort($glob_comment_files);
-
-				foreach ($glob_comment_files as $comment_files)
+				if (stripos($comment_files, $delimiter) !== false)
 				{
-					if (stripos($comment_files, $delimiter) !== false)
+					$comment_file = explode($delimiter, $comment_files);
+					$comment_time = basename($comment_file[0]);
+					$comment_user = basename($comment_file[1], '.txt');
+
+					if (is_dir($comment_user_profdir = $usersdir. $comment_user. '/prof/'))
 					{
-						$comment_file = explode($delimiter, $comment_files);
-						$comment_time = basename($comment_file[0]);
-						$comment_user = basename($comment_file[1], '.txt');
-
-						if (is_dir($comment_user_profdir = $usersdir. $comment_user. '/prof/'))
-						{
-							$comment_user = '<a href="'. $url. '?user='. str_rot13($comment_user). '">'. handle($comment_user_profdir). '</a>';
-							$comment_user_avatar =avatar($comment_user_profdir);
-						}
-						else
-							$comment_user_avatar = '<span class="align-middle comment-icon d-table-cell font-weight-bold display-3 h-100 rounded text-white w-100">'. mb_substr($comment_user, 0, 1). '</span>';
-
-						$comment_content = str_replace($line_breaks, '&#10;', h(strip_tags(file_get_contents($comment_files))));
-
-						$comments_array[] =
-						'<div class="d-flex mb-4 position-relative">'. $n.
-						'<div class="avatar d-table mr-4 rounded text-center">'. $comment_user_avatar. '</div>'. $n.
-						'<div class=card-arrow></div>'. $n.
-						'<div class="card comment w-100" id=cid-'. $comment_time. '>'. $n.
-						'<div class="card-body wrap">'. $comment_content. '</div>'. $n.
-						'<div class=card-footer><span class=mr-3>'. $comment_user. '</span><span class=text-nowrap>'. timeformat($comment_time, $intervals). '</span></div>'. $n.
-						'</div>'. $n.
-						'</div>'. $n;
+						$comment_user = '<a href="'. $url. '?user='. str_rot13($comment_user). '">'. handle($comment_user_profdir). '</a>';
+						$comment_user_avatar =avatar($comment_user_profdir);
 					}
-				}
-				if (isset($comments_array))
-				{
-					$article .= '<div class=card-columns>'. $n;
-					$sliced_comments = array_slice($comments_array, ($comment_pages - 1) * $comments_per_page, $comments_per_page);
+					else
+						$comment_user_avatar = '<span class="align-middle comment-icon d-table-cell font-weight-bold display-3 h-100 rounded text-white w-100">'. mb_substr($comment_user, 0, 1). '</span>';
 
-					foreach ($sliced_comments as $number_of_comments)
-						$article .= $number_of_comments;
+					$comment_content = str_replace($line_breaks, '&#10;', h(strip_tags(file_get_contents($comment_files))));
 
-					$article .= '</div>'. $n;
-
-					if ($count_comments > $comments_per_page)
-					{
-						$article .= '<nav class=mb-5>'. $n;
-						if ($comment_pages < ceil($count_comments / $comments_per_page))
-							$article .= '<a class="float-left badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages + 1). '#comment">'. $comments_next. '</a>'. $n;
-						if ($comment_pages > 1)
-							$article .= '<a class="float-right badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages - 1). '#comment">'. $comments_prev. '</a>'. $n;
-						$article .= '</nav>'. $n;
-					}
+					$comments_array[] =
+					'<div class="d-flex mb-4 position-relative">'. $n.
+					'<div class="avatar d-table mr-4 rounded text-center">'. $comment_user_avatar. '</div>'. $n.
+					'<div class=card-arrow></div>'. $n.
+					'<div class="card comment w-100" id=cid-'. $comment_time. '>'. $n.
+					'<div class="card-body wrap">'. $comment_content. '</div>'. $n.
+					'<div class=card-footer><span class=mr-3>'. $comment_user. '</span><span class=text-nowrap>'. timeformat($comment_time, $intervals). '</span></div>'. $n.
+					'</div>'. $n.
+					'</div>'. $n;
 				}
 			}
-			if (is_file($comment_dir. '/end.txt'))
-				$article .= '<p class="alert alert-warning mb-5">'. $comments_not_allow. '</p>'. $n;
+			if (isset($comments_array))
+			{
+				$article .= '<div class=card-columns>'. $n;
+				$sliced_comments = array_slice($comments_array, ($comment_pages - 1) * $comments_per_page, $comments_per_page);
+
+				foreach ($sliced_comments as $number_of_comments)
+					$article .= $number_of_comments;
+
+				$article .= '</div>'. $n;
+
+				if ($count_comments > $comments_per_page)
+				{
+					$article .= '<nav class=mb-5>'. $n;
+					if ($comment_pages < ceil($count_comments / $comments_per_page))
+						$article .= '<a class="float-left badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages + 1). '#comment">'. $comments_next. '</a>'. $n;
+					if ($comment_pages > 1)
+						$article .= '<a class="float-right badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages - 1). '#comment">'. $comments_prev. '</a>'. $n;
+					$article .= '</nav>'. $n;
+				}
+			}
+		}
+		if (is_file($comment_dir. '/end.txt'))
+			$article .= '<p class="alert alert-warning my-5">'. $comments_not_allow. '</p>'. $n;
+		else
+		{
+			if (is_file($ticket) && (is_file($login_txt) || is_file($categ_login_txt)) && !isset($_SESSION['l']))
+				$article .= '<p class="alert alert-warning my-5">'. $login_required[1]. '</p>';
 			else
 			{
 				if ($comment_privacy_policy)
-					$article .= '<p id=privacy-policy class="alert alert-warning mt-4 wrap">'. $comment_privacy_policy. '</p>'. $n;
+					$article .= '<p id=privacy-policy class="alert alert-warning my-5 wrap">'. $comment_privacy_policy. '</p>'. $n;
 				ob_start();
 				include $form;
 				$article .= trim(ob_get_clean());

@@ -68,7 +68,7 @@ if ($use_comment && $number_of_new_comments > 0 && $all_comments = glob($glob_di
 	'<div id=recent-comments class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[7]. '">'. $n.
 	'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[3]. '</div>';
 
-	foreach (range(0, $number_of_new_comments) as $j)
+	foreach (range(1, $number_of_new_comments) as $j)
 	{
 		if (isset($all_comments[$j]) && is_file($all_comments[$j]))
 		{

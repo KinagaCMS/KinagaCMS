@@ -146,7 +146,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'. $n.
 		'<div class="'. $sidebox_title_class[0]. '">'. $login. '</div>'. $n.
 		'<form class="'. $sidebox_content_class[3]. '" method=post>'. $n.
-		'<input class="form-control my-2" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '" '. (filter_has_var(INPUT_GET, 'login') ? 'autofocus' : ''). '>'. $n.
+		'<input class="bg-transparent text-reset form-control my-2" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '" '. (filter_has_var(INPUT_GET, 'login') ? 'autofocus' : ''). '>'. $n.
 		'<input type=hidden name=t value="'. $token. '">'. $n.
 		'<p>'. $login_message[1]. '</p>'. $n.
 		'</form>'. $n.

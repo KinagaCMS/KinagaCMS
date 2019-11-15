@@ -3,7 +3,7 @@
 <head>
 <meta charset=<?=$encoding?>>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<link href="<?=$css?>" rel=stylesheet>
+<link href="<?=$css, ($get_categ ? '?categ='.$get_categ : '')?>" rel=stylesheet>
 <?=$header?>
 </head>
 <body id=TOP>

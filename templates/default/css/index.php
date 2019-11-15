@@ -108,6 +108,6 @@ if ($color) echo '
 .navbar-dark .navbar-nav .nav-link{color:rgba(255, 255, 255, .7)}
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus{color:rgba(255, 255, 255, .9)}';
 if (is_file($header_jpg = '../../../contents/'. basename(filter_input(INPUT_GET, 'categ', FILTER_SANITIZE_STRING)). '/header.jpg') || is_file($header_jpg = '../../../images/header.jpg')) echo'
-body:before{background-image:url('. $header_jpg. ');background-position:bottom;background-repeat:no-repeat;background-size:cover;content:"";display:block;height:100px;width:100%}
+body:before{background-image:url('. r($header_jpg). ');background-position:bottom;background-repeat:no-repeat;background-size:cover;content:"";display:block;height:100px;width:100%}
 body:after{align-items:center;color:'. ($color ? hsla($color, 0, -30, .9) : 'inherit'). ';display:flex;font-size:large;background-color:'. ($color ? hsla($color, 0, -30, .1) : 'rgba(0,0,0,.1)'). ';content:"'. $meta_description. '";justify-content:center;text-shadow:0px 0px 5px white;letter-spacing:.15em;position:relative;height:100px;left:0;position:absolute;top:0;width:100%}
 div.container-fluid{color:'. ($color ? hsla($color, -50, -50, .7) : 'inherit'). '}';

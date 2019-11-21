@@ -78,7 +78,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 					$session_limit = date($time_format, $now+600);
 					$userubject = $ticket_subject. ' - '. $site_name;
 					$session_headers = $mime;
-					$session_headers .= 'From: '. $mail_address. $n;
+					$session_headers .= 'From: noreply@'. $server. $n;
 					$session_headers .= 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n;
 					$session_headers .= 'Content-Transfer-Encoding: 8bit'. $n;
 					$session_body = '--'. $token. $n;

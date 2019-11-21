@@ -143,7 +143,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					$skey = substr($key, 0, 1);
 					$lkey = ltrim($key, '@#');
 					$to = dec($lkey);
-					$headers = $mime. 'From: '. $mail_address. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+					$headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 
 					if ($val === 'on' && ($skey === '@' || $skey === '#'))
 					{
@@ -477,7 +477,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 							{
 								file_put_contents($approacher, trim(filter_input(INPUT_POST, 'approach-message', FILTER_SANITIZE_STRING)));
 
-								$headers = $mime. 'From: '. $mail_address. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+								$headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 								$to = dec(str_rot13($user));
 								$subject = sprintf($approach_subject[4], $handlename). ' - '. $site_name;
 								$body = sprintf($approach_body[5], $handlename, $myprof). $n. $url. '?user='. $useraddr. $n. $n. $separator. $n. $site_name. $n. $url;

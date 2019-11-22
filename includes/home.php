@@ -7,6 +7,7 @@ if (is_file($index_file = 'contents/index.html'))
 	if ($subtitle)
 		$article .= '<h1 class="h4 mb-4">'. $site_name. ' <small class="ml-3 wrap text-muted">'. $subtitle. '</small></h1>'. $n;
 	$article .= '<div class=article>';
+	ob_start();
 	include $index_file;
 	$article .= trim(ob_get_clean());
 	$article .= '</div>'. $n;

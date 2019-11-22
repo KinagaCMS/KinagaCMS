@@ -37,7 +37,7 @@ elseif ($use_contact && $page_name === $contact_us)
 elseif ($dl && $page_name === $download_contents)
 {
 	$dl_name = d($get_dl);
-	if (is_file($dl_file = $downloads_dir. '/'. $dl_name) && pathinfo($dl_file, PATHINFO_EXTENSION))
+	if (is_file($dl_file = $downloads_dir. '/'. $dl_name))
 	{
 		header('Content-Length: '. filesize($dl_file));
 		header('Content-Type: '. mime_content_type($dl_file));
@@ -59,12 +59,12 @@ elseif ($dl && $page_name === $download_contents)
 		$article .= '<h1 class="h3 mb-4">'. $download_contents. ' <small class="ml-3 wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
 	if ($download_notice)
 		$article .= '<p class="alert alert-warning wrap">'. $download_notice. '</p>'. $n;
-	$dl_files = glob($downloads_dir. '/*.*', GLOB_NOSORT);
+	$dl_files = glob($downloads_dir. '/*', GLOB_NOSORT);
 
 	if ($dl_files)
 	{
-		for($i = 0, $c = count($dl_files); $i < $c; ++$i)
-			$dls_sort[] = ($di_filesize = filesize($dl_files[$i])) > 0 ? filemtime($dl_files[$i]). $delimiter. $dl_files[$i]. $delimiter. size_unit($di_filesize) : '';
+		foreach ($dl_files as $dfiles)
+			$dls_sort[] = ($di_filesize = filesize($dfiles)) > 0 ? filemtime($dfiles). $delimiter. $dfiles. $delimiter. size_unit($di_filesize) : '';
 
 		$dls_sort = array_filter($dls_sort);
 		rsort($dls_sort);
@@ -78,9 +78,9 @@ elseif ($dl && $page_name === $download_contents)
 
 		$article .= '<div class=list-group>';
 
-		for($i = 0, $c = count($dls_in_page); $i < $c; ++$i)
+		foreach ($dls_in_page as $dls)
 		{
-			$dl_uri = explode($delimiter, $dls_in_page[$i]);
+			$dl_uri = explode($delimiter, $dls);
 			$article .=
 			'<a class="list-group-item list-group-item-action list-group-item-lightprimary d-flex justify-content-between align-items-center" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
 			'<span><span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.

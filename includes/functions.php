@@ -9,7 +9,7 @@ function r($path)
 
 function d($enc)
 {
-	return rawurldecode(html_entity_decode($enc));
+	return rawurldecode(basename(html_entity_decode($enc)));
 }
 
 function h($str)

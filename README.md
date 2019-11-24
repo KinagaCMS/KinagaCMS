@@ -1,4 +1,4 @@
-<p align="center"><a href="https://xn--5rwx17a.xn--v8jtdudb.com/"><img src="https://user-images.githubusercontent.com/25574701/68562174-d6dd1600-048b-11ea-9e72-c82b51ae28e6.png" alt="kinaga" width="300"></a><br><b>KinagaCMS</b> Ver.7 → <a href="https://xn--5rwx17a.xn--v8jtdudb.com/">Demo</a></p>
+<p align="center"><a href="https://xn--5rwx17a.xn--v8jtdudb.com/"><img src="https://user-images.githubusercontent.com/25574701/68562174-d6dd1600-048b-11ea-9e72-c82b51ae28e6.png" alt="kinaga" width="300"><br><b>KinagaCMS7</b> デモサイト</a></p>
 
 ---
 
@@ -13,7 +13,7 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 ## 動作環境
 
 - PHP ７ 以上
-- <a href="https://www.php.net/manual/ja/book.exif.php">Exif</a>、<a href="https://www.php.net/manual/ja/book.image.php">GD</a>、<a href="https://www.php.net/manual/ja/book.imagick.php">ImageMagick</a>がインストールされていること
+- <a href="https://www.php.net/manual/ja/book.exif.php">Exif</a>、<a href="https://www.php.net/manual/ja/book.image.php">GD</a>、<a href="https://www.php.net/manual/ja/book.imagick.php">ImageMagick</a> がインストールされていること
 - .htaccess 及び RewriteEngine が利用可能であること
 
 ---

@@ -22,12 +22,14 @@ $session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f
 $user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING);
 $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_SANITIZE_STRING);
 
+$imagick_so = 'extension=imagick.so';
+if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
+	$pos_imagick_so = strpos(file_get_contents($php_ini), $imagick_so);
+
 if (!extension_loaded('imagick'))
 {
-	$imagick_so = 'extension=imagick.so';
-	if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
+	if (is_file($php_ini))
 	{
-		$pos_imagick_so = strpos(file_get_contents($php_ini), $imagick_so);
 		if ($pos_imagick_so === false)
 			file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
 		else

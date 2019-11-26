@@ -22,26 +22,18 @@ $session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f
 $user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING);
 $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_SANITIZE_STRING);
 
-$imagick_so = 'extension=imagick.so';
-if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
-	$pos_imagick_so = strpos(file_get_contents($php_ini), $imagick_so);
-
 if (!extension_loaded('imagick'))
 {
-	if (is_file($php_ini))
+	$imagick_so = 'extension=imagick.so';
+	if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
 	{
-		if ($pos_imagick_so === false)
+		if (strpos(file_get_contents($php_ini), $imagick_so) === false)
 			file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
 		else
 			file_put_contents('./error.log', 'ImageMagick is not installed. See https://www.php.net/manual/'. $lang. '/imagick.setup.php'. $n, LOCK_EX);
 	}
 	else
 		file_put_contents($php_ini, $imagick_so. $n, LOCK_EX);
-}
-else
-{
-	if ($pos_imagick_so === false)
-		file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
 }
 
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;

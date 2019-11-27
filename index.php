@@ -6,7 +6,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 $time_start = microtime(true);
 $base_mem = memory_get_usage();
 
-ob_implicit_flush(true);
+ob_implicit_flush(1);
 
 if (!is_file($session_txt = './'. sha1(__DIR__). '.txt'))
 {

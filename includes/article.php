@@ -55,7 +55,25 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		$article .= '<small class=ml-3><a href=#comment>'. sprintf($comments_count_title, $count_comments). '</a></small>';
 	}
 	$article .= '</h1>';
-
+	if (is_dir($slide_images_dir = $current_article_dir. '/slide-images') && $slides = glob($slide_images_dir. '/*'))
+	{
+		$article .=
+		'<div id=slide-images class="carousel slide carousel-fade mb-3" data-ride=carousel>'. $n.
+		'<ol class=carousel-indicators>';
+		for ($j = 0, $d = count($slides); $j < $d; ++$j)
+		{
+			$slides_exif = @exif_read_data($slides[$j], '', '', true);
+			$slides_exif_comment = isset($slides_exif['COMMENT']) ? '<div style="background:rgba(0,0,0,.2)" class="carousel-caption d-block">'. str_replace($line_breaks, '<br>', h(trim(strip_tags($slides_exif['COMMENT'][0])))). '</div>' : '';
+			$article .= '<li data-target="#slide-images" data-slide-to='. $j. ($j === 0 ? ' class=active' : ''). ' data-interval=10000><span class=sr-only>.</span></li>';
+			$darousel_item[] = '<div class="carousel-item'. ($j === 0 ? ' active' : ''). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($slides[$j]). '">'. $slides_exif_comment. '</div>';
+		}
+		$article .=
+		'</ol>'. $n.
+		'<div class=carousel-inner>'. implode($n, $darousel_item).	'</div>'. $n.
+		'<a class=carousel-control-prev href=#slide-images role=button data-slide=prev><span class=carousel-control-prev-icon aria-hidden=true></span></a>'. $n.
+		'<a class=carousel-control-next href=#slide-images role=button data-slide=next><span class=carousel-control-next-icon aria-hidden=true></span></a>'. $n.
+		'</div>';
+	}
 	ob_start();
 	include $current_article;
 	$current_article_content = trim(ob_get_clean());

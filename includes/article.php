@@ -201,7 +201,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 
 		if (isset($glob_comment_files) && $comments_per_page > 0)
 		{
-			rsort($glob_comment_files);
+			sort($glob_comment_files);
 
 			foreach ($glob_comment_files as $comment_files)
 			{

@@ -62,20 +62,19 @@ if ($use_popular_articles && $number_of_popular_articles > 0 && $glob_all_counte
 
 if ($use_comment && $number_of_new_comments > 0 && $all_comments = glob($glob_dir. 'comments/*'. $delimiter. '*.txt', GLOB_NOSORT))
 {
-	usort($all_comments, 'sort_name');
-
+	rsort($all_comments);
 	$aside .=
 	'<div id=recent-comments class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[7]. '">'. $n.
 	'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[3]. '</div>';
 
-	foreach (range(1, $number_of_new_comments) as $j)
+	for ($k=0; $k < $number_of_new_comments; ++$k)
 	{
-		if (isset($all_comments[$j]) && is_file($all_comments[$j]))
+		if (isset($all_comments[$k]) && is_file($all_comments[$k]))
 		{
-			$new_comments = explode($delimiter, $all_comments[$j]);
+			$new_comments = explode($delimiter, $all_comments[$k]);
 			$comment_link = explode('/', $new_comments[0]);
 			$comment_time = (int)end($comment_link);
-			$comments_content = str_replace($line_breaks, ' ', trim(strip_tags(file_get_contents($all_comments[$j]))));
+			$comments_content = str_replace($line_breaks, ' ', trim(strip_tags(file_get_contents($all_comments[$k]))));
 			$new_comment_user = basename($new_comments[1], '.txt');
 			if (is_dir($new_comment_user_handle = $usersdir. $new_comment_user. '/prof/'))
 				$new_comment_user = handle($new_comment_user_handle);

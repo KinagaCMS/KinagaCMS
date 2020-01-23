@@ -145,9 +145,6 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 else
 {
 	$header .= '<title>'. $site_name. '</title>'. $n;
-	if (!$index_file || !glob('contents/*.html', GLOB_NOSORT))
-	{
-		$header .= '<style>.breadcrumb,.container,.container-fluid,#wrapper,header,nav{display:none!important}footer{height:100vh}</style>'. $n;
-		$footer .= '<img src="'. $url. 'images/icon.php" class="d-block w-50 p-5 m-auto" style="opacity:.2">';
-	}
+	if (!$index_file || !$contents)
+		$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 p-3 m-auto" style="opacity:.2">';
 }

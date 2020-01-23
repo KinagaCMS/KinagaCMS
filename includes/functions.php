@@ -145,7 +145,7 @@ function get_title($str)
 
 function get_page($nr)
 {
-	global $url, $get_categ, $get_title, $page_name, $current_url, $query, $download_contents;
+	global $url, $get_categ, $get_title, $page_name, $current_url, $query, $download_contents, $forum, $forum_thread;
 	if ($get_categ && $get_title)
 		return $current_url. '&amp;pages='. $nr;
 	elseif ($get_categ && !$get_title)
@@ -154,6 +154,8 @@ function get_page($nr)
 		return $url. '?query='. r($query). '&amp;pages='. $nr;
 	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
+	elseif ($page_name === $forum)
+		return $url. r($forum). (!$forum_thread ? '' :  '&amp;thread='. r($forum_thread)). '&amp;pages='. $nr;
 	else
 		return $url. '?pages='. $nr;
 }
@@ -569,9 +571,9 @@ function handle($dir)
 function avatar($dir)
 {
 	if (is_file($img = $dir. 'avatar') && filesize($img) && strpos($base64_img = file_get_contents($img), 'base64') !== false)
-		return '<img src="'. strip_tags($base64_img). '" class=rounded alt="">';
+		return '<img src="'. strip_tags($base64_img). '" class="d-block rounded mx-auto" alt="">';
 	else
-		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
 }
 
 function flow($a, $b, $c, $d)
@@ -603,4 +605,77 @@ function counter($txt, $put=false)
 function is_permitted($dir)
 {
 	if (is_dir($dir) && substr(decoct(fileperms($dir)), 2) !== '700') return true;
+}
+
+function hs($s)
+{
+	$s = str_replace("\t", '    ', $s);
+	foreach (['autofocus', 'disabled', 'multiple', 'required', 'selected'] as $o)
+	{
+		if (strpos($s, $o) !== false)
+			$s = str_replace($o, '<span style="color:ForestGreen">' . $o . '</span>', $s);
+	}
+
+	if (strpos($s, '=') !== false)
+		$s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:ForestGreen">\\1</span>=\\2', $s);
+
+	if (strpos($s, '&lt;') !== false && strpos($s, '&gt;') !== false)
+		$s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:DarkBlue">&lt;\\1&gt;</span>', $s);
+
+	if (strpos($s, '&amp;nbsp;') !== false)
+		$s = str_replace('&amp;nbsp;', '<span style="color:DimGray">&amp;nbsp;</span>', $s);
+
+	if (strpos($s, '&#039;') !== false)
+		$s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:Crimson">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
+
+	if (strpos($s, '&quot;') !== false)
+		$s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:Crimson">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
+
+	if (strpos($s, '/*') !== false)
+		$s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:DarkOrange">' . strip_tags($t[1]) . '</span>';}, $s);
+
+	if (strpos($s, '//') !== false)
+		$s = preg_replace_callback('|^(.*?)?(?<![:(>&quot;&#039;])(//.*?)$|mi', function ($t){return $t[1] . '<span style="color:DarkOrange">' . strip_tags($t[2]) . '</span>';}, $s);
+
+	if (strpos($s, '&lt;!--') !== false)
+		$s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:DarkOrange">' . strip_tags($t[1]) . '</span>';}, $s);
+
+	if (strpos($s, '&lt;script') !== false)
+		$s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:DimGray">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+
+	if (strpos($s, '&lt;style') !== false)
+		$s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:Gray">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+
+	if (strpos($s, '「') !== false)
+		$s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+
+	if (strpos($s, '『') !== false)
+		$s = preg_replace_callback('/(『)(.*?)(』)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+
+	if (strpos($s, '【') !== false)
+		$s = preg_replace_callback('/(【)(.*?)(】)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+
+	if (strpos($s, '&lt;?') !== false)
+		$s = preg_replace_callback('/(&lt;\?.*?\?&gt;)/is', function ($t){return highlight_string(html_entity_decode(strip_tags($t[1]), ENT_QUOTES), true);}, $s);
+
+	if (strpos($s, '[') !== false)
+	{
+		$s = preg_replace_callback('/\[url=?(http.*?)?\](.*?)\[\/url\]/i', function ($t)
+		{
+			if (!$t[1])
+				return '<a href="'. $t[2]. '" target="_blank" rel="noopener noreferrer">'. h($t[2]). '</a>';
+			else
+				return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. h($t[2]). '</a>';
+		}, $s);
+	}
+	return $s;
+}
+
+function blacklist($email, $blacklist = './forum/blacklist.txt')
+{
+	if (filter_var($email, FILTER_VALIDATE_EMAIL))
+	{
+		$list = file($blacklist, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if (!in_array($email, $list, true)) return $email;
+	}
 }

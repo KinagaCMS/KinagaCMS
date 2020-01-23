@@ -67,7 +67,7 @@ $use_user_approach = true;
 #Forum
 $use_forum = true;
 #Guests can create threads and topics
-$allow_guest_creates = 0;
+$allow_guest_creates = true;
 
 #Benchmark in footer
 $use_benchmark = true;

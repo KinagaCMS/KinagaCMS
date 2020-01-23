@@ -64,6 +64,11 @@ $use_summary = true;
 #Show approach menu in user profile
 $use_user_approach = true;
 
+#Forum
+$use_forum = true;
+#Guests can create threads and topics
+$allow_guest_creates = 0;
+
 #Benchmark in footer
 $use_benchmark = true;
 
@@ -82,7 +87,8 @@ $sidebox_order = [
 	6, #comments
 	1, #toc
 	9, #address
-	1 #category
+	1, #category
+	12 #forum
 	];
 
 $sidebox_wrapper_class = [
@@ -159,6 +165,19 @@ $number_of_similars = 3;
 
 #Approached users per page
 $users_per_page = 4;
+
+
+#Forum home & sidebox
+$number_of_topics = 5;
+
+#threads/topics per page
+$forum_contents_per_page = 10;
+
+#Limit the maximum number of posts in a topic
+$forum_limit = 1000;
+
+#Time limit for responding to email (in minutes)
+$time_limit = 10;
 
 ##########################
 

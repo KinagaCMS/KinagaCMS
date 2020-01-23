@@ -9,17 +9,16 @@ if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 	$j = 0;
 	foreach ($recent_files as $recents_name)
 	{
-		if ($j === $number_of_recents) break;
 		$recent_categ = get_categ($recents_name);
 		$recent_title = get_title($recents_name);
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($categ_name. $title_name === $recent_categ. $recent_title ? ' bg-light current' : ''). '" href="'. $url. r($recent_categ. '/'. $recent_title). '">'. h($recent_title). '</a>'. $n;
-		++$j;
+		if (++$j === $number_of_recents) break;
 	}
 	$aside .= '</div>';
 }
 
 $glob_info_files = glob('contents/[!index]*.html', GLOB_NOSORT);
-if ($glob_info_files || $dl || $use_contact && $mail_address)
+if ($glob_info_files || $dl || $use_forum || ($use_contact && $mail_address))
 {
 	usort($glob_info_files, 'sort_time');
 	$aside .=
@@ -31,6 +30,9 @@ if ($glob_info_files || $dl || $use_contact && $mail_address)
 		$info_uri = basename($info_files, '.html');
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $info_uri ? ' bg-light current' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
 	}
+
+	if ($use_forum)
+		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $forum ? ' bg-light current' : ''). '" href="'. $url. r($forum). '">'. $forum. '</a>'. $n;
 
 	if ($dl)
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $download_contents ? ' bg-light current' : ''). '" href="'. $url. r($download_contents). '">'. $download_contents. '</a>'. $n;
@@ -98,4 +100,26 @@ if ($address)
 		if ($adds)
 			$aside .= '<div class="'. $sidebox_content_class[2]. '">'. trim($adds). '</div>';
 	$aside .='</div>';
+}
+
+if ($use_forum)
+{
+	if ($forum_topic_glob = glob('./forum/[!#]*/[!#]*[!threader]*', GLOB_NOSORT))
+	{
+		usort($forum_topic_glob, function($a, $b){return filemtime($a) < filemtime($b);});
+
+		$aside .= '<div id=recent-topics class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[11]. '">'. $n.
+		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[11]. '</div>'. $n;
+		$i = 0;
+		foreach($forum_topic_glob as $newtopics)
+		{
+			$newtopic = basename($newtopics);
+			$newtopic_title = $newtopic[0] === '!' || $newtopic[0] === '@' ? h(substr($newtopic, 1)) : h($newtopic);
+			$topic_dir = basename(dirname($newtopics));
+			$topic_time = timeformat(filemtime($newtopics), $intervals);
+			$aside .= '<a class="d-flex justify-content-between align-items-center text-break '. $sidebox_content_class[0]. (isset($forum_topic) && $forum_topic === $newtopic ? ' bg-light current' : ''). '" href="'. $url. r($forum). '/'. r($topic_dir). '/'. r($newtopic). '">'. $newtopic_title. ' <small class="badge badge-primary badge-pill">'. $topic_time. '</small></a>'. $n;
+			if (++$i === $number_of_topics) break;
+		}
+		$aside .= '</div>';
+	}
 }

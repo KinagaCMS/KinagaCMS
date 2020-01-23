@@ -304,6 +304,9 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					(is_file($comment_error = $current_userdir. '/comment-error.txt') ? '<div class="list-group-item">'. $status[7]. (int)file_get_contents($comment_error). '</div>'. $n : '').
 					(is_file($contact_success = $current_userdir. '/contact-success.txt') ? '<div class="list-group-item">'. $status[8]. (int)file_get_contents($contact_success). '</div>'. $n : '').
 					(is_file($contact_error = $current_userdir. '/contact-error.txt') ? '<div class="list-group-item">'. $status[9]. (int)file_get_contents($contact_error). '</div>'. $n : '').
+					(is_file($forum_thread_count = $current_userdir. '/forum-thread.txt') ? '<div class="list-group-item">'. $status[10]. (int)file_get_contents($forum_thread_count). '</div>'. $n : '').
+					(is_file($forum_topic_count = $current_userdir. '/forum-topic.txt') ? '<div class="list-group-item">'. $status[11]. (int)file_get_contents($forum_topic_count). '</div>'. $n : '').
+					(is_file($forum_ress_count = $current_userdir. '/forum-ress.txt') ? '<div class="list-group-item">'. $status[12]. (int)file_get_contents($forum_ress_count). '</div>'. $n : '').
 					'</div>'. $n.
 					'</div>'. $n;
 				}

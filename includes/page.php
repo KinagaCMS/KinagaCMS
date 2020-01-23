@@ -52,7 +52,7 @@ elseif ($dl && $page_name === $download_contents)
 
 		exit(readfile($dl_file));
 	}
-	$breadcrumb .= '<li class="breadcrumb-item active">'. $download_contents. '</li>';
+	$breadcrumb .= ($pages > 1 ? '<li class="breadcrumb-item"><a href="'. $url. r($download_contents). '">'. $download_contents. '</a></li><li class="breadcrumb-item active">'. sprintf($page_prefix, $pages). '</li>' : '<li class="breadcrumb-item active">'. $download_contents. '</li>');
 	$header .= '<title>'. $download_contents. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 
 	if ($download_subtitle)
@@ -94,5 +94,7 @@ elseif ($dl && $page_name === $download_contents)
 			pager($max_pages, $page_ceil);
 	}
 }
+elseif ($use_forum && $page_name === $forum)
+	include 'forum.php';
 else
 	not_found();

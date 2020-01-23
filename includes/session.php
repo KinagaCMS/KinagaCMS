@@ -7,8 +7,6 @@ if (filter_has_var(INPUT_GET, 'logout'))
 	exit(header('Location: '. $url));
 }
 
-if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757, true);
-
 if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket))
 {
 	$_SESSION['m'] = $now;
@@ -16,7 +14,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 	{
 		if (isset($_FILES['i']['error']) && $_FILES['i']['error'] === UPLOAD_ERR_OK && exif_imagetype($_FILES['i']['tmp_name']) === IMAGETYPE_JPEG)
 		{
-			if (basename($_FILES['i']['name'], '.jpg')+600 >= $now && filemtime($_FILES['i']['tmp_name'])+600 >= $now)
+			if (basename($_FILES['i']['name'], '.jpg')+$time_limit*60 >= $now && filemtime($_FILES['i']['tmp_name'])+$time_limit*60 >= $now)
 			{
 				$session_exif = @exif_read_data($_FILES['i']['tmp_name'], '', '', true);
 
@@ -69,13 +67,13 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 
 		if (extension_loaded('imagick'))
 		{
-			if (is_file($session_tmp) && filemtime($session_tmp)+600 >= $now)
+			if (is_file($session_tmp) && filemtime($session_tmp)+$time_limit*60 >= $now)
 			{
-				if (isset($_SESSION['t'], $_SESSION['m']) && $_SESSION['m']+600 >= $now && $_SESSION['t'] === $session_t)
+				if (isset($_SESSION['t'], $_SESSION['m']) && $_SESSION['m']+$time_limit*60 >= $now && $_SESSION['t'] === $session_t)
 				{
 					$session_precom = str_shuffle(substr($session_txt, 2, 32));
 					$session_filename = $now. '.jpg';
-					$session_limit = date($time_format, $now+600);
+					$session_limit = date($time_format, $now+$time_limit*60);
 					$userubject = $ticket_subject. ' - '. $site_name;
 					$session_headers = $mime;
 					$session_headers .= 'From: noreply@'. $server. $n;

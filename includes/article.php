@@ -254,15 +254,15 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 			}
 		}
 		if (is_file($comment_dir. '/end.txt'))
-			$article .= '<p class="alert alert-warning my-5">'. $comments_not_allow. '</p>'. $n;
+			$article .= '<p class="alert alert-warning my-3">'. $comments_not_allow. '</p>'. $n;
 		else
 		{
 			if (is_file($ticket) && (is_file($login_txt) || is_file($categ_login_txt)) && !isset($_SESSION['l']))
-				$article .= '<p class="alert alert-warning my-5">'. $login_required[1]. '</p>';
+				$article .= '<p class="alert alert-warning my-3">'. $login_required[1]. '</p>';
 			else
 			{
 				if ($comment_privacy_policy)
-					$article .= '<p id=privacy-policy class="alert alert-warning my-5 wrap">'. $comment_privacy_policy. '</p>'. $n;
+					$article .= '<p id=privacy-policy class="alert alert-warning my-3 wrap">'. $comment_privacy_policy. '</p>'. $n;
 				ob_start();
 				include $form;
 				$article .= trim(ob_get_clean());

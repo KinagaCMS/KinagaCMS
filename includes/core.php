@@ -10,7 +10,6 @@ $comment_pages = !filter_has_var(INPUT_GET, 'comments') ? 1 : (int)filter_input(
 $breadcrumb = '<li class=breadcrumb-item><a href="'. $url. '">'. $home. '</a></li>';
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
 $form = 'includes/form.php';
-$ticket = 'images/ticket.jpg';
 $title_name = d($get_title);
 $categ_name = d($get_categ);
 $page_name = d($get_page);
@@ -22,22 +21,32 @@ $session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f
 $user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING);
 $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_SANITIZE_STRING);
 
-if (!extension_loaded('imagick'))
-{
-	$imagick_so = 'extension=imagick.so';
-	if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
-	{
-		if (strpos(file_get_contents($php_ini), $imagick_so) === false)
-			file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
-		else
-			file_put_contents('./error.log', 'ImageMagick is not installed. See https://www.php.net/manual/'. $lang. '/imagick.setup.php'. $n, LOCK_EX);
-	}
-	else
-		file_put_contents($php_ini, $imagick_so. $n, LOCK_EX);
-}
-
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;
 
+if (is_file($ticket = 'images/ticket.jpg'))
+{
+	if (!extension_loaded('imagick'))
+	{
+		$imagick_so = 'extension=imagick.so';
+		if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
+		{
+			if (strpos(file_get_contents($php_ini), $imagick_so) === false)
+				file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
+			else
+				file_put_contents('./error.log', 'ImageMagick is not installed. See https://www.php.net/manual/'. $lang. '/imagick.setup.php'. $n, LOCK_EX);
+		}
+		else
+			file_put_contents($php_ini, $imagick_so. $n, LOCK_EX);
+	}
+	if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757, true);
+}
+
+if ($use_forum)
+{
+	if (!is_dir($forum_dir = './forum/')) mkdir($forum_dir, 0757);
+	if (!is_file($htaccess = $forum_dir. '.htaccess')) file_put_contents($htaccess, 'Order allow,deny'. $n. 'Deny from all');
+	if (!is_file($blacklist = $forum_dir. 'blacklist.txt')) file_put_contents($blacklist, '');
+}
 include 'session.php';
 
 if ($contents = get_dirs('contents', false))

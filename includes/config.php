@@ -179,6 +179,8 @@ $forum_limit = 1000;
 #Time limit for responding to email (in minutes)
 $time_limit = 10;
 
+$delimiter = '-_-';
+
 ##########################
 
 $n = PHP_EOL;
@@ -204,7 +206,6 @@ $js = $url. $tpl_dir. 'js/';
 $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 $tmpdir = ini_get('upload_tmp_dir') ?? sys_get_temp_dir();
 $mime = 'MIME-Version: 1.0'. $n. 'X-Date: '. date('c'). $n. 'X-Host: '. gethostbyaddr($remote_addr). $n. 'X-IP: '. $remote_addr. $n. 'X-Mailer: kinaga'. $n. 'X-UA: '. $user_agent. $n;
-$delimiter = '-_-';
 
 ##########################
 

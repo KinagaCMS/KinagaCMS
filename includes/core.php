@@ -44,7 +44,6 @@ if (is_file($ticket = 'images/ticket.jpg'))
 if ($use_forum)
 {
 	if (!is_dir($forum_dir = './forum/')) mkdir($forum_dir, 0757);
-	if (!is_file($htaccess = $forum_dir. '.htaccess')) file_put_contents($htaccess, 'Order allow,deny'. $n. 'Deny from all');
 	if (!is_file($blacklist = $forum_dir. 'blacklist.txt')) file_put_contents($blacklist, '');
 }
 include 'session.php';

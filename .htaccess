@@ -53,7 +53,12 @@ Header append Vary: Accept-Encoding
 </FilesMatch>
 </IfModule>
 
+SetEnvIf Request_URI "bookings" forbidden
 SetEnvIf Request_URI "downloads" forbidden
 SetEnvIf Request_URI "forum" forbidden
 SetEnvIf Request_URI "users" forbidden
-Deny from env=forbidden
+
+<RequireAll>
+Require all granted
+Require not env forbidden
+</RequireAll>

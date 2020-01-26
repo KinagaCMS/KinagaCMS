@@ -54,5 +54,6 @@ Header append Vary: Accept-Encoding
 </IfModule>
 
 SetEnvIf Request_URI "downloads" forbidden
+SetEnvIf Request_URI "forum" forbidden
 SetEnvIf Request_URI "users" forbidden
 Deny from env=forbidden

@@ -21,9 +21,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)/(.*)/(.*)$ ?page=$1&thread=$2&topic=$3 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)/(.*)/$ ?categ=$1&pages=$2 [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)/$ ?categ=$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

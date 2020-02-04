@@ -149,7 +149,7 @@ function get_page($nr)
 	if ($get_categ && $get_title)
 		return $current_url. '&amp;pages='. $nr;
 	elseif ($get_categ && !$get_title)
-		return $url. $get_categ. '/'. $nr. '/';
+		return $url. $get_categ. '&amp;pages='. $nr;
 	elseif ($query)
 		return $url. '?query='. r($query). '&amp;pages='. $nr;
 	elseif ($page_name === $download_contents)

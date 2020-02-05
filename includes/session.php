@@ -1,7 +1,7 @@
 <?php
 session($session_name = 'kinaga');
 
-if (filter_has_var(INPUT_GET, 'logout'))
+if (filter_has_var(INPUT_GET, $logout))
 {
 	unsession();
 	exit(header('Location: '. $url));
@@ -14,7 +14,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 	{
 		if (isset($_FILES['i']['error']) && $_FILES['i']['error'] === UPLOAD_ERR_OK && exif_imagetype($_FILES['i']['tmp_name']) === IMAGETYPE_JPEG)
 		{
-			if (basename($_FILES['i']['name'], '.jpg')+$time_limit*60 >= $now && filemtime($_FILES['i']['tmp_name'])+$time_limit*60 >= $now)
+			if (basename($_FILES['i']['name'], '.jpg')+$time_limit*60 >= $_SESSION['m'] && filemtime($_FILES['i']['tmp_name'])+$time_limit*60 >= $_SESSION['m'])
 			{
 				$session_exif = @exif_read_data($_FILES['i']['tmp_name'], '', '', true);
 
@@ -63,17 +63,17 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 	{
 		$session_tmp = $tmpdir. $session_e;
 
-		file_put_contents($session_tmp, $now, LOCK_EX);
+		file_put_contents($session_tmp, $_SESSION['m'], LOCK_EX);
 
 		if (extension_loaded('imagick'))
 		{
-			if (is_file($session_tmp) && filemtime($session_tmp)+$time_limit*60 >= $now)
+			if (is_file($session_tmp) && filemtime($session_tmp)+$time_limit*60 >= $_SESSION['m'])
 			{
-				if (isset($_SESSION['t'], $_SESSION['m']) && $_SESSION['m']+$time_limit*60 >= $now && $_SESSION['t'] === $session_t)
+				if (isset($_SESSION['t'], $_SESSION['m']) && $_SESSION['m']+$time_limit*60 >= $_SESSION['m'] && $_SESSION['t'] === $session_t)
 				{
 					$session_precom = str_shuffle(substr($session_txt, 2, 32));
-					$session_filename = $now. '.jpg';
-					$session_limit = date($time_format, $now+$time_limit*60);
+					$session_filename = $_SESSION['m']. '.jpg';
+					$session_limit = date($time_format, $_SESSION['m']+$time_limit*60);
 					$userubject = $ticket_subject. ' - '. $site_name;
 					$session_headers = $mime;
 					$session_headers .= 'From: noreply@'. $server. $n;
@@ -144,7 +144,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'. $n.
 		'<div class="'. $sidebox_title_class[0]. '">'. $login. '</div>'. $n.
 		'<form class="'. $sidebox_content_class[3]. '" method=post>'. $n.
-		'<input class="bg-transparent text-reset form-control my-2" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '" '. (filter_has_var(INPUT_GET, 'login') ? 'autofocus' : ''). '>'. $n.
+		'<input class="bg-transparent text-reset form-control my-2" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '"'. (filter_has_var(INPUT_GET, $login) ? ' autofocus' : ''). '>'. $n.
 		'<input type=hidden name=t value="'. $token. '">'. $n.
 		'<p>'. $login_message[1]. '</p>'. $n.
 		'</form>'. $n.
@@ -156,7 +156,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'. $n.
 		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[4]. '</div>'. $n.
 		'<div class="'. $sidebox_content_class[3]. '">'. $n.
-		'<a class="btn btn-info btn-lg btn-block my-3" href="'. $scheme. $server. $port. $request_uri. '&amp;login">'. $login. '</a>'. $n.
+		'<a class="btn btn-info btn-lg btn-block my-3" href="'. $current_url. '&amp;'. r($login). '">'. $login. '</a>'. $n.
 		'<p>'. $login_message[0]. '</p>'. $n.
 		'</div>'. $n.
 		'</div>'. $n;
@@ -191,7 +191,7 @@ if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === 
 			'<div class="'. $sidebox_title_class[2]. '">'. sprintf($sidebox_title[5], $handlename). '</div>'. $n.
 			'<div class="'. $sidebox_content_class[3]. '">'. $n.
 			'<a class="btn btn-info btn-lg btn-block my-3" href="'. $url. '?user='. $useraddr. '">'. $myprof. '</a>'. $n.
-			'<a class="btn btn-danger btn-lg btn-block my-3" href="'. $url. '?logout">'. $logout. '</a>'. $n.
+			'<a class="btn btn-danger btn-lg btn-block my-3" href="'. $url. '?'. r($logout). '">'. $logout. '</a>'. $n.
 			'</div>'. $n.
 			'</div>'. $n;
 		}
@@ -201,3 +201,4 @@ if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === 
 	else
 		unsession();
 }
+if (isset($_SESSION['l']) && !filter_var(dec($_SESSION['l']), FILTER_VALIDATE_EMAIL)) unsession();

@@ -190,10 +190,10 @@ $port = $server_port === '80' || $server_port === '443' ? '' : ':'. $server_port
 $request_uri = getenv('REQUEST_URI');
 $server = getenv('SERVER_NAME');
 $dir = r(dirname(getenv('SCRIPT_NAME')));
-$addslash = $dir !== '/' ? '/' : '';
-$script = $dir. $addslash;
+$script = $dir. ($dir !== '/' ? '/' : '');
 $scheme = is_ssl() ? 'https://' : 'http://';
 $url = $scheme. $server. $port. $script;
+$current_url = $scheme. $server. $port. $request_uri;
 $line_breaks = ["\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;'];
 $remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
 $user_agent = h(getenv('HTTP_USER_AGENT'));

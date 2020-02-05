@@ -9,7 +9,7 @@ if ($color)
 	#primary
 	$bootstrap = str_replace('#007bff', hsla($color, 5.5, -7, .9), $bootstrap);
 	#secondary
-	$bootstrap = str_replace('#6c757d', hsla($color, -30, -10), $bootstrap);
+	#$bootstrap = str_replace('#6c757d', hsla($color, -30, -10), $bootstrap);
 	#light
 	$bootstrap = str_replace('#f8f9fa', hsla($color, 5, 5, .1), $bootstrap);
 	#dark

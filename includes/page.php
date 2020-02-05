@@ -20,7 +20,7 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 		social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
 
 	if ($use_permalink)
-		permalink($basetitle. ' - '. $site_name, $url. $get_page);
+		permalink($basetitle. ' - '. $site_name, $current_url);
 }
 elseif ($use_contact && $page_name === $contact_us)
 {

@@ -4,7 +4,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	$login_txt = $current_article_dir. '/login.txt';
 	$categ_login_txt = 'contents/'. $categ_name. '/login.txt';
 	$breadcrumb .=
-	'<li class=breadcrumb-item><a href="'. $url. $get_categ. '/">'. h($categ_name). '</a></li>'. $n.
+	'<li class=breadcrumb-item><a href="'. $url. $get_categ. '">'. h($categ_name). '</a></li>'. $n.
 	'<li class="breadcrumb-item active">'. h($title_name). '</li>';
 
 	if (is_dir($background_images_dir = $current_article_dir. '/background-images') && $glob_background_images = glob($background_images_dir. '/*', GLOB_NOSORT))
@@ -43,7 +43,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	$article_encode_title = h($title_name);
 	$header .= '<title>'. $article_encode_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 	$article_filemtime = filemtime($current_article);
-	$current_url = $url. $get_categ. '/'. $get_title;
+
 	$article .= '<small class=text-muted>'. sprintf($last_modified, date($time_format, $article_filemtime)). '</small>';
 	if ($count = counter($current_article_dir. '/counter.txt'))
 		$article .= '<small class="ml-2 text-muted">'. sprintf($views, $count). '</small>';
@@ -136,7 +136,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 			{
 				$prev_next_parts = explode($delimiter, $sort_prev_next[$i]);
 				$prev_next_title = get_title($prev_next_parts[1]);
-				$prev_next_href = $url. $get_categ. '/'. r($prev_next_title);
+				$prev_next_href = $url. $get_categ. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
 
 				if ((int)$prev_next_parts[0] > $article_filemtime)
@@ -181,7 +181,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				for ($i = 0; $i < $similar_counts && $i < $number_of_similars; ++$i)
 				{
 					$similar = explode($delimiter, $similar_article[$i]);
-					$aside .= '<a class="'. $sidebox_content_class[0]. '" href="'. $url. $get_categ. '/'. r($similar[1]). '">'. h($similar[1]). '</a>'. $n;
+					$aside .= '<a class="'. $sidebox_content_class[0]. '" href="'. $url. $get_categ. r($similar[1]). '">'. h($similar[1]). '</a>'. $n;
 				}
 				$aside .= '</div>';
 			}

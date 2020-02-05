@@ -75,22 +75,19 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 					$session_filename = $_SESSION['m']. '.jpg';
 					$session_limit = date($time_format, $_SESSION['m']+$time_limit*60);
 					$userubject = $ticket_subject. ' - '. $site_name;
-					$session_headers = $mime;
-					$session_headers .= 'From: noreply@'. $server. $n;
-					$session_headers .= 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n;
-					$session_headers .= 'Content-Transfer-Encoding: 8bit'. $n;
-					$session_body = '--'. $token. $n;
-					$session_body .= 'Content-Type: text/plain; charset='. $encoding. $n;
-					$session_body .= 'Content-Transfer-Encoding: 8bit'. $n. $n;
-					$session_body .= sprintf($ticket_body, $remote_addr, $session_filename, $session_limit). $n;
-					$session_body .= '--'. $token. $n;
-					$session_body .= 'Content-Type: application/octet-stream; name="'. $session_filename. '"'. $n;
-					$session_body .= 'Content-Disposition: attachment; filename="'. $session_filename. '"'. $n;
-					$session_body .= 'Content-Transfer-Encoding: base64'. $n. $n;
+					$session_headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n. 'Content-Transfer-Encoding: 8bit'. $n;
+					$session_body =
+					'--'. $token. $n.
+					'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n.
+					sprintf($ticket_body, $remote_addr, $session_filename, $session_limit). $n. $n.
+					$separator. $n. $site_name. $n. $url. $n.
+					'--'. $token. $n.
+					'Content-Type: application/octet-stream; name="'. $session_filename. '"'. $n.
+					'Content-Disposition: attachment; filename="'. $session_filename. '"'. $n.
+					'Content-Transfer-Encoding: base64'. $n. $n;
 					$session_card = new Imagick($ticket);
 					$session_card->setImageProperty('comment', $session_precom. '@'. str_rot13($session_e));
-					$session_body .= chunk_split(base64_encode($session_card->getImagesBlob()));
-					$session_body .= '--'. $token. '--'. $n;
+					$session_body .= chunk_split(base64_encode($session_card->getImagesBlob())). '--'. $token. '--'. $n;
 
 					if (mail(dec($session_e), $userubject, $session_body, $session_headers))
 					{

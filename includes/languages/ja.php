@@ -83,8 +83,7 @@ $placeholder = ['Search...', 'example@yourmail.com', '', '', '', '一言メッ�
 
 $not_found = [
 'エラーが発生しました',
-'ページが削除されているか、アドレスが間違っている可能性があります。'. $n.
-'トップページに戻ってから、もう一度ご確認下さい。'
+'ページが削除されているか、アドレスが間違っている可能性があります。'. $n. 'トップページに戻ってから、もう一度ご確認下さい。'
 ];
 
 $more_link_text = '続きを読む…';
@@ -134,13 +133,16 @@ $contact_message = [
 
 $contact_preview = '内容確認';
 
-$contact_btn = ['訂正', '送信'];
-
 $contact_subject_suffix = '%s様よりお問い合わせ - ';
 
 $comment_subject = '「%s」の「%s」にコメント - ';
 
 $time_format = 'Y年n月j日 H時i分';
+$short_time_format = '%d月%d日（%s）';
+$long_time_format = '%d年%02d月%02d日%02d時%02d分';
+
+$btn = ['訂正', '送信', '保存', '拒否', '削除', '承認'];
+
 $intervals = ['y' => '年前', 'm' => 'ヶ月前', 'w' => '週間前', 'd' => '日前', 'h' => '時前', 'i' => '分前', 's' => '秒前'];
 
 #ログイン
@@ -153,7 +155,7 @@ $logout = 'ログアウト';
 $myprof = 'Myプロフィール';
 $nointrod = '特にありません';
 
-$login_try_again = '<a class=text-danger href="'. $url. '">こちら</a>からもう一度メールアドレスを入力して下さい。';
+$login_try_again = '<a class=text-danger href="'. $current_url. '">こちら</a>からもう一度メールアドレスを入力して下さい。';
 
 $login_required = ['続きを読むにはログインが必要です。', 'コメントを投稿するにはログインが必要です。'];
 
@@ -187,7 +189,6 @@ $prof_note = [
 	'HTMLタグは使用できません',
 	'ログインすると%sさんにアプローチすることもできます。'
 	];
-$prof_btn = ['保存', '拒否', '削除', '承認'];
 
 $approach_subject = [
 	'%sさんからコンタクトの承認がありました',
@@ -268,8 +269,22 @@ $forum_guests = [
 	'スレッド／トピックを作成するにはログインが必要です。'
 	];
 
-$benchmark_results = '<small class="d-block text-muted text-center mt-2">処理時間：%s秒　消費メモリ：%s</small>';
+$denial_attrs = ' data-placeholder="受付終了" class=c';
+$accepting = '残り%s件';
+$week = ['日', '月', '火', '水', '木', '金', '土'];
+$meridian = ['午前', '午後'];
+$booking_msg = ['「%d件」の予約を受付中。', '残り「%d件」入力することができます。', '予約は「%d件」まで入力することができます。', '予約を入力するにはログインが必要です。', '現在、予約は「０件」です。'];
+$reminder = [
+	'リマインドメール編集',
+	'予約日時のご確認 - '. $site_name,
+	'この度はご予約頂きありがとうございました。&#10;予約日時は %s です。&#10;ご来場の際はお気をつけてお越し下さい。',
+	'%s にリマインドメールを送信しますか？',
+	'%s にリマインドメールを送信しました。',
+	'%s の予約を削除しても宜しいですか？',
+	];
+$remind_header = ['日時', '予約者', '内容', 'リマインド'];
 
+$benchmark_results = '<small class="d-block text-muted text-center mt-2">処理時間：%s秒　消費メモリ：%s</small>';
 
 #/images/index.php
 

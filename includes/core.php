@@ -1,7 +1,7 @@
 <?php
 $header = $nav = $article = $aside = $footer = $search = '';
 $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : get_uri(basename($request_uri), 'title');
-$get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : (!$get_title ? get_uri(basename($request_uri), 'categ') : get_uri(basename(dirname($request_uri)), 'categ'));
+$get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : (!$get_title ? get_uri(basename($request_uri), 'categ') : get_uri(basename(dirname($request_uri)), 'categ')). '/';
 $get_page = !filter_has_var(INPUT_GET, 'page') ? '' : get_uri(basename($request_uri), 'page');
 $get_dl = !filter_has_var(INPUT_GET, 'dl') ? '' : basename(filter_input(INPUT_GET, 'dl', FILTER_SANITIZE_ENCODED));
 $pages = !filter_has_var(INPUT_GET, 'pages') ? 1 : (int)filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT);

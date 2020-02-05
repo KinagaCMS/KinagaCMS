@@ -38,22 +38,22 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<td colspan=2 class=text-center><strong class=text-danger>'. $contact_message[3]. '</strong></td>'. $n.
 		'</tr>'. $n.
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $contact_btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $contact_btn[1]. '</button></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
 	{
 		$_SESSION['token'] = $token;
 		$article .=
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $contact_btn[0]. '</a></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</a></td>'. $n.
 		'<td>'. $n.
-		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. '/'. $get_title. '#form_result' : r($contact_us)). '">'. $n.
+		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#form_result' : r($contact_us)). '">'. $n.
 		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'. $n.
 		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
 		'<input type=hidden name=token value="'. $token. '">'. $n.
 		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'. $n.
-		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" accesskey=z tabindex=0>'. $contact_btn[1]. '</button>'. $n.
+		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button>'. $n.
 		'</form>'. $n.
 		'</td>'. $n.
 		'</tr>';
@@ -61,8 +61,8 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	else
 		$article .=
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $contact_btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $contact_btn[1]. '</button></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
 		'</tr>';
 	$article .=
 	'</table>'. $n.
@@ -159,7 +159,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 	}
 }
 $article .=
-'<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. '/'. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
+'<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
 '<div class=form-row>'. $n.
 (isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. $_SESSION['h']. '"><input name=email type=hidden value="'. $session_usermail. '">' :
 '<div class="form-group col-md-6">'. $n.

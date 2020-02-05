@@ -155,7 +155,7 @@ function get_page($nr)
 	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
 	elseif ($page_name === $forum)
-		return $url. r($forum). (!$forum_thread ? '' :  '&amp;thread='. r($forum_thread)). '&amp;pages='. $nr;
+		return $url. r($forum). (!$forum_thread ? '' : '&amp;thread='. r($forum_thread)). '&amp;pages='. $nr;
 	else
 		return $url. '?pages='. $nr;
 }
@@ -223,7 +223,7 @@ function img($src, $class='', $show_exif_comment=false)
 	{
 		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
 		$video_extensions = ['.mp4', '.ogg', '.webm'];
-		if ($scheme = strpos($src, '://')) $addr = parse_url($src);
+		if ($src_scheme = strpos($src, '://')) $addr = parse_url($src);
 		if (array_search(strtolower($extension), $image_extensions) !== false)
 		{
 			$alt = h(basename($src));
@@ -240,7 +240,7 @@ function img($src, $class='', $show_exif_comment=false)
 			'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
 			if ($get_title || $get_page)
 			{
-				if ($scheme !== false)
+				if ($src_scheme !== false)
 					return
 					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'. $n.
 					'<a data-fancybox=gallery href="'. $src. '">'. $n.
@@ -306,7 +306,7 @@ function img($src, $class='', $show_exif_comment=false)
 			$vtt = str_replace($extension, '.vtt', $src);
 			if ($get_title || $get_page)
 			{
-				if ($scheme !== false)
+				if ($src_scheme !== false)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'. $n.
 					'<video controls preload=none>'. $n.
@@ -475,7 +475,7 @@ function toc($in_article=false)
 
 function unsession()
 {
-	if (isset($_SESSION['l'],$_SESSION['h']))
+	if (isset($_SESSION['l']))
 	{
 		global $session_name;
 		session_unset();
@@ -677,5 +677,188 @@ function blacklist($email, $blacklist = './forum/blacklist.txt')
 	{
 		$list = file($blacklist, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if (!in_array($email, $list, true)) return $email;
+	}
+}
+
+function booking(
+	$bookings_per_cell = 2,
+	$accepts_per_person = 2,
+	$term = '1 week',
+	$start_hour = '10:00am',
+	$end_hour = '4:00pm',
+	$interval = '1 hour',
+	$denial_week = ['', ''],
+	$denial_day = ['', ''],
+	$denial_time = ['12:00', ''],
+	$cancel = false,
+	$sideless = false
+){
+	global $accepting, $btn, $current_url, $denial_attrs, $footer, $header, $line_breaks, $mail_address, $n, $session_usermail, $week;
+	if ($sideless) sideless(0, 1);
+	$first_day = strtotime('today');
+	$last_day = strtotime("today + $term");
+	$start_time = strtotime($start_hour) - $first_day;
+	$end_time = strtotime($end_hour) - $first_day;
+	$time_range = strtotime($interval) - time();
+	$hours = range(strtotime($start_hour), strtotime($end_hour), $time_range);
+	$days = range($first_day, $last_day, 86400);
+	if (!is_dir($bookings_dir = './bookings/')) mkdir($bookings_dir, 0757);
+	if (isset($_SESSION['l']) && filter_has_var(INPUT_POST, 'date') && filter_has_var(INPUT_POST, 'booking'))
+	{
+		$date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_NUMBER_INT);
+		$booking = trim(filter_input(INPUT_POST, 'booking'));
+		$booking = filter_var($booking, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_LOW);
+		$booking = enc(str_replace($line_breaks, '&#10;', $booking));
+		if (!is_dir($date_dir = $bookings_dir. $date. '/')) mkdir($date_dir, 0757);
+		file_put_contents($booking_txt = $date_dir. $_SESSION['l']. '.txt', $booking, LOCK_EX);
+		if (!$booking && is_file($booking_txt)) unlink($booking_txt);
+		header('Location: '. $current_url. '#booking');
+	}
+	$header .= '<style>.a{opacity:1!important;visibility:visible!important}.b{opacity:0;visibility:hidden}.c{opacity:.8;cursor:not-allowed}.g{background:#3ddb80}.h{cursor:pointer;text-align:center;width:5%}.i{background:mediumseagreen;border:none;bottom:0;cursor:pointer;opacity:0;padding:5px 10px;position:absolute;right:0;text-align:center;transition:opacity .1s,visibility .1s;visibility:hidden}[data-placeholder]:empty:before{content:attr(data-placeholder);display:block;text-align:center}[contenteditable=false][data-placeholder]:empty:before{opacity:.8;cursor:not-allowed}[contenteditable=true][data-placeholder]:empty:before{cursor:pointer}#booking td{position:relative}#booking th,#booking td{padding:.8em .6em}#booking th:empty{width:5em}#booking th{background:dimgray;color:#fff;font-weight:inherit;vertical-align:middle;white-space:nowrap}#booking td div{word-wrap:break-word;white-space:pre-wrap}#booking tr:hover,.g:hover{opacity:.8}#booking tr:nth-child(odd){filter:brightness(105%)}@media print{*,a{color:#000000!important;font-size:8pt!important;opacity:1!important}aside,#side,footer,form,header,nav,p,.breadcrumb{display:none!important}html,body{background:#ffffff!important;margin:0!important;padding:0!important}th,td{background:#ffffff!important}th{white-space:nowrap!important}}</style>';
+
+	if (isset($_SESSION['l'], $session_usermail) && $session_usermail === $mail_address)
+	{
+		global $url, $long_time_format, $reminder, $remind_header, $separator;
+		if (filter_has_var(INPUT_POST, 'remind-addr') && filter_has_var(INPUT_POST, 'remind-date') && filter_has_var(INPUT_POST, 'remind-title') && filter_has_var(INPUT_POST, 'remind-contents'))
+		{
+			global $mime, $encoding, $site_name;
+			$to = filter_input(INPUT_POST, 'remind-addr', FILTER_SANITIZE_STRING);
+			$subject = filter_input(INPUT_POST, 'remind-title', FILTER_SANITIZE_STRING);
+			$body = sprintf(filter_input(INPUT_POST, 'remind-contents', FILTER_SANITIZE_STRING), filter_input(INPUT_POST, 'remind-date', FILTER_SANITIZE_STRING));
+			$body .= $n. $n. $separator. $n. $site_name. $n. $url;
+			$headers = $mime. 'From: '. $site_name. '<'. $mail_address. '>'. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n;
+			mail($to, $subject, $body, $headers);
+		}
+		if (filter_has_var(INPUT_POST, 'del') && is_file($file = filter_input(INPUT_POST, 'del'))) unlink($file);
+		if ($g = glob($bookings_dir. '*/*.txt'))
+		{
+			echo
+			'<div class="card nowrap mb-4">', $n,
+			'<div class=card-header>', $reminder[0], '</div>', $n,
+			'<div class=card-body>', $n,
+			'<pre contenteditable=true id=title>', $reminder[1], '</pre>', $n,
+			'<pre contenteditable=true id=contents>', $reminder[2], '</pre>', $n,
+			'</div>', $n,
+			'</div>', $n,
+			'<table class="small w-100" id=booking>', $n,
+			'<tr><th class=bg-danger></th><th>', $remind_header[0], '</th><th>', $remind_header[1], '</th><th>', $remind_header[2], '</th><th>', $remind_header[3], '</th></tr>', $n;
+			foreach ($g as $remind)
+			{
+				if (is_file($remind))
+				{
+					list ($remind_y, $remind_m, $remind_d, $remind_h, $remind_i) = explode('-', basename(dirname($remind)));
+					if ($reserved_mail = dec($user = basename($remind, '.txt')))
+					{
+						$reserved_time = sprintf($long_time_format, $remind_y, $remind_m, $remind_d, $remind_h, $remind_i);
+						echo
+						'<tr>', $n,
+						'<td class="bg-danger text-white h" onclick="if(!confirm(\'', sprintf($reminder[5], $reserved_time), '\'))return false;d(\''. $remind. '\')">', $btn[4], '</td>', $n,
+						'<th class=w-25>', $reserved_time, '</th>', $n,
+						'<td><a href="', $url, '?user=', str_rot13($user), '">', handle($user. '/prof'), '</a></td>', $n,
+						'<td><div>', dec(file_get_contents($remind)), '</div></td>', $n,
+						'<td class="g text-white h" onclick="if(!confirm(\'', sprintf($reminder[3], $reserved_mail), '\'))return false;a(\'', $reserved_mail,'\',\'', sprintf($long_time_format, $remind_y, $remind_m, $remind_d, $remind_h, $remind_i), '\',$(\'#title\').text().replace(/^\s+|\s+$/g,\'\'),document.getElementById(\'contents\').innerText.replace(/^\s+|\s+$/g,\'\'))">', $btn[1], '</td>', $n,
+						'</tr>', $n;
+					}
+				}
+			}
+			echo '</table>', $n;
+			$footer .= '<script>function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);const x=new XMLHttpRequest();x.open("post","'. $current_url. '");x.send(f);x.addEventListener("loadend",function(){if(x.status===200){document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")}});setTimeout(function(){document.getElementById(b).remove()},5000)}function d(f){$.post("'. $current_url. '",{"del":f},function(data,status){if(status==="success"){let c=$(data).find("#booking").html();$("#booking").html(c)}})}</script>';
+		}
+		else
+		{
+			global $booking_msg;
+			echo '<table class="small w-100" id=booking><tr><th class=bg-danger>', $booking_msg[4], '</th></tr></table>', $n;
+		}
+	}
+	else
+	{
+		global $booking_msg, $short_time_format;
+		echo '<table id=booking class="small w-100">', $n;
+		if (isset($_SESSION['l']))
+		{
+			$accepted = count(glob($bookings_dir. '*/'. $_SESSION['l']. '.txt', GLOB_NOSORT));
+			if ($accepted === $accepts_per_person)
+				echo '<caption class="bg-success px-3 py-2 text-right text-white">', sprintf($booking_msg[0], $accepted), '</caption>', $n;
+			elseif ($accepted === 0)
+				echo '<caption class="bg-primary px-3 py-2 text-right text-white">', sprintf($booking_msg[2], $accepts_per_person), '</caption>', $n;
+			else
+				echo '<caption class="bg-info px-3 py-2 text-right text-white">', sprintf($booking_msg[1], $accepted), '</caption>', $n;
+		}
+		else
+			echo '<caption class="bg-warning px-3 py-2 text-right text-white">', $booking_msg[3], '</caption>', $n;
+
+		echo
+		'<thead class=text-center>', $n,
+		'<tr>', $n,
+		'<th></th>', $n;
+		if (count($hours) === 2)
+		{
+			global $meridian;
+			echo '<th>', $meridian[0], '</th><th>', $meridian[1], '</th>';
+		}
+		else
+		{
+			foreach ($hours as $h)
+			{
+				$hi = date('H:i', $h);
+				echo '<th', (!in_array($hi, $denial_time, true) ? '' : $denial_attrs),'>', $hi, '</th>', $n;
+			}
+		}
+		echo
+		'</tr>', $n,
+		'</thead>', $n,
+		'<tbody>', $n;
+		foreach ($days as $d)
+		{
+			$times = range($d+$start_time, $d+$end_time, $time_range);
+			$w = date('w', $d);
+			echo
+			'<tr>', $n,
+			'<th', (!in_array($week[$w], $denial_week, true) && !in_array(date('Y-m-d', $d), $denial_day, true) ? '' : $denial_attrs), '>', sprintf($short_time_format, date('n', $d), date('j', $d), $week[$w]), '</th>', $n;
+			foreach ($times as $t)
+			{
+				$time_dir = date('Y-m-d-H-i', $t);
+				$received = $bookings_per_cell - count(glob($bookings_dir. $time_dir. '/*.txt', GLOB_NOSORT));
+				$percent = round($received/$bookings_per_cell*100). '%';
+				$is_denial_week = in_array($week[$w], $denial_week, true);
+				$is_denial_day = in_array(date('j', $t), $denial_day, true);
+				$is_denial_time = in_array(date('H:i', $t), $denial_time, true);
+				if (isset($_SESSION['l']))
+				{
+					if (is_file($f = $bookings_dir. $time_dir. '/'. $_SESSION['l']. '.txt'))
+					{
+						$books = str_replace($line_breaks, '&#10;', dec(file_get_contents($f)));
+						$attr = ' contenteditable="'. (($t < time()) && !$cancel ? 'false' : 'true'). '"';
+						$abtn = ($t < time()) && !$cancel ? '>' : ' onclick="this.lastElementChild.focus()"><a class=i onclick="a(this.nextElementSibling.innerText,\''. $time_dir. '\');this.className=\'i b\'">'. $btn[2]. '</a>';
+					}
+					else
+					{
+						$books = '';
+						$attr = ' contenteditable="'. ($accepted >= $accepts_per_person ? 'false' : 'true'). '" data-placeholder="'. sprintf($accepting, $received). '"';
+						$abtn = ($accepted >= $accepts_per_person) ? '>' : ' onclick="this.lastElementChild.focus()"><a class=i onclick="a(this.nextElementSibling.innerText,\''. $time_dir. '\');this.className=\'i b\'">'. $btn[2]. '</a>';
+					}
+				}
+				else
+				{
+					$books = '';
+					$attr = ' data-placeholder="'. sprintf($accepting, $received). '"';
+					$abtn = '>';
+				}
+				echo '<td', (isset($f) && is_file($f) || $t > time() && $received > 0 && !$is_denial_week && !$is_denial_day && !$is_denial_time ?
+				' style="background:hsl(210,'. $percent. ',70%);color:#ffffff"'. $abtn. '<div'. $attr. '>' : '><div'. (!$books ? $denial_attrs : ' contenteditable=true style="opacity:.6"'). '>'), $books, '</div></td>', $n;
+				$a[] = is_dir($e = $bookings_dir. $time_dir) ? $e : '';
+			}
+			echo '</tr>', $n;
+		}
+		echo
+		'</tbody>', $n,
+		'</table>', $n;
+		$footer .= '<script>const d=document;'. (isset($_SESSION['l']) ? 'd.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=d.createElement("form");f.style.display="none";f.method="post";let g=d.createElement("input"),h=d.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);d.body.appendChild(f);f.submit()}' : ''). 'const t=d.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}</script>';
+
+		if ($g = glob($bookings_dir. '*', GLOB_ONLYDIR+GLOB_NOSORT))
+		{
+			if ($b = array_diff($g, $a)) foreach ($b as $c) if (is_dir($c)) `rm -rf $c`;
+			`find $bookings_dir -type d -empty -delete`;
+		}
 	}
 }

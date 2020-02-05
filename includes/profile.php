@@ -130,7 +130,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 		'</div>'. $n.
 		'</fieldset>'. $n.
 		'<div class=text-center>'. $n.
-		'<input class="btn btn-primary btn-lg mb-2" id=p name=p type=submit accesskey=p value="'. $prof_btn[0]. '">'. $n.
+		'<input class="btn btn-primary btn-lg mb-2" id=p name=p type=submit accesskey=p value="'. $btn[2]. '">'. $n.
 		'</div>'. $n.
 		'</form>';
 
@@ -225,10 +225,10 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					'<a class="card-title text-break" href="'. $url. '?user='. $sbga. '">'. $approacher_handle. '</a>'. $n.
 					'<div class="btn-group btn-group-toggle" data-toggle=buttons>'. $n.
 					'<label class="btn btn-danger'. ($acceptable === '#' && $acceptable !== '@' ? ' active' : ''). '" for="b['. $bga. ']">'. $n.
-					'<input type=radio id="b['. $bga. ']" name="acceptable['. $bga. ']"'. ($acceptable === '#' && $acceptable !== '@' ? ' checked' : ''). ' value=off>'. $prof_btn[1]. '</label>'. $n.
-					'<label class="btn btn-secondary" for="d['. $bga. ']"><input type=radio id="d['. $bga. ']" name="acceptable['. $bga. ']" value=del>'. $prof_btn[2]. '</label>'. $n.
+					'<input type=radio id="b['. $bga. ']" name="acceptable['. $bga. ']"'. ($acceptable === '#' && $acceptable !== '@' ? ' checked' : ''). ' value=off>'. $btn[3]. '</label>'. $n.
+					'<label class="btn btn-secondary" for="d['. $bga. ']"><input type=radio id="d['. $bga. ']" name="acceptable['. $bga. ']" value=del>'. $btn[4]. '</label>'. $n.
 					'<label class="btn btn-'. ($acceptable === '@' || $acceptable === '#' ? 'info' : 'success active'). '" for="a['. $bga. ']">'. $n.
-					'<input type=radio id="a['. $bga. ']" name="acceptable['. $bga. ']"'. ($acceptable === '@' || $acceptable === '#' ? '' : ' checked'). ' value=on>'. $prof_btn[3]. '</label>'. $n.
+					'<input type=radio id="a['. $bga. ']" name="acceptable['. $bga. ']"'. ($acceptable === '@' || $acceptable === '#' ? '' : ' checked'). ' value=on>'. $btn[5]. '</label>'. $n.
 					'</div>'. $n.
 					'</div>'. $n.
 					'</div>'. $n.
@@ -238,7 +238,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 			}
 			$article .=
 			'</div>'. $n.
-			'<div class=text-center><input type=submit value="'. $prof_btn[0]. '" class="btn btn-primary btn-lg" id=approachers-submit disabled></div>'. $n.
+			'<div class=text-center><input type=submit value="'. $btn[2]. '" class="btn btn-primary btn-lg" id=approachers-submit disabled></div>'. $n.
 			'</form>';
 			$footer .= '<script> $("#approachers").change(function(){$("#approachers-submit").prop("disabled",false)})</script>';
 		}

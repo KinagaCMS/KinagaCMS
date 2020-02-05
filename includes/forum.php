@@ -86,7 +86,7 @@ if ($forum_topic)
 				'<div class="text-center px-4 small">'. date($time_format, ltrim($topic_str[0], '#')). $topic_user_avatar. $topic_user. '</div>'.
 				'<div class=media-body>';
 				if (isset($session_usermail, $_SESSION['l']) && $mail_address === $session_usermail && $topic_str[1] !== $_SESSION['l'])
-					$article .= '<a class="d-block text-danger" href="'. $topic_url. '&amp;del='. $i. '">'. $prof_btn[2]. '</a>';
+					$article .= '<a class="d-block text-danger" href="'. $topic_url. '&amp;del='. $i. '">'. $btn[4]. '</a>';
 				if (isset($topic_str[3])) foreach (explode(',', $topic_str[3]) as $ref) $article .= '<a href="#re'. $ref. '">&gt;&gt;'. $ref. '</a> ';
 				$article .=
 				'<p class="wrap text-break">'. (substr($topic_lines[$i], 0, 1) !== '#' ? hs($topic_str[2]) : str_repeat('*', mb_strlen($topic_str[2], 'UTF8'))). '</p>'.
@@ -229,7 +229,7 @@ elseif ($forum_thread)
 					$thread_url = $forum_url. '/'. r(basename(dirname($thread_topics))). '/';
 					$article .= '<li class="bg-transparent list-group-item">';
 					if (isset($session_usermail) && $mail_address === $session_usermail)
-						$article .= '<a class="d-block text-danger" href="'. $thread_url. '&amp;del='. r($thread_topic). '">'. $prof_btn[2]. '</a>';
+						$article .= '<a class="d-block text-danger" href="'. $thread_url. '&amp;del='. r($thread_topic). '">'. $btn[4]. '</a>';
 					$article .= '<a class="d-flex justify-content-between align-items-center text-break" href="'. $thread_url. r($thread_topic). '">'.
 					$topic_name.
 					'<small class="badge badge-success badge-pill">'.
@@ -343,7 +343,7 @@ else
 			'<h2 class="card-title border-0 h5">'.
 			'<a class=text-secondary href="'. $forum_url. '/'. r($thread_name). '/">'. $thread_title. '</a>'.
 			(isset($session_usermail, $_SESSION['l']) && $mail_address === $session_usermail ?
-				'<a class="float-right text-danger" href="'. $forum_url. '&amp;del='. r($thread_name). '">'. $prof_btn[2]. '</a>' : '').
+				'<a class="float-right text-danger" href="'. $forum_url. '&amp;del='. r($thread_name). '">'. $btn[4]. '</a>' : '').
 			'</h2>'. $n.
 			'<small class="card-subtitle d-block text-right">'. date($time_format, filemtime($threads)). ' '. $threader_name. '</small>'.
 			'</div>';

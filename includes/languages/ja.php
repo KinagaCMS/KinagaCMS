@@ -284,7 +284,7 @@ $reminder = [
 	];
 $remind_header = ['日時', '予約者', '内容', 'リマインド'];
 
-$benchmark_results = '<small class="d-block text-muted text-center mt-2">処理時間：%s秒　消費メモリ：%s</small>';
+$benchmark_results = '<span class=text-nowrap>処理時間：%s秒</span> <span class=text-nowrap>消費メモリ：%s</span>';
 
 #/images/index.php
 

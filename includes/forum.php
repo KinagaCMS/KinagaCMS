@@ -25,7 +25,7 @@ if ($forum_topic)
 			if (isset($session_usermail) && $mail_address === $session_usermail)
 				$topicer_name = '<a href="mailto:'. $topicer_email. '">'. $topicer_name. '</a>';
 		}
-		$header .= '<title>'. $topic_title. ' - '. $site_name. '</title>';
+		if ($get_page || $get_title) $header .= '<title>'. $topic_title. ' - '. $site_name. '</title>';
 		$breadcrumb .=
 		'<li class=breadcrumb-item><a href="'. $forum_url. '">'. h($forum). '</a></li>'.
 		'<li class=breadcrumb-item><a href="'. $thread_url. '">'. $thread_title. '</a></li>'.
@@ -171,13 +171,13 @@ elseif ($forum_thread)
 		'<h2 class=h3>'. $thread_title. '</h2>';
 		if ($forum_thread[0] === '!' && !isset($_SESSION['l']))
 		{
-			$header .= '<title>'. $thread_title. ' - '. $site_name. '</title>'. $n;
+			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. $site_name. '</title>'. $n;
 			$breadcrumb .= '<li class="breadcrumb-item active"><a href="'. $forum_url. '">'. h($forum). '</a></li><li class="breadcrumb-item active">'. $thread_title. '</li>';
 			$article .= '<p class="alert alert-danger mt-3">'. $login_required[0]. '</p>';
 		}
 		else
 		{
-			$header .= '<title>'. $thread_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
+			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 			$breadcrumb .=
 			($pages > 1 ?
 				'<li class=breadcrumb-item><a href="'. $forum_url. '">'. h($forum). '</a></li>'.
@@ -301,7 +301,7 @@ elseif ($forum_thread)
 }
 else
 {
-	$header .= '<title>'. h($forum). ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
+	if ($get_page || $get_title) $header .= '<title>'. h($forum). ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 	$breadcrumb .=
 	($pages > 1 ?
 		'<li class=breadcrumb-item><a href="'. $forum_url. '">'. h($forum). '</a></li><li class="breadcrumb-item active">'. sprintf($page_prefix, $pages). '</li>'

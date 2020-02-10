@@ -86,6 +86,22 @@ $header .=
 '<meta name=application-name content=KinagaCMS>'. $n.
 '<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'. $n.
 (!is_file('favicon.ico') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel="shortcut icon" href="'. $url. 'favicon.ico">'). $n;
-$footer .= '<small class="d-block text-muted">&copy; '. $this_year. ' '. $site_name. '.</small>'. $n.
-($use_benchmark ? sprintf($benchmark_results, round(microtime(true) - $time_start, 6), size_unit(memory_get_usage() - $base_mem)) : '').
-'<img class="mx-auto my-2" alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=30 height=24><div class="modal fade" id=powered-by-kinaga aria-hidden=true><div class="modal-dialog modal-dialog-centered modal-sm"><div class=modal-content><button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button><div class="modal-body text-black-50"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS"></div><div class=modal-footer><small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a></div></div></div></div>';
+$footer .=
+'<span id=footer>'. $n.
+'<small class="d-block text-muted">&copy; '. $this_year. ' '. $site_name. '.</small>'. $n.
+'<small class="d-block text-muted text-center mt-2">'. $n.
+($use_benchmark ? sprintf($benchmark_results, round(microtime(true) - $time_start, 6), size_unit(memory_get_usage() - $base_mem)) : ''). $n.
+'</small>'. $n.
+'<img class="mx-auto my-2" alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=30 height=24>'. $n.
+'</span>'. $n.
+'<div class="modal fade" id=powered-by-kinaga aria-hidden=true>'. $n.
+'<div class="modal-dialog modal-dialog-centered modal-sm">'. $n.
+'<div class=modal-content>'. $n.
+'<button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button>'. $n.
+'<div class="modal-body text-black-50"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'. $n.
+'<div class=modal-footer>'. $n.
+'<small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a>'. $n.
+'</div>'. $n.
+'</div>'. $n.
+'</div>'. $n.
+'</div>'. $n;

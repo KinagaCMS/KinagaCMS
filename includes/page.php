@@ -82,7 +82,7 @@ elseif ($dl && $page_name === $download_contents)
 		{
 			$dl_uri = explode($delimiter, $dls);
 			$article .=
-			'<a class="list-group-item list-group-item-action list-group-item-lightprimary d-flex justify-content-between align-items-center" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
+			'<a class="list-group-item bg-transparent d-flex justify-content-between align-items-center" href="'. $url. r($download_contents). '&amp;dl='. rawurlencode(strip_tags(basename($dl_uri[1]))). '" target="_blank">'. $n.
 			'<span><span class=mr-3>'. ht($dl_uri[1]). '</span>'. $n.
 			'<span class=mr-3>'. date($time_format, $dl_uri[0]). '</span></span>'. $n.
 			'<span class="badge badge-primary badge-pill">'. $dl_uri[2]. '</span>'. $n.

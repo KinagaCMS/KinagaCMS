@@ -41,15 +41,7 @@ elseif ($dl && $page_name === $download_contents)
 	{
 		header('Content-Length: '. filesize($dl_file));
 		header('Content-Type: '. mime_content_type($dl_file));
-
-		if (strpos($user_agent_lang, 'ja') !== false && strpos($user_agent, 'MSIE') !== false || strpos($user_agent, 'rv:11.0') !== false || strpos($user_agent, 'Edge') !== false)
-		{
-			header('X-Download-Options: noopen');
-			header('Content-Disposition: attachment; filename="'. mb_convert_encoding($dl_name, $encoding_win, $encoding). '"');
-		}
-		else
-			header('Content-Disposition: attachment; filename="'. $dl_name. '"');
-
+		header('Content-Disposition: attachment; filename*='. $encoding. '\'\''. r($dl_name));
 		exit(readfile($dl_file));
 	}
 	$breadcrumb .= ($pages > 1 ? '<li class="breadcrumb-item"><a href="'. $url. r($download_contents). '">'. $download_contents. '</a></li><li class="breadcrumb-item active">'. sprintf($page_prefix, $pages). '</li>' : '<li class="breadcrumb-item active">'. $download_contents. '</li>');

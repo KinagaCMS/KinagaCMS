@@ -16,9 +16,6 @@ $lang = 'ja';
 
 $encoding = 'UTF-8';
 
-#Download Multi-byte filename for IE
-$encoding_win = 'SJIS-win';
-
 ##########################
 
 

@@ -70,7 +70,7 @@ file_get_contents('jquery.fancybox.min.css'), '
 .nowrap{white-space:normal}
 .page-top:after{content:"'. $pagetop. '";position:absolute;opacity:0;right:-2em}
 .page-top:hover:after{opacity:1;right:0;transition:.3s linear}
-.page-top:not(:hover):after{opacity:0;transition:.3s}
+.page-top :not(:hover):after{opacity:0;transition:.3s}
 .page-top{clear:both;border-bottom:thin dotted;position:relative;text-decoration:none!important}
 .permit{left:.5em}
 .popover{max-width:70%}
@@ -85,7 +85,7 @@ a:hover img,a:hover svg,.social:hover,img[alt=K]{opacity:.8}img[alt=K]:hover{opa
 body{color:#555555;letter-spacing:.4px}
 h1,h2,h3,h4,h5,h6{border-bottom:thin dotted;padding:.1em;overflow-wrap:break-word;margin-bottom:.5em}
 a,li,.title{overflow-wrap:break-word}
-label:not(.active),img[alt=K]{cursor:pointer}
+label :not(.active),img[alt=K]{cursor:pointer}
 urlset{background-repeat: no-repeat; background:linear-gradient(to left,white,whitesmoke);color:dimgray}
 urlset:before{border-bottom:medium solid dimgray;margin:1em;text-align:center;font-size:x-large;display:block;content:"Sitemap of '. $server. '";padding-bottom:1em}
 url:hover{background-color:whitesmoke;color:darkgray}
@@ -103,7 +103,7 @@ if ($color) echo 'div.container-fluid{color:'. hsla($color, -50, -50, .7). '}
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{background-color:'. hsla($color, 0, 0, .05). '}
 ::selection, .highlight{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
 ::-moz-selection, .highlight{background-color:'.hsla($color, 0, 0, .2).';color:'.hsla($color).'}
-.title,.btn:not([class*="btn-outline"]),[class*="btn-outline"]:hover{background-image:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.2))}
+.title,.btn :not(.btn-outline) :not(.btn-link),[class*="btn-outline"]:hover{background-image:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(0,0,0,.2))}
 .col-md-6.mb-5 ul.list-group.list-group-flush li.list-group-item a{color:'. ($color ? hsla($color, -50, -50, .75) : 'inherit'). '}
 .navbar-dark .navbar-nav .nav-link{color:rgba(255, 255, 255, .7)}
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus{color:rgba(255, 255, 255, .9)}';

@@ -51,7 +51,7 @@ include 'session.php';
 if ($contents = get_dirs('contents', false))
 {
 	foreach($contents as $categ)
-		$nav .= '<li><a'. ($categ_name === $categ ? ' class="nav-item nav-link active"' : ' class="nav-item nav-link"'). ' href="'. $url. r($categ). '/">'. h($categ). '</a></li>'. $n;
+		$nav .= '<li'. ($categ_nav_class ?? ''). '><a'. ($categ_name === $categ ? ' class="nav-item nav-link active"' : ' class="nav-item nav-link"'). ' href="'. $url. r($categ). '/">'. h($categ). '</a></li>'. $n;
 }
 
 if ($user)

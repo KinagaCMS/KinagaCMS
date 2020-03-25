@@ -30,7 +30,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 
 		if ($categ_contents_number > $categ_sections_per_page) pager($max_pages, $page_ceil);
 
-		$article .= '<div class="card-columns categ">';
+		$article .= '<div class="'. $categ_class. '">';
 		foreach ($sections_in_categ as $sections)
 		{
 			$articles = explode($delimiter, $sections);
@@ -63,10 +63,10 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			$total_images = (int)$count_images + (int)$count_background_images;
 
 			$article .=
-			'<div class=card>'. $n.
+			'<div class="'. $categ_wrapper_class. '">'. $n.
 			$default_image.
-			'<div class=card-body>'. $n.
-			'<h2 class="h5 card-title mb-3"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($articles_link[2]);
+			'<div class="'. $categ_content_class. '">'. $n.
+			'<h2 class="'. $categ_title_class. '"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($articles_link[2]);
 			if ($total_images > 0)
 				$article .= '<small>'. sprintf($images_count_title, $total_images). '</small>';
 
@@ -78,7 +78,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			if ($use_summary) $article .= '<p class="categ-summary wrap">'. get_summary($articles[1]). '</p>'. $n;
 			$article .=
 			'</div>'. $n.
-			'<div class="card-footer bg-transparent">'. $n.
+			'<div class="'. $categ_footer_class. '">'. $n.
 			'<time class=card-link datetime="'. date('c', $articles[0]). '">'. timeformat($articles[0], $intervals). '</time>';
 			if ($counter || $comments) $article .= $counter. $comments;
 			$article .= '</div></div>'. $n;

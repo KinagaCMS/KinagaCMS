@@ -15,6 +15,7 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 - PHP ７ 以上
 - <a href="https://www.php.net/manual/ja/book.exif.php">Exif</a>、<a href="https://www.php.net/manual/ja/book.image.php">GD</a>、<a href="https://www.php.net/manual/ja/book.imagick.php">ImageMagick</a> がインストールされていること
 - .htaccess 及び RewriteEngine が利用可能であること
+- <a href="https://github.com/DOlDNa/lapi">lapi</a> 推奨
 
 ---
 

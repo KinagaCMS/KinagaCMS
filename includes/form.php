@@ -162,19 +162,19 @@ $article .=
 '<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
 '<div class=form-row>'. $n.
 (isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. $_SESSION['h']. '"><input name=email type=hidden value="'. $session_usermail. '">' :
-'<div class="form-group col-md-6">'. $n.
+'<div class="form-group col-xl-6">'. $n.
 '<label class=input-group-text>'. $contact_label[0]. $n.
-'<input required name=name type=text value="'. ($_SESSION['h'] ?? $filtered_preview_name ?? ''). '" class="form-control ml-2" accesskey=n'. ($placeholder[2] ? ' placeholder="'. $placeholder[2]. '"' : ''). '>'. $n.
+'<input required name=name maxlength=60 type=text value="'. ($_SESSION['h'] ?? $filtered_preview_name ?? ''). '" class="form-control ml-md-2" accesskey=n'. ($placeholder[2] ? ' placeholder="'. $placeholder[2]. '"' : ''). '>'. $n.
 '</label>'. $n.
 '</div>'. $n.
-'<div class="form-group col-md-6">'. $n.
+'<div class="form-group col-xl-6">'. $n.
 '<label class=input-group-text>'. $contact_label[1]. $n.
-'<input required name=email type=email value="'. ($filtered_preview_email ?? ''). '" class="form-control ml-2" accesskey=m'. ($placeholder[3] ? ' placeholder="'. $placeholder[3]. '"' : ''). '>'. $n.
+'<input required name=email type=email value="'. ($filtered_preview_email ?? ''). '" class="form-control ml-md-2" accesskey=m'. ($placeholder[3] ? ' placeholder="'. $placeholder[3]. '"' : ''). '>'. $n.
 '</label>'. $n.
 '</div>'). $n.
 '<div class="form-group col-md-12">'. $n.
 '<label class=input-group-text>'. $contact_label[2]. $n.
-'<textarea required name=message class="form-control ml-2" accesskey=t rows=10 tabindex=0'. ($placeholder[4] ? ' placeholder="'. $placeholder[4]. '"' : ''). '>'. ($filtered_preview_message ?? ''). '</textarea>'. $n.
+'<textarea required name=message class="form-control ml-md-2" accesskey=t rows=10 tabindex=0'. ($placeholder[4] ? ' placeholder="'. $placeholder[4]. '"' : ''). '>'. ($filtered_preview_message ?? ''). '</textarea>'. $n.
 '</label>'. $n.
 '<button name=preview type=submit class="btn btn-outline-primary float-right mt-3" accesskey=s tabindex=0>'. $contact_preview. '</button>'. $n.
 '</div>'. $n.

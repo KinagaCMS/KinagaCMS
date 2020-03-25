@@ -30,7 +30,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 
 		if ($count_glob_files > $default_sections_per_page) pager($max_pages, $page_ceil);
 
-		$article .= '<div class=card-columns>';
+		$article .= '<div class="'. $index_class. '">';
 
 		foreach($sections_in_home as $sections)
 		{
@@ -63,10 +63,10 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			preg_match('/width="(\d+)"/', $default_image, $width);
 
 			$article .=
-			'<div class="index card">'. $n.
+			'<div class="'. $index_wrapper_class. '">'. $n.
 			$default_image.
-			'<div class=card-body>'. $n.
-			'<h2 class="h5 card-title mb-3"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($all_link[2]);
+			'<div class="'. $index_content_class. '">'. $n.
+			'<h2 class="'. $index_title_class. '"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($all_link[2]);
 
 			if ($total_images > 0)
 				$article .= '<small>'. sprintf($images_count_title, $total_images). '</small>';
@@ -79,9 +79,9 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			if ($use_summary)
 				$article .= '<p class="index-summary wrap">'. get_summary($sections). '</p>'. $n;
 			$article .=
-			'<span class="blockquote-footer text-right"><a href="'. $url. $categ_link. '/" class=card-link>'. h($all_link[1]). '</a></span>'. $n.
+			'<span class="'. $index_categ_link_class. '"><a href="'. $url. $categ_link. '/" class=card-link>'. h($all_link[1]). '</a></span>'. $n.
 			'</div>'. $n.
-			'<div class="card-footer bg-transparent"><time class=card-link datetime="'. date('c', $filemtime). '">'. timeformat($filemtime, $intervals). '</time>';
+			'<div class="'. $index_footer_class. '"><time class=card-link datetime="'. date('c', $filemtime). '">'. timeformat($filemtime, $intervals). '</time>';
 			if ($counter || $comments) $article .= $counter. $comments;
 			$article .=
 			'</div></div>'. $n;
@@ -146,5 +146,5 @@ else
 {
 	$header .= '<title>'. $site_name. '</title>'. $n;
 	if (!$index_file || !$contents)
-		$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 p-3 m-auto" style="opacity:.2">';
+		$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 p-3 m-auto" style="opacity:.05">';
 }

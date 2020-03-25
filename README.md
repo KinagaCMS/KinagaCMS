@@ -20,7 +20,7 @@ Linux ユーザーに最適化されたコンテンツ管理システム
 
 ## スクリーンショット
 
-![screenshot](https://user-images.githubusercontent.com/25574701/68562364-ae095080-048c-11ea-8131-b73f9f074141.png)
+![screenshot](https://user-images.githubusercontent.com/25574701/77500292-f5223c00-6e97-11ea-814e-4775411f18d2.png)
 
 ---
 

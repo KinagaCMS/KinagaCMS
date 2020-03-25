@@ -77,19 +77,20 @@ if ($forum_topic)
 				{
 					$topic_user = filter_var($topic_user_email = dec($topic_str[1]), FILTER_VALIDATE_EMAIL) ? explode('@', $topic_user_email)[0] : '';
 					$topic_user_avatar =
-					'<span class="avatar align-items-center bg-primary d-flex justify-content-center font-weight-bold display-3 mx-auto rounded text-center text-white">'. mb_substr($topic_user, 0, 1). '</span>';
+					'<span class="avatar align-items-center bg-primary d-flex justify-content-center font-weight-bold display-3 mx-auto rounded-circle text-center text-white">'. mb_substr($topic_user, 0, 1). '</span>';
 					if (isset($session_usermail) && $mail_address === $session_usermail)
 						$topic_user = '<a href="mailto:'. $topic_user_email. '">'. $topic_user. '</a>';
 				}
 				$article .=
 				'<div class="media border-bottom py-3" id="re'. $i. '">'.
-				'<div class="text-center px-4 small">'. date($time_format, ltrim($topic_str[0], '#')). $topic_user_avatar. $topic_user. '</div>'.
+				'<div class="text-center pr-3 small">'. $topic_user_avatar. '</div>'.
 				'<div class=media-body>';
 				if (isset($session_usermail, $_SESSION['l']) && $mail_address === $session_usermail && $topic_str[1] !== $_SESSION['l'])
 					$article .= '<a class="d-block text-danger" href="'. $topic_url. '&amp;del='. $i. '">'. $btn[4]. '</a>';
 				if (isset($topic_str[3])) foreach (explode(',', $topic_str[3]) as $ref) $article .= '<a href="#re'. $ref. '">&gt;&gt;'. $ref. '</a> ';
 				$article .=
-				'<p class="wrap text-break">'. (substr($topic_lines[$i], 0, 1) !== '#' ? hs($topic_str[2]) : str_repeat('*', mb_strlen($topic_str[2], 'UTF8'))). '</p>'.
+				'<p class="wrap text-break" style="min-height:4em">'. (substr($topic_lines[$i], 0, 1) !== '#' ? hs($topic_str[2]) : str_repeat('*', mb_strlen($topic_str[2]))). '</p>'.
+				'<small class="blockquote-footer text-right">'. date($time_format, ltrim($topic_str[0], '#')). ' '. $topic_user. '</small>'.
 				'</div>'.
 				'<div class="custom-control custom-checkbox re" data-toggle=tooltip data-placement=left title="'. $forum_form[0]. '">'.
 				'<input class="custom-control-input" type=checkbox name=ressid[] id="ressid'. $i. '" value="'. $i. '">'.
@@ -131,7 +132,7 @@ if ($forum_topic)
 							if (file_put_contents($tmpdir. $i. $delimiter. $resstime. '.txt', $resstime. ',"'. enc($resser). '","'. $ress. '"'. (!isset($ressid['ressid']) ? '' : ',"'. implode(',', $ressid['ressid']). '"'). $n, LOCK_EX))
 							{
 								$ress_limit = date($time_format, $resstime+$time_limit*60);
-								$headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 								$subject = $forum_guests[0]. ' - '. $site_name;
 								$body = sprintf($forum_guests[1], $ress_limit). $n. $topic_url. '&amp;r='. $i. '&amp;t='. $resstime. $n. $n. $separator. $n. $site_name. $n. $url;
 								if (mail($resser, $subject, $body, $headers)) header('Location: '. $topic_url. '&guest=check#email');
@@ -256,7 +257,7 @@ elseif ($forum_thread)
 							if (file_put_contents($tmpdir. $topictime. $delimiter. $enctopicer, $topictime. ',"'. $enctopicer. '","'. $topic. '"'. $n, LOCK_EX))
 							{
 								$topic_limit = date($time_format, $topictime + $time_limit * 60);
-								$headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 								$subject = $forum_guests[0]. ' - '. $site_name;
 								$body = sprintf($forum_guests[1], $topic_limit). $n. $thread_url. '&amp;g='. str_rot13($enctopicer). '&amp;t='. $topictime. $n. $n. $separator. $n. $site_name. $n. $url;
 								if (mail($topicer, $subject, $body, $headers)) header('Location: '. $thread_url. '&guest=check#email');
@@ -341,7 +342,7 @@ else
 			'<div class=card>'.
 			'<div class="card-header">'.
 			'<h2 class="card-title border-0 h5">'.
-			'<a class=text-secondary href="'. $forum_url. '/'. r($thread_name). '/">'. $thread_title. '</a>'.
+			'<a href="'. $forum_url. '/'. r($thread_name). '/">'. $thread_title. '</a>'.
 			(isset($session_usermail, $_SESSION['l']) && $mail_address === $session_usermail ?
 				'<a class="float-right text-danger" href="'. $forum_url. '&amp;del='. r($thread_name). '">'. $btn[4]. '</a>' : '').
 			'</h2>'. $n.
@@ -404,7 +405,7 @@ else
 					if (file_put_contents($tmpdir. $threadtime. $delimiter. $encthreader, $thread, LOCK_EX))
 					{
 						$thread_limit = date($time_format, $threadtime + $time_limit * 60);
-						$headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+						$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 						$subject = $forum_guests[0]. ' - '. $site_name;
 						$body = sprintf($forum_guests[1], $thread_limit). $n. $forum_url. '&amp;g='. str_rot13($encthreader). '&amp;t='. $threadtime. $n. $n. $separator. $n. $site_name. $n. $url;
 						if (mail($threader, $subject, $body, $headers)) header('Location: '. $forum_url. '&guest=check#email');

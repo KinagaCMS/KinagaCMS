@@ -151,7 +151,7 @@ function get_page($nr)
 	elseif ($get_categ && !$get_title)
 		return $url. $get_categ. '&amp;pages='. $nr;
 	elseif ($query)
-		return $url. '?query='. r($query). '&amp;pages='. $nr;
+		return $url. '?query='. $query. '&amp;pages='. $nr;
 	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
 	elseif ($page_name === $forum)
@@ -571,9 +571,9 @@ function handle($dir)
 function avatar($dir)
 {
 	if (is_file($img = $dir. 'avatar') && filesize($img) && strpos($base64_img = file_get_contents($img), 'base64') !== false)
-		return '<img src="'. strip_tags($base64_img). '" class="d-block rounded mx-auto" alt="">';
+		return '<img src="'. strip_tags($base64_img). '" class="d-block rounded-circle mx-auto" alt="">';
 	else
-		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
 }
 
 function flow($a, $b, $c, $d)
@@ -613,38 +613,29 @@ function hs($s)
 	foreach (['autofocus', 'disabled', 'multiple', 'required', 'selected'] as $o)
 	{
 		if (strpos($s, $o) !== false)
-			$s = str_replace($o, '<span style="color:ForestGreen">' . $o . '</span>', $s);
+			$s = str_replace($o, '<span style="color:#44AA00">' . $o . '</span>', $s);
 	}
 
 	if (strpos($s, '=') !== false)
-		$s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:ForestGreen">\\1</span>=\\2', $s);
+		$s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:#44AA00">\\1</span>=\\2', $s);
 
 	if (strpos($s, '&lt;') !== false && strpos($s, '&gt;') !== false)
-		$s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:DarkBlue">&lt;\\1&gt;</span>', $s);
+		$s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:#5F8DD3">&lt;\\1&gt;</span>', $s);
 
 	if (strpos($s, '&amp;nbsp;') !== false)
-		$s = str_replace('&amp;nbsp;', '<span style="color:DimGray">&amp;nbsp;</span>', $s);
+		$s = str_replace('&amp;nbsp;', '<span style="color:#888A85">&amp;nbsp;</span>', $s);
 
 	if (strpos($s, '&#039;') !== false)
-		$s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:Crimson">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
+		$s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
 
 	if (strpos($s, '&quot;') !== false)
-		$s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:Crimson">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
-
-	if (strpos($s, '/*') !== false)
-		$s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:DarkOrange">' . strip_tags($t[1]) . '</span>';}, $s);
-
-	if (strpos($s, '//') !== false)
-		$s = preg_replace_callback('|^(.*?)?(?<![:(>&quot;&#039;])(//.*?)$|mi', function ($t){return $t[1] . '<span style="color:DarkOrange">' . strip_tags($t[2]) . '</span>';}, $s);
-
-	if (strpos($s, '&lt;!--') !== false)
-		$s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:DarkOrange">' . strip_tags($t[1]) . '</span>';}, $s);
+		$s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
 
 	if (strpos($s, '&lt;script') !== false)
-		$s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:DimGray">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+		$s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
 
 	if (strpos($s, '&lt;style') !== false)
-		$s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:Gray">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+		$s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
 
 	if (strpos($s, '「') !== false)
 		$s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
@@ -668,6 +659,16 @@ function hs($s)
 				return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. h($t[2]). '</a>';
 		}, $s);
 	}
+
+	if (strpos($s, '/*') !== false)
+		$s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+
+	if (strpos($s, '&lt;!--') !== false)
+		$s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+
+	if (strpos($s, '//') !== false)
+		$s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+
 	return $s;
 }
 
@@ -714,7 +715,7 @@ function booking(
 		if (!$booking && is_file($booking_txt)) unlink($booking_txt);
 		header('Location: '. $current_url. '#booking');
 	}
-	$header .= '<style>.a{opacity:1!important;visibility:visible!important}.b{opacity:0;visibility:hidden}.c{opacity:.8;cursor:not-allowed}.g{background:#3ddb80}.h{cursor:pointer;text-align:center;width:5%}.i{background:mediumseagreen;border:none;bottom:0;cursor:pointer;opacity:0;padding:5px 10px;position:absolute;right:0;text-align:center;transition:opacity .1s,visibility .1s;visibility:hidden}[data-placeholder]:empty:before{content:attr(data-placeholder);display:block;text-align:center}[contenteditable=false][data-placeholder]:empty:before{opacity:.8;cursor:not-allowed}[contenteditable=true][data-placeholder]:empty:before{cursor:pointer}#booking td{position:relative}#booking th,#booking td{padding:.8em .6em}#booking th:empty{width:5em}#booking th{background:dimgray;color:#fff;font-weight:inherit;vertical-align:middle;white-space:nowrap}#booking td div{word-wrap:break-word;white-space:pre-wrap}#booking tr:hover,.g:hover{opacity:.8}#booking tr:nth-child(odd){filter:brightness(105%)}@media print{*,a{color:#000000!important;font-size:8pt!important;opacity:1!important}aside,#side,footer,form,header,nav,p,.breadcrumb{display:none!important}html,body{background:#ffffff!important;margin:0!important;padding:0!important}th,td{background:#ffffff!important}th{white-space:nowrap!important}}</style>';
+	$header .= '<style>.a{opacity:1!important;visibility:visible!important}.b{opacity:0;visibility:hidden}.c{opacity:.8;cursor:not-allowed}.g{background:#3ddb80}.h{cursor:pointer;text-align:center;width:5%}.i{background:mediumseagreen;border:none;bottom:0;cursor:pointer;opacity:0;padding:5px 10px;position:absolute;right:0;text-align:center;transition:opacity .1s,visibility .1s;visibility:hidden}[data-placeholder]:empty:before{content:attr(data-placeholder);display:block;text-align:center}[contenteditable=false][data-placeholder]:empty:before{opacity:.8;cursor:not-allowed}[contenteditable=true][data-placeholder]:empty:before{cursor:pointer}#booking td{position:relative}#booking th,#booking td{padding:.8em .6em}#booking th:empty{width:5em}#booking th{background:dimgray;color:#fff;font-weight:inherit;vertical-align:middle;white-space:nowrap}#booking td div{word-wrap:break-word;white-space:pre-wrap}.g:hover{opacity:.8}#booking tr:hover,#booking tr:nth-child(odd){filter:brightness(105%)}@media print{*,a{color:#000000!important;font-size:8pt!important;opacity:1!important}aside,#side,footer,form,header,nav,p,.breadcrumb{display:none!important}html,body{background:#ffffff!important;margin:0!important;padding:0!important}th,td{background:#ffffff!important}th{white-space:nowrap!important}}</style>';
 
 	if (isset($_SESSION['l'], $session_usermail) && $session_usermail === $mail_address)
 	{

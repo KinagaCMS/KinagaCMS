@@ -13,7 +13,6 @@ $index_items = 4;
 ##########################
 
 $lang = 'ja';
-
 $encoding = 'UTF-8';
 
 ##########################
@@ -27,6 +26,9 @@ $use_comment = true;
 
 #Use Contact
 $use_contact = true;
+
+#From: noreply@example.com
+$use_noreply = false;
 
 #Use Search
 $use_search = true;
@@ -71,8 +73,18 @@ $use_benchmark = true;
 
 ##########################
 
-#Sidebox
+#Category
+$categ_nav_class = '';
 
+#Article
+$article_nav_wrapper_class = 'd-flex border mt-5';
+$article_nav_next_href_class = 'flex-fill p-2 text-decoration-none w-50';
+$article_nav_prev_href_class = 'border-right '. $article_nav_next_href_class;
+$article_nav_xaquo_class = 'px-1 d-flex align-items-center bg-secondary text-white';
+$article_nav_title_class = 'd-block mb-1 text-secondary';
+$article_nav_content_class = 'd-block pb-3 px-3';
+
+#Sidebox
 $sidebox_order = [
 	1, #login
 	7, #similar
@@ -112,16 +124,32 @@ $number_of_recents = 5;
 
 $number_of_popular_articles = 5;
 
+#Comments
 $number_of_new_comments = 5;
-
 $comment_length = 100;
+$comment_class = '';
+$comment_wrapper_class = 'card card-body comment mb-3';
+$comment_content_class = 'media';
+$comment_body_class = 'media-body';
+$comment_user_class = 'd-flex justify-content-between mb-2';
 
 
 #Top page: if $index_type = 1;
 $default_sections_per_page = 6;
+$index_class = 'card-columns index';
+$index_wrapper_class = 'card';
+$index_content_class = 'card-body';
+$index_title_class = 'h4 card-title mb-3';
+$index_categ_link_class = 'blockquote-footer text-right';
+$index_footer_class = 'card-footer bg-transparent';
 
 #Category
 $categ_sections_per_page = 6;
+$categ_class = 'card-columns categ';
+$categ_wrapper_class = 'card';
+$categ_content_class = 'card-body';
+$categ_title_class = 'h4 card-title mb-3';
+$categ_footer_class = 'card-footer bg-transparent';
 
 #Search
 $results_per_page = 6;
@@ -207,3 +235,4 @@ $mime = 'MIME-Version: 1.0'. $n. 'X-Date: '. date('c'). $n. 'X-Host: '. gethostb
 ##########################
 
 if (is_file($lang_file = __DIR__. '/languages/'. $lang. '.php')) include $lang_file;
+$from = $site_name. ' <'. ($use_noreply || !$mail_address ? 'noreply@'. $server : $mail_address). '>';

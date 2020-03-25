@@ -367,7 +367,7 @@ function hsla($colour, $cal_s=0, $cal_l=0, $a=1)
 	{
 		$h = 0;
 		$s = 0;
-		$l = 10;
+		$l = 35;
 	}
 	else list($h, $s, $l) = get_hsl($colour);
 	if (isset($h, $s, $l))

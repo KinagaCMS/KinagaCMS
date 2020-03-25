@@ -25,7 +25,7 @@ echo
 <link href="../', $tpl_dir, 'css/bootstrap.min.css" rel=stylesheet>
 <style>
 body{color:#555}
-.breadcrumb-item+.breadcrumb-item:before{content:">"}
+main{min-height:calc(100vh - 264px)}
 </style>
 <link href=icon.php rel=icon type="image/svg+xml" sizes=any>
 </head>
@@ -33,9 +33,10 @@ body{color:#555}
 <ol class="breadcrumb bg-dark mb-0 py-4 rounded-0">
 <li class=breadcrumb-item><a class=text-white href="', dirname($url), '">', $site_name, '</a></li>
 <li class=breadcrumb-item><a class=text-white href="', $url, '">', basename(__DIR__, '.php'), '</a></li>
-<li class="breadcrumb-item active">', sprintf($page_prefix, $page), '/', $maxpage, '</li>
+<li class="breadcrumb-item active">', ($maxpage > 1 ? sprintf($page_prefix, $page). '/'. $maxpage : ''), '</li>
 </ol>
-<header class="bg-secondary p-4 text-white"><h1 class="h5 m-0">', $images_heading, '</h1></header>', $n;
+<header class="bg-secondary p-4 text-white"><h1 class="h5 m-0">', $images_heading, '</h1></header>
+<main>', $n;
 foreach ($sort as $image)
 {
 	$img = explode($delimiter, $image);
@@ -128,6 +129,7 @@ if ($img_array)
 	}
 }
 echo '
+</main>
 <footer class="bg-dark mt-5 py-4 text-center text-white"><small>&copy; ', date('Y'), ' ', $site_name, '. Powered by Kinaga.</small></footer>
 <script src="../', $tpl_dir, 'js/jquery.min.js"></script>
 <script>function c(c){$(".form-control").val(function(index,value){return value.replace(/img-thumbnail(.*?)img-fluid/g,"img-thumbnail "+c+" img-fluid")});$(".input-group").fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100)}$("#left").click(function()

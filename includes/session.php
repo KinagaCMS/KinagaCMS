@@ -75,7 +75,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 					$session_filename = $_SESSION['m']. '.jpg';
 					$session_limit = date($time_format, $_SESSION['m']+$time_limit*60);
 					$userubject = $ticket_subject. ' - '. $site_name;
-					$session_headers = $mime. 'From: noreply@'. $server. $n. 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n. 'Content-Transfer-Encoding: 8bit'. $n;
+					$session_headers = $mime. 'From: '. $from. $n. 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 					$session_body =
 					'--'. $token. $n.
 					'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n.

@@ -130,7 +130,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		{
 			$prev_link = '';
 			rsort($sort_prev_next);
-			$article .= '<nav class="d-flex border mt-5">';
+			$article .= '<nav id=article-nav class="'. $article_nav_wrapper_class. '">';
 
 			for ($i = 0, $c = count($sort_prev_next); $i < $c; ++$i)
 			{
@@ -143,20 +143,20 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				{
 					$header_prev = '<link rel=prev href="'. $prev_next_href. '">'. $n;
 					$prev_link =
-					'<a class="flex-fill p-2 text-decoration-none w-50" title="'. $prev_next_encode_title. '" href="'. $prev_next_href. '">'. $n.
-					'<span class="d-block mb-1 text-secondary">'. $article_prevnext[0]. '</span>'.
-					'<span class="d-block pb-3 px-3">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</span>'. $n.
+					'<a class="'. $article_nav_next_href_class. '" title="'. $prev_next_encode_title. '" href="'. $prev_next_href. '">'. $n.
+					'<span class="'. $article_nav_title_class. '">'. $article_prevnext[0]. '</span>'.
+					'<span class="'. $article_nav_content_class. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</span>'. $n.
 					'</a>'. $n.
-					'<span class="px-1 d-flex align-items-center bg-secondary text-white">'. $nav_raquo. '</span>'. $n;
+					'<span class="'. $article_nav_xaquo_class. '">'. $nav_raquo. '</span>'. $n;
 				}
 				if ((int)$prev_next_parts[0] < $article_filemtime)
 				{
 					$header_next = '<link rel=next href="'. $prev_next_href. '">'. $n;
 					$article .=
-					'<span class="px-1 d-flex align-items-center bg-secondary text-white">'. $nav_laquo. '</span>'. $n.
-					'<a class="border-right flex-fill p-2 text-decoration-none w-50" title="'. $prev_next_encode_title. '" href="'. $prev_next_href. '">'. $n.
-					'<span class="d-block mb-1 text-secondary">'. $article_prevnext[1]. '</span>'. $n.
-					'<span class="d-block pb-3 px-3">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</span>'. $n.
+					'<span class="'. $article_nav_xaquo_class. '">'. $nav_laquo. '</span>'. $n.
+					'<a class="'. $article_nav_prev_href_class. '" title="'. $prev_next_encode_title. '" href="'. $prev_next_href. '">'. $n.
+					'<span class="'. $article_nav_title_class. '">'. $article_prevnext[1]. '</span>'. $n.
+					'<span class="'. $article_nav_content_class. '">'. mb_strimwidth($prev_next_encode_title, 0, $prev_next_length, $ellipsis, $encoding). '</span>'. $n.
 					'</a>'. $n;
 					break;
 				}
@@ -217,24 +217,25 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 						$comment_user_avatar =avatar($comment_user_profdir);
 					}
 					else
-						$comment_user_avatar = '<span class="align-middle comment-icon d-table-cell font-weight-bold display-3 h-100 rounded text-white w-100">'. mb_substr($comment_user, 0, 1). '</span>';
+						$comment_user_avatar = '<span class="align-middle comment-icon d-table-cell font-weight-bold display-3 rounded-circle text-white">'. mb_substr($comment_user, 0, 1). '</span>';
 
-					$comment_content = str_replace($line_breaks, '&#10;', h(strip_tags(file_get_contents($comment_files))));
+					$comment_content = str_replace($line_breaks, '&#10;', h(file_get_contents($comment_files)));
 
 					$comments_array[] =
-					'<div class="d-flex mb-4 position-relative">'. $n.
-					'<div class="avatar d-table mr-4 rounded text-center">'. $comment_user_avatar. '</div>'. $n.
-					'<div class=card-arrow></div>'. $n.
-					'<div class="card comment w-100" id=cid-'. $comment_time. '>'. $n.
-					'<div class="card-body wrap">'. $comment_content. '</div>'. $n.
-					'<div class=card-footer><span class=mr-3>'. $comment_user. '</span><span class=text-nowrap>'. timeformat($comment_time, $intervals). '</span></div>'. $n.
+					'<div class="'. $comment_wrapper_class. '" id=cid-'. $comment_time. '>'. $n.
+					'<div class="'. $comment_content_class. '">'. $n.
+					'<div class="avatar d-table mr-3 text-center">'. $comment_user_avatar. '</div>'. $n.
+					'<div class="'. $comment_body_class. '">'. $n.
+					'<div class="'. $comment_user_class. '"><span class="h5 text-truncate">'. $comment_user. '</span><span class="text-muted text-nowrap">'. timeformat($comment_time, $intervals). '</span></div>'.
+					'<p class=wrap>'. $comment_content. '</p>'. $n.
+					'</div>'. $n.
 					'</div>'. $n.
 					'</div>'. $n;
 				}
 			}
 			if (isset($comments_array))
 			{
-				$article .= '<div class=card-columns>'. $n;
+				$article .= '<div class="'. $comment_class. '">'. $n;
 				$sliced_comments = array_slice($comments_array, ($comment_pages - 1) * $comments_per_page, $comments_per_page);
 
 				foreach ($sliced_comments as $number_of_comments)

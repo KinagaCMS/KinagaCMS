@@ -1,6 +1,6 @@
 <?php
 #exit('Down for Maintenance...');
-$time_start = microtime(true);
+$time_start = hrtime(true);
 $base_mem = memory_get_usage();
 
 error_reporting(0);

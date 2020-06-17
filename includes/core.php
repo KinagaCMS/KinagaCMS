@@ -90,7 +90,7 @@ $footer .=
 '<span id=footer>'. $n.
 '<small class="d-block text-muted">&copy; '. $this_year. ' '. $site_name. '.</small>'. $n.
 '<small class="d-block text-muted text-center mt-2">'. $n.
-($use_benchmark ? sprintf($benchmark_results, round(microtime(true) - $time_start, 6), size_unit(memory_get_usage() - $base_mem)) : ''). $n.
+($use_benchmark ? sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem)) : ''). $n.
 '</small>'. $n.
 '<img class="mx-auto my-2" alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=30 height=24>'. $n.
 '</span>'. $n.

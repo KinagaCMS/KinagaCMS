@@ -1,7 +1,8 @@
 <?php
+if (__FILE__ === implode(get_included_files())) exit;
 function r($path)
 {
-	if (strpos($path, '%') !== false)
+	if (false !== strpos($path, '%'))
 		return $path;
 	else
 		return str_replace(['%2F', '%3A'], ['/', ':'], rawurlencode($path));
@@ -20,7 +21,7 @@ function h($str)
 
 function size_unit($size)
 {
-	if ($size > 0)
+	if (0 < $size)
 	{
 		$unit = ['B', 'KB', 'MB', 'GB'];
 		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
@@ -34,30 +35,26 @@ function timestamp()
 
 function is_ssl()
 {
-	if (isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']))
-		return true;
+	return isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']) ? true : false;
 }
 
 function complementary($hsla)
 {
-	if (list($h, $s, $l, $a) = explode(',', str_replace([' ', 'hsla', '(', ')', '%'], '', $hsla)))
+	if (list ($h, $s, $l, $a) = explode(',', str_replace([' ', 'hsla', '(', ')', '%'], '', $hsla)))
 	{
-		if ((int)$l === 10) $l = 100;
-		return 'hsla('. ($h += ($h > 180) ? -180 : 180). ', '. $s. '%, '. $l. '%, '. $a. ')';
+		if (10 === (int)$l) $l = 100;
+		return 'hsla('. ($h += (180 < $h) ? -180 : 180). ', '. $s. '%, '. $l. '%, '. $a. ')';
 	}
 }
 
 function get_hsl($colour)
 {
-	if ($colour[0] === 'h')
-	{
-		if (list($h, $s, $l) = explode(',', str_replace(['hsl', '(', ')', '%'], '', $colour))) return [$h, $s, $l];
-	}
-	elseif ($colour[0] !== 'r')
+	if ('h' === $colour[0])
+		if (list ($h, $s, $l) = explode(',', str_replace(['hsl', '(', ')', '%'], '', $colour))) return [$h, $s, $l];
+	elseif ('r' !== $colour[0])
 	{
 		$colour = ltrim($colour, '#');
-
-		if (strlen($colour) === 3)
+		if (3 === strlen($colour))
 		{
 			$r = hexdec(substr($colour, 0, 1). substr($colour, 0, 1));
 			$g = hexdec(substr($colour, 1, 1). substr($colour, 1, 1));
@@ -70,7 +67,7 @@ function get_hsl($colour)
 			$b = hexdec(substr($colour, 4, 2));
 		}
 	}
-	else list($r, $g, $b) = explode(',', str_replace(['rgb', '(', ')'], '', $colour));
+	else list ($r, $g, $b) = explode(',', str_replace(['rgb', '(', ')'], '', $colour));
 	$r /= 255;
 	$g /= 255;
 	$b /= 255;
@@ -100,13 +97,8 @@ function get_dirs($dir, $nosort=true)
 {
 	if ($dirs = glob($dir. '/*' , !$nosort ? GLOB_ONLYDIR : GLOB_ONLYDIR + GLOB_NOSORT))
 	{
-		foreach($dirs as $dir_names)
-		{
-			if (isset($dir_names))
-				$all_dirs[] = basename($dir_names);
-		}
-		if (isset($all_dirs))
-			return $all_dirs;
+		foreach($dirs as $dir_names) if ($dir_names) $all_dirs[] = basename($dir_names);
+		if (isset($all_dirs)) return $all_dirs;
 	}
 }
 
@@ -138,20 +130,21 @@ function get_categ($str)
 function get_title($str)
 {
 	$title = basename(dirname($str));
-	if ($title === 'contents')
-		$title = basename($str, '.html');
+	if ('contents' === $title) $title = basename($str, '.html');
 	return $title;
 }
 
 function get_page($nr)
 {
-	global $url, $get_categ, $get_title, $page_name, $current_url, $query, $download_contents, $forum, $forum_thread;
+	global $url, $get_categ, $get_title, $page_name, $current_url, $query, $fquery, $download_contents, $forum, $forum_thread;
 	if ($get_categ && $get_title)
 		return $current_url. '&amp;pages='. $nr;
 	elseif ($get_categ && !$get_title)
 		return $url. $get_categ. '&amp;pages='. $nr;
 	elseif ($query)
 		return $url. '?query='. $query. '&amp;pages='. $nr;
+	elseif ($fquery)
+		return $url. $forum. '?fquery='. $fquery. '&amp;pages='. $nr;
 	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
 	elseif ($page_name === $forum)
@@ -211,40 +204,41 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 	($class ? ' class="'. $class. '"' : '') .
 	($title ? ' data-toggle="tooltip" title="'. $title. '" data-html="true"' : '') .
 	($position ? ' data-placement="'. $position. '"' : '') .
-	($target === '_blank' ? ' rel="noopener noreferrer"' : ''). '>' .
+	('_blank' === $target ? ' rel="noopener noreferrer"' : ''). '>' .
 	(!$name ? h($uri) : h($name)) .
 	'</a>';
 }
 
 function img($src, $class='', $show_exif_comment=false)
 {
-	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks;
+	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks, $use_datasrc;
 	if ($extension = get_extension($src))
 	{
 		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
 		$video_extensions = ['.mp4', '.ogg', '.webm'];
 		if ($src_scheme = strpos($src, '://')) $addr = parse_url($src);
-		if (array_search(strtolower($extension), $image_extensions) !== false)
+		$data = !$use_datasrc ? '' : 'data-';
+		if (false !== array_search(strtolower($extension), $image_extensions))
 		{
 			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
-			$exif_thumbnail = isset($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
-			$exif_comment = isset($exif['COMMENT']) && $show_exif_comment ? str_replace($line_breaks, '<br>', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
-			list($width, $height, $type, $attr) = @getimagesize($src);
-			if ($exif_thumbnail) list($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
+			$exif_thumbnail = isset ($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
+			$exif_comment = isset ($exif['COMMENT']) && $show_exif_comment ? str_replace($line_breaks, '<br>', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
+			list ($width, $height, $type, $attr) = @getimagesize($src);
+			if ($exif_thumbnail) list ($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
 			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
-			'<img class="img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
 			'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
 			'</figure>'. $n :
-			'<img class="align-top img-fluid img-thumbnail '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
+			'<img class="align-top img-fluid img-thumbnail '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
 			if ($get_title || $get_page)
 			{
-				if ($src_scheme !== false)
+				if (false !== $src_scheme)
 					return
 					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'. $n.
 					'<a data-fancybox=gallery href="'. $src. '">'. $n.
-					'<img class=img-fluid src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
+					'<img class=img-fluid '. $data. 'src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
 					'</a>'. $n.
 					'<small class="blockquote-footer my-2 text-right">'. $n.
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
@@ -254,7 +248,7 @@ function img($src, $class='', $show_exif_comment=false)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
 					'<a data-fancybox=gallery class="d-inline-block mb-2 mr-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
-					'<img class="align-top img-fluid '. $class. '" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
+					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'. $n.
 					'<figcaption class="text-center mb-2">'. $exif_comment. '</figcaption>'. $n.
 					'</figure>'. $n;
@@ -263,7 +257,7 @@ function img($src, $class='', $show_exif_comment=false)
 					'<figure class="d-inline-block m-2">'. $n.
 					'<a data-fancybox=gallery href="'. $url. r($src). '" data-caption="'. $exif_comment. '">'. $n.
 					($exif_thumbnail && $use_thumbnails ?
-					'<img class="'. $class. ' align-top img-thumbnail" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
+					'<img class="'. $class. ' align-top img-thumbnail" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
 					$img).
 					'</a>'. $n.
 					'</figure>'. $n;
@@ -281,32 +275,32 @@ function img($src, $class='', $show_exif_comment=false)
 				}
 				if ($exif_thumbnail && $use_categ_thumbnails)
 				{
-					if ($get_categ || $index_type === 1)
+					if ($get_categ || 1 === $index_type)
 						$img =
 						'<span class="card-header d-block text-center">'. $n.
-						'<img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'<img class="img-fluid '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
 						'</span>';
 					else
 						$img =
 						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '>'. $n.
-						'<img class="img-fluid '. $class. '" src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'<img class="img-fluid '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
 						'</span>';
 				}
 				else
 					$img =
 					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'. $n.
-					'<img class="img-fluid '. $class. ' card-img-top" src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+					'<img class="img-fluid '. $class. ' card-img-top" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
 					'</span>';
 
 				return '<a href="'. $url. r(basename(dirname($dirname = dirname(dirname($src)))). '/'. basename($dirname)). '">'. $img. '</a>';
 			}
 		}
-		elseif (array_search(strtolower($extension), $video_extensions) !== false)
+		elseif (false !== array_search(strtolower($extension), $video_extensions))
 		{
 			$vtt = str_replace($extension, '.vtt', $src);
 			if ($get_title || $get_page)
 			{
-				if ($src_scheme !== false)
+				if (false !== $src_scheme)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'. $n.
 					'<video controls preload=none>'. $n.
@@ -345,27 +339,27 @@ function timeformat($time, array $intervals)
 		else
 			unset($intervals[$k]);
 	}
-	return implode('', array_slice($intervals, 0, 1));
+	return implode(array_slice($intervals, 0, 1));
 }
 
-function pager($num, $max)
+function pager(int $num, int $max)
 {
 	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $n;
 	$article .= '<ul class="justify-content-center pagination my-4">'. $n;
 
-	if($num > 2)
+	if(2 < $num)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page(1). '">'. $nav_laquo. $nav_laquo. '</a></li>';
-	if ($num > 1)
+	if (1 < $num)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page($num-1). '">'. $nav_laquo. '</a></li>'. $n;
 
 	$i = 1;
 	while ($i <= $number_of_pager)
 	{
 		$half_page = $number_of_pager/2;
-		$ceil = ceil($half_page);
-		if ($num - $ceil < 0)
+		$ceil = (int)ceil($half_page);
+		if (0 > $num - $ceil)
 		{
-			if ($i == $num)
+			if ($num === $i)
 				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
 			else
 				$article .= '<li class=page-item><a class=page-link href="'. get_page($i). '">'. $i. '</a></li>'. $n;
@@ -377,14 +371,14 @@ function pager($num, $max)
 			else
 				$j = $i;
 
-			if ($j == $num)
+			if ($num === $j)
 				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
 			else
 				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
 		}
 		else
 		{
-			if ($i == $ceil)
+			if ($i === $ceil)
 				$article .= '<li class="disable active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
 			else
 			{
@@ -392,10 +386,10 @@ function pager($num, $max)
 				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
 			}
 		}
-		if ($i == $max) break;
+		if ($max === $i) break;
 		++$i;
 	}
-	if ($num < $max)
+	if ($max > $num)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page($num+1). '">'. $nav_raquo. '</a></li>'. $n;
 	if ($num < $max - 1)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page($max). '">'. $nav_raquo. $nav_raquo. '</a></li>'. $n;
@@ -419,8 +413,7 @@ function sideless($hide=false, $force=false)
 function nowrap()
 {
 	global $header, $get_title, $get_page;
-	if ($get_title || $get_page)
-		$header .= '<style>.article{white-space:normal}</style>';
+	if ($get_title || $get_page) $header .= '<style>.article{white-space:normal}</style>';
 }
 
 function redirect($link)
@@ -437,12 +430,13 @@ function redirect($link)
 function get_logo($name=false, $class='')
 {
 	global $site_name, $url;
-	if (is_file($logo = 'images/logo.png'))
+	if (!is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/logo.png'))
+		return $site_name;
+	else
 		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '">'.
 		(!$name ? '' : '<span class="'. (!$class ? 'border-0 d-block h1 mt-4' : $class). '">'. $site_name. '</span>');
-	else
-		return $site_name;
 }
+
 
 function not_found()
 {
@@ -452,7 +446,7 @@ function not_found()
 	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>'. $n;
 	$article .=
 	'<h1 class="h3 mb-4">'. $not_found[0]. '</h1>'. $n.
-	'<div class="article not-found">'. $not_found[1]. '</div>'. $n;
+	'<div class="article p-4 not-found">'. $not_found[1]. '</div>'. $n;
 }
 
 function toc($in_article=false)
@@ -463,13 +457,13 @@ function toc($in_article=false)
 		$toc_content = '<div class="'. $sidebox_title_class[4]. '">'. $sidebox_title[9];
 		if ($in_article)
 			$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=0><span class=navbar-toggler-icon></span></button>';
-		$toc_content .= '</div><div data-spy=scroll data-target=".article" data-offset=0 id=toctoggle class="'. $sidebox_wrapper_class[1]. '"></div>';
+		$toc_content .= '</div><div id=toctoggle class="'. $sidebox_wrapper_class[1]. ' show"></div>';
 
 		if ($in_article)
 			$article .= '<div id=toc class="'. $sidebox_wrapper_class[2]. '">'. $toc_content. '</div>';
 		else
 			$aside .= '<div id=toc class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[8]. '">'. $toc_content. '</div>';
-		$footer .= '<script>let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toc").fadeIn("slow");$("#toctoggle").html(toc)</script>';
+		$footer .= '<script>let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toctoggle").html(toc)</script>';
 	}
 }
 
@@ -491,15 +485,23 @@ function session($session_name)
 	{
 		global $dir, $server;
 		session_name($session_name);
-		session_set_cookie_params(86400, $dir === '/' ? '/' : $dir. '/', $server, is_ssl(), true);
-		session_start((['cookie_lifetime' => 86400]));
+		session_set_cookie_params(
+		[
+			'lifetime' => 86400,
+			'path' => '/' === $dir ? '/' : $dir. '/',
+			'domain' => $server,
+			'secure' => is_ssl(),
+			'httponly' => true,
+			'samesite' => 'Strict',
+		]);
+		session_start();
 		session_regenerate_id(true);
 	}
 }
 
 function get_uri($uri, $get)
 {
-	if (strpos($uri, '%23') !== false || strpos($uri, '%26') !== false)
+	if (false !== strpos($uri, '%23') || false !== strpos($uri, '%26'))
 		return $uri;
 	else
 		return basename(filter_input(INPUT_GET, $get, FILTER_SANITIZE_ENCODED));
@@ -558,19 +560,15 @@ function handle($dir)
 	if (is_file($handle = $dir. 'handle') && filesize($handle))
 		$handle = h(file_get_contents($handle));
 	else
-	{
-		$lp = explode('@', dec(basename(dirname($dir))));
-		$handle = h($lp[0]);
-	}
-	if (dec(basename(dirname($dir))) === $mail_address)
+		$handle = h(explode('@', dec(basename(dirname($dir))))[0]);
+	if ($mail_address === dec(basename(dirname($dir))))
 		$handle .= $admin_suffix;
 	return $handle;
-
 }
 
 function avatar($dir)
 {
-	if (is_file($img = $dir. 'avatar') && filesize($img) && strpos($base64_img = file_get_contents($img), 'base64') !== false)
+	if (is_file($img = $dir. 'avatar') && filesize($img) && false !== strpos($base64_img = file_get_contents($img), 'base64'))
 		return '<img src="'. strip_tags($base64_img). '" class="d-block rounded-circle mx-auto" alt="">';
 	else
 		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
@@ -582,10 +580,10 @@ function flow($a, $b, $c, $d)
 	return
 	'<h3>'. $a[0]. '</h3>'. $n.
 	'<ol class=flow>'. $n.
-	'<li'. ($d === 1 ? ' class=active' : ''). '>'. sprintf($a[1], $b, $c). '</li>'. $n.
-	'<li'. ($d === 2 ? ' class=active' : ''). '>'. sprintf($a[2], $c). '</li>'. $n.
-	'<li'. ($d === 3 ? ' class=active' : ''). '>'. sprintf($a[3], $b). '</li>'. $n.
-	'<li'. ($d === 4 ? ' class=active' : ''). '>'. sprintf($a[4], $c). '</li>'. $n.
+	'<li'. (1 === $d ? ' class=active' : ''). '>'. sprintf($a[1], $b, $c). '</li>'. $n.
+	'<li'. (2 === $d ? ' class=active' : ''). '>'. sprintf($a[2], $c). '</li>'. $n.
+	'<li'. (3 === $d ? ' class=active' : ''). '>'. sprintf($a[3], $b). '</li>'. $n.
+	'<li'. (4 === $d ? ' class=active' : ''). '>'. sprintf($a[4], $c). '</li>'. $n.
 	'</ol>';
 }
 
@@ -604,81 +602,43 @@ function counter($txt, $put=false)
 
 function is_permitted($dir)
 {
-	if (is_dir($dir) && substr(decoct(fileperms($dir)), 2) !== '700') return true;
+	if (is_dir($dir) && '700' !== substr(decoct(fileperms($dir)), 2)) return true;
 }
 
 function hs($s)
 {
-	$s = str_replace("\t", '    ', $s);
+	$s = str_replace("\t", '    ', h($s));
 	foreach (['autofocus', 'disabled', 'multiple', 'required', 'selected'] as $o)
-	{
-		if (strpos($s, $o) !== false)
-			$s = str_replace($o, '<span style="color:#44AA00">' . $o . '</span>', $s);
-	}
-
-	if (strpos($s, '=') !== false)
-		$s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:#44AA00">\\1</span>=\\2', $s);
-
-	if (strpos($s, '&lt;') !== false && strpos($s, '&gt;') !== false)
-		$s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:#5F8DD3">&lt;\\1&gt;</span>', $s);
-
-	if (strpos($s, '&amp;nbsp;') !== false)
-		$s = str_replace('&amp;nbsp;', '<span style="color:#888A85">&amp;nbsp;</span>', $s);
-
-	if (strpos($s, '&#039;') !== false)
-		$s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
-
-	if (strpos($s, '&quot;') !== false)
-		$s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
-
-	if (strpos($s, '&lt;script') !== false)
-		$s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
-
-	if (strpos($s, '&lt;style') !== false)
-		$s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
-
-	if (strpos($s, '「') !== false)
-		$s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-
-	if (strpos($s, '『') !== false)
-		$s = preg_replace_callback('/(『)(.*?)(』)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-
-	if (strpos($s, '【') !== false)
-		$s = preg_replace_callback('/(【)(.*?)(】)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-
-	if (strpos($s, '&lt;?') !== false)
-		$s = preg_replace_callback('/(&lt;\?.*?\?&gt;)/is', function ($t){return highlight_string(html_entity_decode(strip_tags($t[1]), ENT_QUOTES), true);}, $s);
-
-	if (strpos($s, '[') !== false)
+		if (false !== strpos($s, $o)) $s = str_replace($o, '<span style="color:#44AA00">'. $o. '</span>', $s);
+	if (false !== strpos($s, '&amp;nbsp;')) $s = str_replace('&amp;nbsp;', '<span style="color:#888A85">&amp;nbsp;</span>', $s);
+	if (false !== strpos($s, '=')) $s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:#44AA00">\\1</span>=\\2', $s);
+	if (false !== strpos($s, '&lt;') && false !== strpos($s, '&gt;')) $s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:#5F8DD3">&lt;\\1&gt;</span>', $s);
+	if (false !== strpos($s, '&#039;')) $s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
+	if (false !== strpos($s, '&quot;')) $s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
+	if (false !== strpos($s, '&lt;script')) $s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+	if (false !== strpos($s, '&lt;style')) $s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+	if (false !== strpos($s, '「')) $s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (false !== strpos($s, '『')) $s = preg_replace_callback('/(『)(.*?)(』)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (false !== strpos($s, '【')) $s = preg_replace_callback('/(【)(.*?)(】)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (false !== strpos($s, '&lt;?')) $s = preg_replace_callback('/(&lt;\?.*?\?&gt;)/is', function ($t){return highlight_string(html_entity_decode(strip_tags($t[1]), ENT_QUOTES), true);}, $s);
+	if (false !== strpos($s, '['))
 	{
 		$s = preg_replace_callback('/\[url=?(http.*?)?\](.*?)\[\/url\]/i', function ($t)
 		{
-			if (!$t[1])
-				return '<a href="'. $t[2]. '" target="_blank" rel="noopener noreferrer">'. h($t[2]). '</a>';
-			else
-				return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. h($t[2]). '</a>';
+			if (!$t[1]) return '<a href="'. $t[2]. '" target="_blank" rel="noopener noreferrer">'. $t[2]. '</a>';
+			else return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. $t[2]. '</a>';
 		}, $s);
 	}
-
-	if (strpos($s, '/*') !== false)
-		$s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
-
-	if (strpos($s, '&lt;!--') !== false)
-		$s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
-
-	if (strpos($s, '//') !== false)
-		$s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
-
+	if (false !== strpos($s, '/*')) $s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+	if (false !== strpos($s, '&lt;!--')) $s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+	if (false !== strpos($s, '//')) $s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
 	return $s;
 }
 
 function blacklist($email, $blacklist = './forum/blacklist.txt')
 {
-	if (filter_var($email, FILTER_VALIDATE_EMAIL))
-	{
-		$list = file($blacklist, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if (!in_array($email, $list, true)) return $email;
-	}
+	$list = file($blacklist, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	if (!in_array($email, $list, true)) return $email;
 }
 
 function booking(
@@ -862,4 +822,42 @@ function booking(
 			`find $bookings_dir -type d -empty -delete`;
 		}
 	}
+}
+
+function put_png_tEXt($png, $key, $val='')
+{
+	if ('image/png' === getimagesize($png)['mime'])
+	{
+		$str = $key. "\0". $val;
+		$iend = hex2bin('0000000049454e44ae426082');
+		return base64_encode(str_replace($iend, pack('N', strlen($str)). 'tEXt'. $str. pack('N', crc32('tEXt'. $str)). $iend, file_get_contents($png)));
+	}
+}
+
+function get_png_tEXt($png)
+{
+	$fp = fopen($png, 'rb');
+	if ("\x89PNG\x0d\x0a\x1a\x0a" === fread($fp, 8))
+	{
+		while ($fr = fread($fp, 8))
+		{
+			$chunk = unpack('Nlength/a4type', $fr);
+			if ('IEND' === $chunk['type']) break;
+			if ('tEXt' === $chunk['type'])
+			{
+				list ($key, $val) = explode("\0", fread($fp, $chunk['length']));
+				fseek($fp, 4, SEEK_CUR);
+			}
+			else
+				fseek($fp, $chunk['length']+4, SEEK_CUR);
+		}
+	}
+	fclose($fp);
+	if (isset($key, $val)) return $key. $val;
+}
+
+function is_admin()
+{
+	global $session_usermail, $mail_address;
+	return isset($session_usermail, $mail_address) && $mail_address === $session_usermail ? true : false;
 }

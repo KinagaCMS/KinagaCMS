@@ -38,22 +38,22 @@ if (filter_has_var(INPUT_POST, 'preview'))
 		'<td colspan=2 class=text-center><strong class=text-danger>'. $contact_message[3]. '</strong></td>'. $n.
 		'</tr>'. $n.
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
 	{
 		$_SESSION['token'] = $token;
 		$article .=
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</a></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</a></td>'. $n.
 		'<td>'. $n.
 		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#form_result' : r($contact_us)). '">'. $n.
 		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'. $n.
 		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
 		'<input type=hidden name=token value="'. $token. '">'. $n.
 		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'. $n.
-		'<button name=send type=submit class="btn btn-outline-success btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button>'. $n.
+		'<button name=send type=submit class="btn btn-outline-success btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button>'. $n.
 		'</form>'. $n.
 		'</td>'. $n.
 		'</tr>';
@@ -61,8 +61,8 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	else
 		$article .=
 		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-lg btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-lg btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
+		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
+		'<td><button disabled class="btn btn-outline-danger btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
 		'</tr>';
 	$article .=
 	'</table>'. $n.
@@ -83,17 +83,15 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 		];
 
 		$filtered_sendings = filter_input_array(INPUT_POST, $sendings);
-		$filtered_sending_name = base64_decode($filtered_sendings['preview_name']);
-		$filtered_sending_email = base64_decode($filtered_sendings['preview_email']);
-		$filtered_sending_message = base64_decode($filtered_sendings['preview_message']);
+		$filtered_sending_name = filter_var(base64_decode($filtered_sendings['preview_name']), FILTER_SANITIZE_STRIPPED);
+		$filtered_sending_email = filter_var(base64_decode($filtered_sendings['preview_email']), FILTER_VALIDATE_EMAIL);
+		$filtered_sending_message = filter_var(base64_decode($filtered_sendings['preview_message']), FILTER_SANITIZE_STRIPPED);
 
 		if ($filtered_sending_name && $filtered_sending_email && $filtered_sending_message)
 		{
 			$headers = $mime;
 			$headers .= 'From: '. $filtered_sending_name. ' <'. $filtered_sending_email. '>'. $n;
-			$to = ($mail_address && isset($site_name) ? $site_name. ' <'. $mail_address. '>' : $mail_address);
 			$body = '';
-
 			if ($get_categ && $get_title)
 			{
 				$boundary = bin2hex(random_bytes(16));
@@ -125,8 +123,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$subject = sprintf($contact_subject_suffix, $filtered_sending_name). $site_name;
 				$body .= $filtered_sending_message. $n. $n;
 			}
-
-			if (mail($to, $subject, $body, $headers))
+			if (mail($mail_address, $subject, $body, $headers))
 			{
 				if (isset($_SESSION['l'], $userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-success.txt', 1);
 				$article .=
@@ -158,6 +155,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 		}
 	}
 }
+if (__FILE__ === implode(get_included_files())) exit;
 $article .=
 '<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
 '<div class=form-row>'. $n.

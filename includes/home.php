@@ -1,12 +1,12 @@
 <?php
+if (__FILE__ === implode(get_included_files())) exit;
 $header .= '<meta name=description content="'. $meta_description. '">'. $n;
-
 if (is_file($index_file = 'contents/index.html'))
 {
 	$header .= '<title>'. $site_name. ($subtitle ? ' - '. $subtitle : ''). '</title>'. $n;
 	if ($subtitle)
 		$article .= '<h1 class="h4 mb-4">'. $site_name. ' <small class="ml-3 wrap text-muted">'. $subtitle. '</small></h1>'. $n;
-	$article .= '<div class=article>';
+	$article .= '<div class="'. $article_wrapper_class. ' article clearfix">';
 	ob_start();
 	include $index_file;
 	$article .= trim(ob_get_clean());
@@ -16,7 +16,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 {
 	usort($glob_files, 'sort_time');
 
-	if ($index_type === 1)
+	if (1 === $index_type)
 	{
 		$header .= '<title>'. $site_name. ($subtitle ? ' - '. $subtitle : ''). ($pages > 1 ? ' - '. sprintf($page_prefix, $pages) : ''). '</title>'. $n;
 
@@ -95,7 +95,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 		$header .= '<title>'. $site_name. ($subtitle ? ' - '. $subtitle : ''). '</title>'. $n;
 		if ($subtitle)
 			$article .= '<h1 class="h4 mb-4">'. $site_name. ' <small class="ml-3 wrap text-muted">'. $subtitle. '</small></h1>'. $n;
-		$article .= '<div class=container><div class=row>';
+		$article .= '<div class=row>';
 		$c = [];
 		$header .= '<style>';
 		foreach($glob_files as $a)
@@ -107,11 +107,11 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			{
 				sort($i);
 				$img = img($i[0]);
-				if ($index_type === 2)
+				if (2 === $index_type)
 					$a = $img. '<span class="d-inline-block mt-2">'. h($t). '</span>';
-				if ($index_type === 3)
+				if (3 === $index_type)
 					$a = $img. h($t);
-				if ($index_type === 4)
+				if (4 === $index_type)
 				{
 					preg_match('/width="(\d+)"/', $img, $width);
 					$a = $img. '<span class="d-inline-block text-truncate" style="max-width:'. ($width[1] ?? '200'). 'px">'. h($t). '</span>';
@@ -131,20 +131,20 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			foreach($b as $k => $v)
 			{
 				$s = array_slice($v, 0, $index_items);
-				if ($index_type === 2)
-					$article .= '<div class="col-md-6 mb-5 text-center"><div class=h5>'. $k. '</div><ul class="list-group list-group-flush"><li class="list-group-item bg-transparent">'. implode('</li><li class="list-group-item bg-transparent">', $s). '</li></ul></div>';
-				if ($index_type === 3)
-					$article .= '<div class=col-md-6><div class=h5>'. $k. '</div><div class="my-4 position-relative">'. implode('</div><div class=my-4>', $s). '</div></div>';
-				if ($index_type === 4)
-					$article .= '<div class="col-md-12 mb-4"><div class="h5 border-bottom px-2 py-1">'. $k. '</div><div class=row><div class="m-2 col-md-auto">'. implode('</div><div class="m-2 col-md-auto">', $s). '</div></div></div>';
+				if (2 === $index_type)
+					$article .= '<div class="col-md-6 mb-5 text-center"><span class="h5 border-bottom pb-1">'. $k. '</span><ul class="mt-3 list-group list-group-flush"><li class="list-group-item bg-transparent">'. implode('</li><li class="list-group-item bg-transparent">', $s). '</li></ul></div>';
+				if (3 === $index_type)
+					$article .= '<div class=col-md-6><div class="h5 bg-primary p-3">'. $k. '</div><div class="m-4">'. implode('</div><div class=m-4>', $s). '</div></div>';
+				if (4 === $index_type)
+					$article .= '<div class="col-md-12 mb-4"><div class="h5 border-bottom px-2 py-1 my-3">'. $k. '</div><div class=row><div class="m-2 col-md-auto">'. implode('</div><div class="m-2 col-md-auto">', $s). '</div></div></div>';
 			}
 		}
-		$article .= '</div></div>';
+		$article .= '</div>';
 	}
 }
 else
 {
 	$header .= '<title>'. $site_name. '</title>'. $n;
 	if (!$index_file || !$contents)
-		$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 p-3 m-auto" style="opacity:.05">';
+		$article .= '<img src="'. $url. 'images/icon.php" class="d-block w-75 p-3 m-auto" style="opacity:.05;max-width:50%">';
 }

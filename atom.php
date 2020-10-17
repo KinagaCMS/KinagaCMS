@@ -1,13 +1,14 @@
 <?php
 include 'includes/functions.php';
 include 'includes/config.php';
-
 $atom_files = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
-
 if ($atom_files)
 {
 	header('Content-Type: application/xml; charset='. $encoding);
 	$xml = new DOMDocument('1.0', $encoding);
+	$insert = $xml->firstChild;
+	$style = $xml->createProcessingInstruction('xml-stylesheet', 'type="text/css" href="'. $css. '"');
+	$xml->insertBefore($style, $insert);
 	echo $xml->saveXML(),
 	'<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', $lang, '">', $n,
 	'<title type="text">', $site_name, '</title>', $n,
@@ -17,29 +18,25 @@ if ($atom_files)
 	'<link rel="self" type="application/atom+xml" href="', $url, 'atom.php" />', $n,
 	'<rights>Copyright ', date('Y'), ', ', $site_name, '.</rights>', $n,
 	'<generator>kinaga</generator>', $n;
-
 	usort($atom_files, 'sort_time');
-
-	$i = 0;
-	foreach ($atom_files as $atoms)
+	foreach ($atom_files as $key => $atoms)
 	{
-		if ($i === $number_of_feeds) break;
+		if ($number_of_feeds === $key) break;
 		$atom_title = get_title($atoms);
 		$atom_categ = get_categ($atoms);
 		$atom_filetime = filemtime($atoms);
 		$atom_description = get_description(file_get_contents($atoms));
-
 		if ($atom_categ)
 		{
 			$atom_link_title = h($atom_title);
 			$id = $url. r($atom_categ. '/'. $atom_title);
 		}
-		if ($atom_title === 'index')
+		if ('index' === $atom_title)
 		{
 			$atom_link_title = $home;
 			$id = $url;
 		}
-		if ($atom_title === 'contents')
+		if ('contents' === $atom_title)
 		{
 			$atom_link_title = h($atom_title);
 			$id = $url. r($atom_title);
@@ -58,7 +55,7 @@ if ($atom_files)
 		{
 			if ($glob_atom_background_imgs = glob($atom_background_imgs_dir. '/*'))
 				$atom_background_image = ($size = @getimagesize($glob_atom_background_imgs[0])) ?
-				'<a href="'. $id. '"><img src="'. $url. r($glob_atom_background_imgs[0]). '" width="'. ($size[0] > 500 ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
+				'<a href="'. $id. '"><img src="'. $url. r($glob_atom_background_imgs[0]). '" width="'. (500 < $size[0] ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
 			else
 				$atom_background_image = '';
 		}
@@ -72,13 +69,12 @@ if ($atom_files)
 		'<updated>', date(DATE_ATOM, $atom_filetime), '</updated>', $n,
 		'<content type="xhtml" xml:lang="', $lang, '">', $n,
 		'<div xmlns="http://www.w3.org/1999/xhtml">', $n,
-		'<p>', $atom_description, ' <a href="', $id, '">', $more_link_text, '</a></p>', $n,
+		'<p>', $atom_description, ' <a class="stretched-link" href="', $id, '">', $more_link_text, '</a></p>', $n,
 		$atom_image, $atom_background_image, $n,
 		'</div>', $n,
 		'</content>', $n,
 		'<author><name>', $site_name, '</name></author>', $n,
 		'</entry>', $n;
-		++$i;
 	}
 	echo '</feed>';
 }

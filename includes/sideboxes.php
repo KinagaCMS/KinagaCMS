@@ -1,8 +1,8 @@
 <?php
+if (__FILE__ === implode(get_included_files())) exit;
 if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 {
 	usort($recent_files, 'sort_time');
-
 	$aside .=
 	'<div id=recents class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[4]. '">'. $n.
 	'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[0]. '</div>'. $n;
@@ -16,7 +16,6 @@ if ($use_recents && $recent_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 	}
 	$aside .= '</div>';
 }
-
 $glob_info_files = glob('contents/[!index]*.html', GLOB_NOSORT);
 if ($glob_info_files || $dl || $use_forum || ($use_contact && $mail_address))
 {
@@ -30,66 +29,69 @@ if ($glob_info_files || $dl || $use_forum || ($use_contact && $mail_address))
 		$info_uri = basename($info_files, '.html');
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $info_uri ? ' bg-light current' : ''). '" href="'. $url. r($info_uri). '">'. h($info_uri). '</a>'. $n;
 	}
-
 	if ($use_forum)
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $forum ? ' bg-light current' : ''). '" href="'. $url. r($forum). '">'. $forum. '</a>'. $n;
-
 	if ($dl)
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $download_contents ? ' bg-light current' : ''). '" href="'. $url. r($download_contents). '">'. $download_contents. '</a>'. $n;
-
 	if ($use_contact && $mail_address)
 		$aside .= '<a class="'. $sidebox_content_class[0]. ($page_name === $contact_us ? ' bg-light current' : ''). '" href="'. $url. r($contact_us). '">'. $contact_us. '</a>'. $n;
 	$aside .= '</div>';
 }
 
-if ($use_popular_articles && $number_of_popular_articles > 0 && $glob_all_counter_files = glob($glob_dir. 'counter.txt', GLOB_NOSORT))
+if ($use_popular_articles && $number_of_popular_articles > 0)
 {
-	$aside .=
-	'<div id=popular-articles class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[6]. '">'. $n.
-	'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[2]. '</div>'. $n;
-
-	foreach ($glob_all_counter_files as $all_counter_files)
-		$counter_sort[] = (int)trim(file_get_contents($all_counter_files)). $all_counter_files;
-
-	$counter_sort = array_filter($counter_sort);
-	rsort($counter_sort, SORT_NUMERIC);
-	for ($i = 0, $c = count($counter_sort); $i < $c && $i < $number_of_popular_articles; ++$i)
+	if ($glob_all_counter_files = glob($glob_dir. 'counter.txt', GLOB_NOSORT))
 	{
-		$popular_titles = explode('/', $counter_sort[$i]);
 		$aside .=
-		'<a class="'. $sidebox_content_class[0]. ($categ_name. $title_name === $popular_titles[1]. $popular_titles[2] ? ' bg-light current' : ''). '" href="'. $url. r($popular_titles[1]. '/'. $popular_titles[2]). '">'. h($popular_titles[2]). '</a>'. $n;
-	}
-	$aside .= '</div>'. $n;
-}
+		'<div id=popular-articles class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[6]. '">'. $n.
+		'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[2]. '</div>'. $n;
 
-if ($use_comment && $number_of_new_comments > 0 && $all_comments = glob($glob_dir. 'comments/*'. $delimiter. '*.txt', GLOB_NOSORT))
-{
-	rsort($all_comments);
-	$aside .=
-	'<div id=recent-comments class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[7]. '">'. $n.
-	'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[3]. '</div>';
+		foreach ($glob_all_counter_files as $all_counter_files)
+			$counter_sort[] = (int)file_get_contents($all_counter_files). $all_counter_files;
 
-	for ($k=0; $k < $number_of_new_comments; ++$k)
-	{
-		if (isset($all_comments[$k]) && is_file($all_comments[$k]))
+		$counter_sort = array_filter($counter_sort);
+		rsort($counter_sort, SORT_NUMERIC);
+		foreach ($counter_sort as $k => $v)
 		{
-			$new_comments = explode($delimiter, $all_comments[$k]);
-			$comment_link = explode('/', $new_comments[0]);
-			$comment_time = (int)end($comment_link);
-			$comments_content = str_replace($line_breaks, ' ', trim(strip_tags(file_get_contents($all_comments[$k]))));
-			$new_comment_user = basename($new_comments[1], '.txt');
-			if (is_dir($new_comment_user_handle = $usersdir. $new_comment_user. '/prof/'))
-				$new_comment_user = handle($new_comment_user_handle);
-			$aside .=
-			'<a class="'. $sidebox_content_class[0]. '" href="'. $url. r($comment_link[1]. '/'. $comment_link[2]). '#cid-'. $comment_time. '">'. $n.
-			'<p class="'. $sidebox_content_class[1]. '">'. mb_strimwidth($comments_content, 0, $comment_length, $ellipsis, $encoding). '</p>'. $n.
-			'<small class="blockquote-footer text-break text-right">'. h($new_comment_user). ' <span class=text-nowrap>('. timeformat($comment_time, $intervals). ')</span></small>'. $n.
-			'</a> '. $n;
+			if ($number_of_popular_articles > $k)
+			{
+				$popular_titles = explode('/', $v);
+				$aside .=
+				'<a class="'. $sidebox_content_class[0]. ($categ_name. $title_name === $popular_titles[1]. $popular_titles[2] ? ' bg-light current' : ''). '" href="'. $url. r($popular_titles[1]. '/'. $popular_titles[2]). '">'. h($popular_titles[2]). '</a>'. $n;
+			}
 		}
+		$aside .= '</div>'. $n;
 	}
-	$aside .= '</div>'. $n;
 }
-
+if ($use_comment && $number_of_new_comments > 0)
+{
+	if ($all_comments = glob($glob_dir. 'comments/*'. $delimiter. '*.txt', GLOB_NOSORT))
+	{
+		rsort($all_comments);
+		$aside .=
+		'<div id=recent-comments class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[7]. '">'. $n.
+		'<div class="'. $sidebox_title_class[1]. '">'. $sidebox_title[3]. '</div>';
+		foreach ($all_comments as $k => $v)
+		{
+			if ($number_of_new_comments > $k)
+			{
+				$new_comments = explode($delimiter, $v);
+				$comment_link = explode('/', $new_comments[0]);
+				$comment_time = (int)end($comment_link);
+				$comments_content = str_replace($line_breaks, ' ', trim(strip_tags(file_get_contents($v))));
+				$new_comment_user = basename($new_comments[1], '.txt');
+				if (is_dir($new_comment_user_handle = $usersdir. $new_comment_user. '/prof/'))
+					$new_comment_user = handle($new_comment_user_handle);
+				$aside .=
+				'<a class="'. $sidebox_content_class[0]. '" href="'. $url. r($comment_link[1]. '/'. $comment_link[2]). '#cid-'. $comment_time. '">'. $n.
+				'<p class="'. $sidebox_content_class[1]. '">'. mb_strimwidth($comments_content, 0, $comment_length, $ellipsis, $encoding). '</p>'. $n.
+				'<small class="blockquote-footer text-break text-right">'. h($new_comment_user). ' <span class=text-nowrap>('. timeformat($comment_time, $intervals). ')</span></small>'. $n.
+				'</a> '. $n;
+			}
+		}
+		$aside .= '</div>'. $n;
+	}
+}
 if ($address)
 {
 	$aside .=
@@ -97,28 +99,26 @@ if ($address)
 	'<div class="'. $sidebox_title_class[1]. '">'. ($address_title ?: $site_name). '</div>'. $n.
 	'<div class="'. $sidebox_content_class[2]. '">'. trim($address). '</div>'. $n;
 	foreach ($additional_address as $adds)
-		if ($adds)
-			$aside .= '<div class="'. $sidebox_content_class[2]. '">'. trim($adds). '</div>';
+		if ($adds) $aside .= '<div class="'. $sidebox_content_class[2]. '">'. trim($adds). '</div>';
 	$aside .='</div>';
 }
-
 if ($use_forum)
 {
 	if ($forum_topic_glob = glob('./forum/[!#]*/[!#]*[!threader]*', GLOB_NOSORT))
 	{
 		usort($forum_topic_glob, function($a, $b){return filemtime($a) < filemtime($b);});
-
-		$aside .= '<div id=recent-topics class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[11]. '">'. $n.
+		$aside .= '<div id=recent-topics class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[5]. '">'. $n.
 		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[11]. '</div>'. $n;
-		$i = 0;
-		foreach($forum_topic_glob as $newtopics)
+		foreach ($forum_topic_glob as $k => $v)
 		{
-			$newtopic = basename($newtopics);
-			$newtopic_title = $newtopic[0] === '!' || $newtopic[0] === '@' ? h(substr($newtopic, 1)) : h($newtopic);
-			$topic_dir = basename(dirname($newtopics));
-			$topic_time = timeformat(filemtime($newtopics), $intervals);
-			$aside .= '<a class="d-flex justify-content-between align-items-center text-break '. $sidebox_content_class[0]. (isset($forum_topic) && $forum_topic === $newtopic ? ' bg-light current' : ''). '" href="'. $url. r($forum). '/'. r($topic_dir). '/'. r($newtopic). '">'. $newtopic_title. ' <small class="badge badge-primary badge-pill">'. $topic_time. '</small></a>'. $n;
-			if (++$i === $number_of_topics) break;
+			if ($number_of_topics > $k)
+			{
+				$newtopic = basename($v);
+				$newtopic_title = $newtopic[0] === '!' || $newtopic[0] === '@' ? h(substr($newtopic, 1)) : h($newtopic);
+				$topic_dir = basename(dirname($v));
+				$topic_time = timeformat(filemtime($v), $intervals);
+				$aside .= '<a class="d-flex justify-content-between align-items-baseline text-break '. $sidebox_content_class[0]. (isset($forum_topic) && $forum_topic === $newtopic ? ' bg-light current' : ''). '" href="'. $url. r($forum). '/'. r($topic_dir). '/'. r($newtopic). '">'. $newtopic_title. ' <small class="badge badge-primary badge-pill ml-2">'. $topic_time. '</small></a>'. $n;
+			}
 		}
 		$aside .= '</div>';
 	}

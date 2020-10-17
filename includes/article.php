@@ -1,4 +1,5 @@
 <?php
+if (!filter_has_var(INPUT_GET, 'categ') && !filter_has_var(INPUT_GET, 'title')) exit;
 if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) && is_file($current_article = $current_article_dir. '/index.html'))
 {
 	$login_txt = $current_article_dir. '/login.txt';
@@ -44,7 +45,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	$header .= '<title>'. $article_encode_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 	$article_filemtime = filemtime($current_article);
 
-	$article .= '<small class=text-muted>'. sprintf($last_modified, date($time_format, $article_filemtime)). '</small>';
+	$article .= '<header><small class=text-muted>'. sprintf($last_modified, date($time_format, $article_filemtime)). '</small>';
 	if ($count = counter($current_article_dir. '/counter.txt'))
 		$article .= '<small class="ml-2 text-muted">'. sprintf($views, $count). '</small>';
 	$article .= '<h1 class="h3 mb-4">'. $article_encode_title;
@@ -54,32 +55,35 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		$count_comments = count($glob_comment_files);
 		$article .= '<small class=ml-3><a href=#comment>'. sprintf($comments_count_title, $count_comments). '</a></small>';
 	}
-	$article .= '</h1>';
-	if (is_dir($slide_images_dir = $current_article_dir. '/slide-images') && $slides = glob($slide_images_dir. '/*'))
+	$article .= '</h1></header>';
+	if (is_dir($slide_images_dir = $current_article_dir. '/slide-images'))
 	{
-		$article .=
-		'<div id=slide-images class="carousel slide carousel-fade mb-3" data-ride=carousel>'. $n.
-		'<ol class=carousel-indicators>';
-		for ($j = 0, $d = count($slides); $j < $d; ++$j)
+		if ($slides = glob($slide_images_dir. '/*'))
 		{
-			$slides_exif = @exif_read_data($slides[$j], '', '', true);
-			$slides_exif_comment = isset($slides_exif['COMMENT']) ? '<div style="background:rgba(0,0,0,.2)" class="carousel-caption d-block">'. str_replace($line_breaks, '<br>', h(trim(strip_tags($slides_exif['COMMENT'][0])))). '</div>' : '';
-			$article .= '<li data-target="#slide-images" data-slide-to='. $j. ($j === 0 ? ' class=active' : ''). ' data-interval=10000><span class=sr-only>.</span></li>';
-			$darousel_item[] = '<div class="carousel-item'. ($j === 0 ? ' active' : ''). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($slides[$j]). '">'. $slides_exif_comment. '</div>';
+			$article .=
+			'<div id=slide-images class="carousel slide carousel-fade mb-3" data-ride=carousel>'. $n.
+			'<ol class=carousel-indicators>';
+			foreach ($slides as $k => $v)
+			{
+				$slides_exif = @exif_read_data($v, '', '', true);
+				$slides_exif_comment = isset($slides_exif['COMMENT']) ? '<div style="background:rgba(0,0,0,.2)" class="carousel-caption d-block">'. str_replace($line_breaks, '<br>', h(trim(strip_tags($slides_exif['COMMENT'][0])))). '</div>' : '';
+				$article .= '<li data-target="#slide-images" data-slide-to='. $k. (0 === $k ? ' class=active' : ''). ' data-interval=10000><span class=sr-only>.</span></li>';
+				$darousel_item[] = '<div class="carousel-item'. (0 === $k ? ' active' : ''). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($v). '">'. $slides_exif_comment. '</div>';
+			}
+			$article .=
+			'</ol>'. $n.
+			'<div class=carousel-inner>'. implode($n, $darousel_item).	'</div>'. $n.
+			'<a class=carousel-control-prev href=#slide-images role=button data-slide=prev><span class=carousel-control-prev-icon aria-hidden=true></span></a>'. $n.
+			'<a class=carousel-control-next href=#slide-images role=button data-slide=next><span class=carousel-control-next-icon aria-hidden=true></span></a>'. $n.
+			'</div>';
 		}
-		$article .=
-		'</ol>'. $n.
-		'<div class=carousel-inner>'. implode($n, $darousel_item).	'</div>'. $n.
-		'<a class=carousel-control-prev href=#slide-images role=button data-slide=prev><span class=carousel-control-prev-icon aria-hidden=true></span></a>'. $n.
-		'<a class=carousel-control-next href=#slide-images role=button data-slide=next><span class=carousel-control-next-icon aria-hidden=true></span></a>'. $n.
-		'</div>';
 	}
 	ob_start();
 	include $current_article;
 	$current_article_content = trim(ob_get_clean());
 
 	$header .= '<meta name=description content="'. get_description($current_article_content). '">'. $n;
-	$article .= '<div class="mb-2 px-2 article clearfix">';
+	$article .= '<div class="'. $article_wrapper_class. ' article clearfix">';
 	if (is_file($ticket) && (is_file($login_txt) || is_file($categ_login_txt)) && !isset($_SESSION['l']))
 	{
 		if (is_file($login_txt) && filesize($login_txt)) $article .= file_get_contents($login_txt);
@@ -92,23 +96,21 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 
 	$article .='</div>'. $n;
 
-	if ($images_per_page >= 1 && is_dir($images_dir = $current_article_dir. '/images') && $glob_image_files = glob($images_dir. $glob_imgs, GLOB_BRACE))
+	if (1 <= $images_per_page && is_dir($images_dir = $current_article_dir. '/images') && $glob_image_files = glob($images_dir. $glob_imgs, GLOB_BRACE))
 	{
 		$glob_images_number = count($glob_image_files);
-		$page_ceil = ceil($glob_images_number / $images_per_page);
+		$page_ceil = ceil($glob_images_number/$images_per_page);
 		$max_pages = min($pages, $page_ceil);
-		$images_in_page = array_slice($glob_image_files, ($max_pages - 1) * $images_per_page, $images_per_page);
+		$images_in_page = array_slice($glob_image_files, ($max_pages-1) * $images_per_page, $images_per_page);
 
-		if ($glob_images_number > $images_per_page)
-			pager($max_pages, $page_ceil);
+		if ($glob_images_number > $images_per_page) pager($max_pages, $page_ceil);
 
 		$article .= '<div class="images text-center">'. $n;
 		foreach ($images_in_page as $article_images)
 			$article .= img($article_images, '', true);
 		$article .= '</div>'. $n;
 
-		if ($glob_images_number > $images_per_page)
-			pager($max_pages, $page_ceil);
+		if ($glob_images_number > $images_per_page) pager($max_pages, $page_ceil);
 	}
 
 	if ($glob_prev_next = glob('contents/'. $categ_name. '/*/index.html', GLOB_NOSORT))
@@ -120,25 +122,22 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 			similar_text($title_name, $similar_titles, $percent);
 			$per = round($percent);
 
-			if ($per < 100 && $per >= 20)
+			if (100 > $per && 20 <= $per)
 				$similar_article[] = $per. $delimiter. $similar_titles;
 
 			$sort_prev_next[] = filemtime($prev_next). $delimiter. $prev_next;
 		}
-
-		if ($use_prevnext)
+		if ($use_prevnext && 1 < $c = count($sort_prev_next))
 		{
 			$prev_link = '';
 			rsort($sort_prev_next);
 			$article .= '<nav id=article-nav class="'. $article_nav_wrapper_class. '">';
-
-			for ($i = 0, $c = count($sort_prev_next); $i < $c; ++$i)
+			foreach ($sort_prev_next as $prevnext)
 			{
-				$prev_next_parts = explode($delimiter, $sort_prev_next[$i]);
+				$prev_next_parts = explode($delimiter, $prevnext);
 				$prev_next_title = get_title($prev_next_parts[1]);
 				$prev_next_href = $url. $get_categ. r($prev_next_title);
 				$prev_next_encode_title = h($prev_next_title);
-
 				if ((int)$prev_next_parts[0] > $article_filemtime)
 				{
 					$header_prev = '<link rel=prev href="'. $prev_next_href. '">'. $n;
@@ -161,27 +160,26 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					break;
 				}
 			}
-			if (isset($header_prev))
-				$header .= $header_prev;
-			if (isset($header_next))
-				$header .= $header_next;
+			if (isset($header_prev)) $header .= $header_prev;
+			if (isset($header_next)) $header .= $header_next;
 			$article .= $prev_link. '</nav>'. $n;
 		}
-
 		if ($use_similars && $similar_article)
 		{
 			$similar_counts = count($similar_article);
-
-			if ($similar_counts >= 1)
+			if (1 <= $similar_counts)
 			{
 				$aside .=
 				'<div id=similars class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[1]. '">'. $n.
 				'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[6]. '</div>'. $n;
 				rsort($similar_article);
-				for ($i = 0; $i < $similar_counts && $i < $number_of_similars; ++$i)
+				foreach ($similar_article as $k => $v)
 				{
-					$similar = explode($delimiter, $similar_article[$i]);
-					$aside .= '<a class="'. $sidebox_content_class[0]. '" href="'. $url. $get_categ. r($similar[1]). '">'. h($similar[1]). '</a>'. $n;
+					if ($number_of_similars > $k)
+					{
+						$similar = explode($delimiter, $v);
+						$aside .= '<a class="'. $sidebox_content_class[0]. '" href="'. $url. $get_categ. r($similar[1]). '">'. h($similar[1]). '</a>'. $n;
+					}
 				}
 				$aside .= '</div>';
 			}
@@ -196,16 +194,15 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	if ($use_comment && is_dir($comment_dir))
 	{
 		$article .=
-		'<section class=my-5 id=comment>'. $n.
+		'<section class="'. $comment_wrapper_class[0]. '" id=comment>'. $n.
 		'<h2 class=mb-4>'. $comment. '</h2>'. $n;
 
-		if (isset($glob_comment_files) && $comments_per_page > 0)
+		if (isset($glob_comment_files) && 0 < $comments_per_page)
 		{
-			sort($glob_comment_files);
-
+			rsort($glob_comment_files);
 			foreach ($glob_comment_files as $comment_files)
 			{
-				if (stripos($comment_files, $delimiter) !== false)
+				if (false !== stripos($comment_files, $delimiter))
 				{
 					$comment_file = explode($delimiter, $comment_files);
 					$comment_time = basename($comment_file[0]);
@@ -222,9 +219,9 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					$comment_content = str_replace($line_breaks, '&#10;', h(file_get_contents($comment_files)));
 
 					$comments_array[] =
-					'<div class="'. $comment_wrapper_class. '" id=cid-'. $comment_time. '>'. $n.
+					'<div class="'. $comment_wrapper_class[1]. '" id=cid-'. $comment_time. '>'. $n.
 					'<div class="'. $comment_content_class. '">'. $n.
-					'<div class="avatar d-table mr-3 text-center">'. $comment_user_avatar. '</div>'. $n.
+					'<div class="avatar d-table mr-4 text-center">'. $comment_user_avatar. '</div>'. $n.
 					'<div class="'. $comment_body_class. '">'. $n.
 					'<div class="'. $comment_user_class. '"><span class="h5 text-truncate">'. $comment_user. '</span><span class="text-muted text-nowrap">'. timeformat($comment_time, $intervals). '</span></div>'.
 					'<p class=wrap>'. $comment_content. '</p>'. $n.
@@ -246,10 +243,10 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				if ($count_comments > $comments_per_page)
 				{
 					$article .= '<nav class=mb-5>'. $n;
-					if ($comment_pages < ceil($count_comments / $comments_per_page))
-						$article .= '<a class="float-left badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages + 1). '#comment">'. $comments_next. '</a>'. $n;
-					if ($comment_pages > 1)
-						$article .= '<a class="float-right badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages - 1). '#comment">'. $comments_prev. '</a>'. $n;
+					if ($comment_pages < ceil($count_comments/$comments_per_page))
+						$article .= '<a class="float-left badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages+1). '#comment">'. $comments_next. '</a>'. $n;
+					if (1 < $comment_pages)
+						$article .= '<a class="float-right badge badge-pill badge-primary" href="'. $current_url. '&amp;comments='. ($comment_pages-1). '#comment">'. $comments_prev. '</a>'. $n;
 					$article .= '</nav>'. $n;
 				}
 			}

@@ -13,6 +13,7 @@ $index_items = 4;
 ##########################
 
 $lang = 'ja';
+
 $encoding = 'UTF-8';
 
 ##########################
@@ -48,6 +49,9 @@ $use_prevnext = true;
 #Show Popular articles
 $use_popular_articles = true;
 
+#Use Lazy Load
+$use_datasrc = true;
+
 #Show Thumbnails
 $use_thumbnails = true;
 
@@ -77,12 +81,16 @@ $use_benchmark = true;
 $categ_nav_class = '';
 
 #Article
+$article_wrapper_class = 'mb-2 px-2';
 $article_nav_wrapper_class = 'd-flex border mt-5';
 $article_nav_next_href_class = 'flex-fill p-2 text-decoration-none w-50';
 $article_nav_prev_href_class = 'border-right '. $article_nav_next_href_class;
 $article_nav_xaquo_class = 'px-1 d-flex align-items-center bg-secondary text-white';
 $article_nav_title_class = 'd-block mb-1 text-secondary';
 $article_nav_content_class = 'd-block pb-3 px-3';
+
+#Forum
+$forum_wrapper_class = '';
 
 #Sidebox
 $sidebox_order = [
@@ -97,7 +105,7 @@ $sidebox_order = [
 	1, #toc
 	9, #address
 	1, #category
-	12 #forum
+	0, #forum search
 	];
 
 $sidebox_wrapper_class = [
@@ -127,8 +135,8 @@ $number_of_popular_articles = 5;
 #Comments
 $number_of_new_comments = 5;
 $comment_length = 100;
+$comment_wrapper_class = ['my-5', 'card card-body comment mb-3'];
 $comment_class = '';
-$comment_wrapper_class = 'card card-body comment mb-3';
 $comment_content_class = 'media';
 $comment_body_class = 'media-body';
 $comment_user_class = 'd-flex justify-content-between mb-2';
@@ -185,7 +193,7 @@ $number_of_downloads = 10;
 $number_of_pager = 5;
 
 #Similar articles
-$number_of_similars = 3;
+$number_of_similars = 5;
 
 
 #Approached users per page
@@ -208,17 +216,18 @@ $delimiter = '-_-';
 
 ##########################
 
+if ($file = __FILE__ === implode(get_included_files())) exit;
 $n = PHP_EOL;
 $now = time();
 $server_port = getenv('SERVER_PORT');
-$port = $server_port === '80' || $server_port === '443' ? '' : ':'. $server_port;
+$port = '80' === $server_port || '443' === $server_port ? '' : ':'. $server_port;
 $request_uri = getenv('REQUEST_URI');
 $server = getenv('SERVER_NAME');
 $dir = r(dirname(getenv('SCRIPT_NAME')));
-$script = $dir. ($dir !== '/' ? '/' : '');
+$script = $dir. ('/' !== $dir ? '/' : '');
 $scheme = is_ssl() ? 'https://' : 'http://';
 $url = $scheme. $server. $port. $script;
-$current_url = $scheme. $server. $port. $request_uri;
+$current_url = explode('&', $scheme. $server. $port. $request_uri)[0];
 $line_breaks = ["\r\n", "\n", "\r", '&#13;&#10;', '&#13;', '&#10;'];
 $remote_addr = filter_var(getenv('REMOTE_ADDR'), FILTER_VALIDATE_IP);
 $user_agent = h(getenv('HTTP_USER_AGENT'));
@@ -231,6 +240,7 @@ $js = $url. $tpl_dir. 'js/';
 $glob_imgs ='/*.{[jJ][pP][gG],[pP][nN][gG],[gG][iI][fF],[sS][vV][gG],[jJ][pP][eE][gG],[mM][pP]4,[oO][gG][gG],[wW][eE][bB][mM]}';
 $tmpdir = ini_get('upload_tmp_dir') ?? sys_get_temp_dir();
 $mime = 'MIME-Version: 1.0'. $n. 'X-Date: '. date('c'). $n. 'X-Host: '. gethostbyaddr($remote_addr). $n. 'X-IP: '. $remote_addr. $n. 'X-Mailer: kinaga'. $n. 'X-UA: '. $user_agent. $n;
+$pngtext = 'comment';
 
 ##########################
 

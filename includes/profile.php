@@ -1,4 +1,5 @@
 <?php
+if (!filter_has_var(INPUT_GET, 'user')) exit;
 if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') && is_permitted($usersdir. $userstr))
 {
 	$myintrod = $user_profdir. 'myintrod';
@@ -26,7 +27,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 				if (is_file($bgcolor)) unlink($bgcolor);
 			}
 
-			if (filter_input(INPUT_POST, 'o', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === false)
+			if (false === filter_input(INPUT_POST, 'o', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
 			{
 				if (!is_file($donotapproach))
 					file_put_contents($donotapproach, '');
@@ -37,7 +38,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					unlink($donotapproach);
 			}
 
-			if (isset($_FILES['a']['error'], $_FILES['a']['name'], $_FILES['a']['tmp_name']) && $_FILES['a']['error'] === UPLOAD_ERR_OK)
+			if (isset($_FILES['a']['error'], $_FILES['a']['name'], $_FILES['a']['tmp_name']) && UPLOAD_ERR_OK === $_FILES['a']['error'])
 			{
 				if (list($width, $height) = getimagesize($_FILES['a']['tmp_name']))
 				{
@@ -59,7 +60,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					}
 					$thumb = imagecreatetruecolor($new_width, $new_height);
 
-					if (exif_imagetype($_FILES['a']['tmp_name']) === IMAGETYPE_JPEG)
+					if (IMAGETYPE_JPEG === exif_imagetype($_FILES['a']['tmp_name']))
 					{
 						$source = imagecreatefromjpeg($_FILES['a']['tmp_name']);
 						imagecopyresampled($thumb, $source, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
@@ -70,7 +71,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 						imagedestroy($thumb);
 						file_put_contents($avatar, 'data:image/jpeg;base64,'. ltrim(base64_encode($content), '='));
 					}
-					elseif (exif_imagetype($_FILES['a']['tmp_name']) === IMAGETYPE_PNG)
+					elseif (IMAGETYPE_PNG === exif_imagetype($_FILES['a']['tmp_name']))
 					{
 						$source = imagecreatefrompng($_FILES['a']['tmp_name']);
 						imagealphablending($thumb, false);
@@ -89,7 +90,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 		}
 		$article .=
 		'<form enctype="multipart/form-data" method=post class=mb-5>'. $n.
-		'<fieldset class="form-group mb-4">'. $n.
+		'<fieldset class="form-group my-4">'. $n.
 		'<label for=h>'. $prof_label[0]. '</label>'. $n.
 		'<input class=form-control type=text id=h name=h accesskey=h title="'. $prof_note[0]. '" value="'. str_replace($admin_suffix, '', $username_bk). '">'. $n.
 		'<small class="form-text text-muted">'. $prof_note[1]. '</small>'. $n.
@@ -107,7 +108,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 		}
 		$article .=
 		'<div class=d-flex>'. $n.
-		'<div class="d-table text-center">'. avatar($user_profdir). '</div>'. $n.
+		'<div class="avatar d-table text-center">'. avatar($user_profdir). '</div>'. $n.
 		'<div class=ml-3>'. $n.
 		'<input type=hidden name=MAX_FILE_SIZE value=100000>'. $n.
 		'<input id=a name=a type=file accesskey=a accept="image/jpeg,image/png">'. $n.
@@ -145,7 +146,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					$to = dec($lkey);
 					$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
 
-					if ($val === 'on' && ($skey === '@' || $skey === '#'))
+					if ('on' === $val && ('@' === $skey || '#' === $skey))
 					{
 						if (!is_file($approach. $lkey))
 						{
@@ -156,7 +157,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 							mail($to, $subject, $body, $headers);
 						}
 					}
-					if ($val === 'off' && $skey !== '#')
+					if ('off' === $val && '#' !== $skey)
 					{
 						rename($approach. $key, $approach. '#'. $lkey);
 						$subject = sprintf($approach_subject[1], $username). ' - '. $site_name;
@@ -164,7 +165,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 						$separator. $n. $site_name. $n. $url;
 						mail($to, $subject, $body, $headers);
 					}
-					if ($val === 'del' && $skey !== '!')
+					if ('del' === $val && '!' !== $skey)
 					{
 						rename($approach. $key, $approach. '!'. $lkey);
 						$subject = sprintf($approach_subject[2], $username). ' - '. $site_name;
@@ -175,12 +176,11 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 				}
 				header('Location: '. $url. '?user='. $user. '#approval');
 			}
-
 			$q = !filter_has_var(INPUT_GET, 'q') ? 1 : (int)filter_input(INPUT_GET, 'q', FILTER_SANITIZE_NUMBER_INT);
 
 			$article .=
 			'<h3 id=approval>'. $prof_title[1]. ' <small>'. ($q > 1 ? sprintf($page_prefix, $q) : ''). '</small></h3>'. $n.
-			'<p class=px-1>'. sprintf($approach_info[0], $username). '</p>'. $n;
+			'<p class=my-4>'. sprintf($approach_info[0], $username). '</p>'. $n;
 
 			$count_glob_approach = count($glob_approach);
 			$mx = ceil($count_glob_approach/$users_per_page);
@@ -198,7 +198,6 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 				'<li class="page-item'. ($q <= $mx-1 ? '' : ' disabled'). '"><a class=page-link href="'. $url. '?user='. $user. '&amp;q='. $mx. '#approval">'. $last. '</a></li>'. $n.
 				'</ul>'. $n;
 			}
-
 			$article .=
 			'<form method=post action="'. $url. '?user='. $user. '" class=my-5 id=approachers>'. $n.
 			'<div class=row>';
@@ -242,7 +241,6 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 			'</form>';
 			$footer .= '<script> $("#approachers").change(function(){$("#approachers-submit").prop("disabled",false)})</script>';
 		}
-
 		if ($mail_address === $session_usermail)
 		{
 			if ($glob_userdir = glob($usersdir. '*/log/', GLOB_NOSORT+GLOB_ONLYDIR))
@@ -285,7 +283,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 					$article .=
 					'<div class="col mb-5">'. $n.
 					'<div class="list-group'. ($permitted ? '' : ' banned'). '">'. $n.
-					'<div class="list-group-item text-center"><div class="d-flex justify-content-center mx-auto mb-3">'. $user_avatar. '</div>'. $n.
+					'<div class="list-group-item text-center"><div class="avatar d-flex justify-content-center mx-auto mb-3">'. $user_avatar. '</div>'. $n.
 					'<div class="custom-control custom-switch">'. $n.
 					'<input type=checkbox class=custom-control-input id="'. $base_current_userdir. '"'. ($permitted ? ' checked' : ''). ' onchange="permit(this)">'. $n.
 					'<label class="custom-control-label permit" for="'. $base_current_userdir. '">'. ($permitted ? '' : ''). '</label>'. $n.
@@ -327,35 +325,27 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 		}
 		if (isset($logdir) && $glogs = glob($logdir. '*', GLOB_NOSORT))
 		{
-			$article .=
-			'<h2>'. $prof_title[3]. '</h2>'. $n.
-			'';
+			$article .= '<h2>'. $prof_title[3]. '</h2>'. $n;
 			usort($glogs, function($a, $b){return filemtime($a) < filemtime($b);});
-
-			$i = 0;
-			foreach ($glogs as $glog)
+			$article .= '<ul class="list-group my-4">'. $n;
+			foreach ($glogs as $key => $glog)
 			{
-				if (++$i > 10)
+				if (10 < $key)
 					unlink($glog);
 				else
 				{
 					$log = explode($delimiter, file_get_contents($glog));
-					$article .=
-					'<ul class="list-group mb-4">'. $n.
-					'<li class="list-group-item list-group-item-action">'. date($time_format, h(basename($glog))). '</li>'. $n.
-					'<li class="list-group-item list-group-item-action">'. h($log[0]). '</li>'. $n.
-					'<li class="list-group-item list-group-item-action">'. h($log[1]). '</li>'. $n.
-					'</ul>';
+					$article .= '<li class="list-group-item">'. date('Y-m-d H:i:s', basename($glog)). ' '. h($log[0]). ' '. h($log[1]).'</li>'. $n;
 				}
 			}
-			$article .= '';
+			$article .= '</ul>';
 		}
 	}
 	else
 	{
 		$article .=
 		'<h2>'. $user_prof_title. '</h2>'. $n.
-		'<div class="d-flex mb-5 position-relative">'. $n.
+		'<div class="d-flex my-5 position-relative">'. $n.
 		'<div class="avatar d-table mr-4 rounded-circle text-center">'. avatar($user_profdir). '</div>'. $n.
 		'<div class=card-arrow></div>'. $n.
 		'<div class="card w-100">'. $n.
@@ -376,7 +366,6 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 			if (isset($profdir))
 			{
 				if (!is_dir($approach = $usersdir. $userstr. '/approach/')) mkdir($approach, 0757, true);
-
 				if (is_file($userdir. '/approach/@'. $userstr) || is_file($userdir. '/approach/'. $userstr))
 					$article .='<p class="alert alert-success my-5">'. sprintf($approach_info[1], $username, $useraddr). '</p>';
 				elseif (is_dir($approach))
@@ -425,7 +414,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 							if (!is_file($contacted. $_SESSION['l']))
 								$article .=
 								'<h3>'. sprintf($approach_form_title[0], $username). '</h3>'. $n.
-								'<p>'. sprintf($approach_form_message[1], $handlename, $username). '</p>'. $n.
+								'<p class=my-4>'. sprintf($approach_form_message[1], $handlename, $username). '</p>'. $n.
 								'<form method=post action="'. $url. '?user='. $user. '">'. $n.
 								'<textarea class="form-control" rows=5 id=contact name=contact-text required></textarea>'. $n.
 								'<div class=text-right><input type=submit name=contact value="'. $approach_form[3]. '" class="btn btn-danger mt-3 mb-5"></div>'. $n.
@@ -441,7 +430,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 						{
 							$article .=
 							'<h3>'. sprintf($approach_form_title[1], $username). '</h3>'. $n.
-							'<p>'. $approach_form_message[2]. '</p>'. $n.
+							'<p class=my-4>'. $approach_form_message[2]. '</p>'. $n.
 							'<form method=post action="'. $url. '?user='. $user. '" class="text-center mb-5">'. $n.
 							'<input type=submit name=disapproach value="'. $approach_form[2]. '" class="btn btn-danger">'. $n.
 							'</form>';
@@ -450,13 +439,13 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 						{
 							$article .=
 							'<h3>'. sprintf($approach_form_title[2], $username). '</h3>'. $n.
-							'<p>'. sprintf($approach_form_message[3], $username). '</p>';
+							'<p class=my-4>'. sprintf($approach_form_message[3], $username). '</p>';
 						}
 						elseif (!is_file($approacher = $approach. '@'. $_SESSION['l']))
 						{
 							$article .=
 							'<h3>'. sprintf($approach_form_title[3], $username). '</h3>'. $n.
-							'<p>'. sprintf($approach_form_message[4], $username, $handlename). '</p>'. $n.
+							'<p class=my-4>'. sprintf($approach_form_message[4], $username, $handlename). '</p>'. $n.
 							'<form method=post action="'. $url. '?user='. $user. '" class="text-center mb-5">'. $n.
 							'<input name=approach-message type=text class="form-control mb-3" accesskey=a placeholder="'. $placeholder[5]. '">'. $n.
 							'<input type=submit name=approach value="'. $approach_form[3]. '" class="btn btn-danger">'. $n.
@@ -473,7 +462,6 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 							'</form>'. $n.
 							flow($approach_flow, $handlename, $username, 2);
 						}
-
 						if (filter_has_var(INPUT_POST, 'approach'))
 						{
 							if (!is_file($approacher))
@@ -515,6 +503,6 @@ else
 	http_response_code(404);
 	$header .= '<title>'. $user_not_found. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $user_not_found. '</li>';
-	$article .= '<h2>'. $user_not_found_title. '</h2>';
+	$article .= '<h2>'. $user_not_found_title[0]. '</h2>';
 	if ($use_contact) $article .= '<p>'. $​ask_admin. '</p>';
 }

@@ -1,11 +1,12 @@
 <?php
+if (__FILE__ === implode(get_included_files())) exit;
 $header = $nav = $article = $aside = $footer = $search = '';
 $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : get_uri(basename($request_uri), 'title');
-$get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : (!$get_title ? get_uri(basename($request_uri), 'categ') : get_uri(basename(dirname($request_uri)), 'categ')). '/';
+$get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : (!filter_has_var(INPUT_GET, 'title') ? get_uri(basename($request_uri), 'categ') : get_uri(basename(dirname($request_uri)), 'categ')). '/';
 $get_page = !filter_has_var(INPUT_GET, 'page') ? '' : get_uri(basename($request_uri), 'page');
 $get_dl = !filter_has_var(INPUT_GET, 'dl') ? '' : basename(filter_input(INPUT_GET, 'dl', FILTER_SANITIZE_ENCODED));
 $pages = !filter_has_var(INPUT_GET, 'pages') ? 1 : (int)filter_input(INPUT_GET, 'pages', FILTER_SANITIZE_NUMBER_INT);
-$query = !filter_has_var(INPUT_GET, 'query') ? '' : trim(mb_convert_kana(filter_input(INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS), 'rnsK', $encoding));
+$query = !filter_has_var(INPUT_GET, 'query') ? '' : trim(filter_input(INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS));
 $comment_pages = !filter_has_var(INPUT_GET, 'comments') ? 1 : (int)filter_input(INPUT_GET, 'comments', FILTER_SANITIZE_NUMBER_INT);
 $breadcrumb = '<li class=breadcrumb-item><a href="'. $url. '">'. $home. '</a></li>';
 $dl = is_dir($downloads_dir = 'downloads') ? true : false;
@@ -23,23 +24,7 @@ $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't
 
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;
 
-if (is_file($ticket = 'images/ticket.jpg'))
-{
-	if (!extension_loaded('imagick'))
-	{
-		$imagick_so = 'extension=imagick.so';
-		if (is_file($php_ini = $_SERVER['DOCUMENT_ROOT']. '/php.ini'))
-		{
-			if (strpos(file_get_contents($php_ini), $imagick_so) === false)
-				file_put_contents($php_ini, $imagick_so. $n, FILE_APPEND | LOCK_EX);
-			else
-				file_put_contents('./error.log', 'ImageMagick is not installed. See https://www.php.net/manual/'. $lang. '/imagick.setup.php'. $n, LOCK_EX);
-		}
-		else
-			file_put_contents($php_ini, $imagick_so. $n, LOCK_EX);
-	}
-	if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757, true);
-}
+if (is_file($ticket = 'images/ticket.png')) if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757);
 
 if ($use_forum)
 {
@@ -63,16 +48,9 @@ elseif ($get_categ && !$get_title)
 elseif ($get_categ && $get_title)
 	include 'article.php';
 elseif (!$get_categ && !$get_title)
-{
-	if ($use_search && $query)
-		include 'search.php';
-	else
-		include 'home.php';
-}
+	include $use_search && $query ? 'search.php' : 'home.php';
 else
 	not_found();
-
-$article .= '<div class="clearfix mb-5"></div>';
 
 if ($use_search)
 	$search .=
@@ -85,20 +63,20 @@ include 'sideboxes.php';
 $header .=
 '<meta name=application-name content=KinagaCMS>'. $n.
 '<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'. $n.
-(!is_file('favicon.ico') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel="shortcut icon" href="'. $url. 'favicon.ico">'). $n;
+(!is_file($favicon = 'favicon.ico') && !is_file($favicon = 'images/favicon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel="shortcut icon" href="'. $url. $favicon. '">'). $n;
 $footer .=
-'<span id=footer>'. $n.
-'<small class="d-block text-muted">&copy; '. $this_year. ' '. $site_name. '.</small>'. $n.
-'<small class="d-block text-muted text-center mt-2">'. $n.
-($use_benchmark ? sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem)) : ''). $n.
+(!$use_datasrc ? '' : '<script>const x=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const y=entry.target;if(y.dataset.src){y.src=y.dataset.src}}})}),z=document.querySelectorAll("img[data-src]");z.forEach(z=>x.observe(z))</script>').
+'<div id=copyright class="d-flex justify-content-center align-items-center h-100">'. $n.
+'<img alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'. $n.
+'<small class="ml-3 text-muted">&copy; '. $this_year. ' '. $site_name. '. '. ($copyright ?? '').
+(!$use_benchmark ? '' : '<br>'. sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem)). $n).
 '</small>'. $n.
-'<img class="mx-auto my-2" alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=30 height=24>'. $n.
-'</span>'. $n.
+'</div>'. $n.
 '<div class="modal fade" id=powered-by-kinaga aria-hidden=true>'. $n.
 '<div class="modal-dialog modal-dialog-centered modal-sm">'. $n.
 '<div class=modal-content>'. $n.
 '<button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button>'. $n.
-'<div class="modal-body text-black-50"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'. $n.
+'<div class="modal-body text-black-50 text-center"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'. $n.
 '<div class=modal-footer>'. $n.
 '<small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a>'. $n.
 '</div>'. $n.

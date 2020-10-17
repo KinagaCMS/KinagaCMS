@@ -1,4 +1,6 @@
 <?php
+if (!filter_has_var(INPUT_GET, 'categ')) exit;
+
 if (is_dir($current_categ = 'contents/'. $categ_name))
 {
 	$categ_login_txt = $current_categ. '/login.txt';
@@ -15,7 +17,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		$article .= '<h1 class="h3 mb-4">'. $categ_title. ' <small class="ml-3 wrap text-muted">'. $categ_content. '</small></h1>';
 		$header .= '<meta name=description content="'. get_description($categ_content). '">'. $n;
 	}
-	if ($categ_contents_number > 0)
+	if (0 < $categ_contents_number)
 	{
 		foreach ($categ_contents as $articles_name)
 			$articles_sort[] = is_file($article_files = $current_categ. '/'. $articles_name. '/index.html') ? filemtime($article_files). $delimiter. $article_files : '';
@@ -24,9 +26,9 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		rsort($articles_sort);
 		$page_ceil = ceil($categ_contents_number / $categ_sections_per_page);
 		$max_pages = min($pages, $page_ceil);
-		$sections_in_categ = array_slice($articles_sort, ($max_pages - 1) * $categ_sections_per_page, $categ_sections_per_page);
+		$sections_in_categ = array_slice($articles_sort, ($max_pages-1) * $categ_sections_per_page, $categ_sections_per_page);
 
-		$header .= '<title>'. $categ_title. ' - '. ($max_pages > 1 ? sprintf($page_prefix, $max_pages). ' - ' : ''). $site_name. '</title>'. $n;
+		$header .= '<title>'. $categ_title. ' - '. (1 < $max_pages ? sprintf($page_prefix, $max_pages). ' - ' : ''). $site_name. '</title>'. $n;
 
 		if ($categ_contents_number > $categ_sections_per_page) pager($max_pages, $page_ceil);
 
@@ -67,7 +69,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			$default_image.
 			'<div class="'. $categ_content_class. '">'. $n.
 			'<h2 class="'. $categ_title_class. '"><a href="'. $url. $categ_link. '/'. $title_link. '">'. ht($articles_link[2]);
-			if ($total_images > 0)
+			if (0 < $total_images)
 				$article .= '<small>'. sprintf($images_count_title, $total_images). '</small>';
 
 			if (is_file($ticket) && (is_file($categ_login_txt) || is_file($article_dir. '/login.txt')) && !isset($_SESSION['l']))
@@ -85,8 +87,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		}
 		$article .= '</div>';
 
-		if ($categ_contents_number > $categ_sections_per_page)
-			pager($max_pages, $page_ceil);
+		if ($categ_contents_number > $categ_sections_per_page) pager($max_pages, $page_ceil);
 	}
 	elseif (!$categ_file)
 		not_found();

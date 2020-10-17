@@ -4,11 +4,11 @@ include '../includes/config.php';
 $img_array = [];
 $page = !filter_has_var(INPUT_GET, 'p') ? 1 : (int)filter_input(INPUT_GET, 'p', FILTER_SANITIZE_NUMBER_INT);
 $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.', FilesystemIterator::SKIP_DOTS));
-if ($page < 1) $page = 1;
+if (1 > $page) $page = 1;
 foreach ($files as $images)
 {
 	if (!$images->isFile()) continue;
-	$sort[] = strpos($images, '.php') === false && strpos($images, '.vtt') === false && strpos($images, '.md') === false ? $images->getMTime(). $delimiter. trim($images, './') : '';
+	$sort[] = false === strpos($images, '.php') && false === strpos($images, '.vtt') && false === strpos($images, '.md') ? $images->getMTime(). $delimiter. trim($images, './') : '';
 }
 $sort = array_filter($sort);
 rsort($sort);
@@ -43,15 +43,13 @@ foreach ($sort as $image)
 	$info = pathinfo($img[1]);
 	$formats = strtolower($info['extension']);
 	$extensions = ['gif', 'jpg', 'jpeg', 'png', 'svg', 'pdf', 'mp4', 'ogg', 'webm'];
-
-	if (array_search($formats, $extensions) !== false)
+	if (false !== array_search($formats, $extensions))
 	{
 		$uri = $url. r($img[1]);
 		$basename = basename($img[1], '.'. $formats);
 		$vtt = is_file($vtt = r($basename). '.vtt') ? '<track src="'.$url .$vtt.'">' : '';
 		$img_info = '<small class=text-uppercase>'. date($time_format, $img[0]). ' '. size_unit(filesize($img[1])). ' '. $formats. '</small>';
-
-		if ($formats === 'mp4' || $formats === 'ogg' || $formats === 'webm')
+		if ('mp4' === $formats  || 'ogg' === $formats || 'webm' === $formats)
 		{
 			$img_array[] =
 			'<div class="bg-light card"><video class=card-img-top controls><source src="'. $uri. '">'. $vtt. '</video>'. $n.
@@ -62,7 +60,7 @@ foreach ($sort as $image)
 			'</div>'. $n.
 			'</div>'. $n;
 		}
-		elseif ($formats === 'pdf')
+		elseif ('pdf' === $formats)
 		{
 			$img_array[] =
 			'<div class="bg-light card">'. $n.
@@ -108,13 +106,10 @@ if ($img_array)
 	'<div class=container-fluid>', $n,
 	'<div class=card-deck>', $n;
 	$imgs_in_page = array_slice($img_array, ($page - 1) * $imgs_per_page, $imgs_per_page);
-
 	foreach ($imgs_in_page as $imgs) echo $imgs;
-
 	echo
 	'</div>', $n,
 	'</div>';
-
 	if ($count_imgs > $imgs_per_page)
 	{
 		echo

@@ -1,4 +1,5 @@
 <?php
+if (!filter_has_var(INPUT_GET, 'page')) exit;
 if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 {
 	$basetitle = h($page_name);
@@ -7,20 +8,17 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 	$breadcrumb .=
 	'<li class="breadcrumb-item active">'. $basetitle. '</li>';
 	$article .=
-	'<small class=text-muted>'. sprintf($last_modified, date($time_format, filemtime($pages_file))). '</small>'. $n.
-	'<h1 class="h3 mb-4">'. $basetitle. '</h1>';
+	'<header><small class=text-muted>'. sprintf($last_modified, date($time_format, filemtime($pages_file))). '</small>'. $n.
+	'<h1 class="h3 mb-4">'. $basetitle. '</h1></header>';
 
 	ob_start();
 	include $pages_file;
 	$pages_content = trim(ob_get_clean());
 	$header .= '<meta name=description content="'. get_description($pages_content). '">'. $n;
-	$article .= '<div class="article px-2 mb-5 clearfix">'. $pages_content. '</div>'. $n;
+	$article .= '<div class="article p-5 mb-5 clearfix">'. $pages_content. '</div>'. $n;
 
-	if ($use_social)
-		social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
-
-	if ($use_permalink)
-		permalink($basetitle. ' - '. $site_name, $current_url);
+	if ($use_social) social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
+	if ($use_permalink) permalink($basetitle. ' - '. $site_name, $current_url);
 }
 elseif ($use_contact && $page_name === $contact_us)
 {
@@ -65,8 +63,7 @@ elseif ($dl && $page_name === $download_contents)
 		$max_pages = min($pages, $page_ceil);
 		$dls_in_page = array_slice($dls_sort, ($max_pages - 1) * $number_of_downloads, $number_of_downloads);
 
-		if ($dls_number > $number_of_downloads)
-			pager($max_pages, $page_ceil);
+		if ($dls_number > $number_of_downloads) pager($max_pages, $page_ceil);
 
 		$article .= '<div class=list-group>';
 
@@ -82,8 +79,7 @@ elseif ($dl && $page_name === $download_contents)
 		}
 		$article .= '</div>';
 
-		if ($dls_number > $number_of_downloads)
-			pager($max_pages, $page_ceil);
+		if ($dls_number > $number_of_downloads) pager($max_pages, $page_ceil);
 	}
 }
 elseif ($use_forum && $page_name === $forum)

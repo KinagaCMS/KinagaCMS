@@ -52,6 +52,8 @@ elseif (!$get_categ && !$get_title)
 else
 	not_found();
 
+$article .= '<div class="clearfix mb-5"></div>';
+
 if ($use_search)
 	$search .=
 	'<form method=get action="'. $url. '">'. $n.

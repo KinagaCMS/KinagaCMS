@@ -19,7 +19,7 @@ $this_year = date('Y');
 $session_c = !filter_has_var(INPUT_POST, 'c') ? '' : filter_input(INPUT_POST, 'c', FILTER_SANITIZE_STRING);
 $session_e = !filter_has_var(INPUT_POST, 'e') ? '' : enc(filter_input(INPUT_POST, 'e', FILTER_SANITIZE_EMAIL));
 $session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f', FILTER_SANITIZE_STRING);
-$user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING);
+$user = !filter_has_var(INPUT_GET, 'user') ? '' : basename(filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING));
 $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_SANITIZE_STRING);
 
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;

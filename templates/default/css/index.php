@@ -136,7 +136,6 @@ else echo '
 
 if (is_file($header_jpg = '../../../contents/'. basename(filter_input(INPUT_GET, 'categ', FILTER_SANITIZE_STRING)). '/header.jpg') || is_file($header_jpg = '../../../images/header.jpg'))
 {
-	$header_jpg = r($header_jpg);
 	list ($width, $height) = getimagesize($header_jpg);
 	echo '
 #header{background-image:url('. $header_jpg. ');background-repeat:no-repeat;background-size:cover;height:'. $height. 'px}

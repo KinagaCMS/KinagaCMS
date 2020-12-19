@@ -509,7 +509,7 @@ function get_uri($uri, $get)
 
 function sort_time($a, $b)
 {
-	return filemtime($a) < filemtime($b);
+	return filemtime($b) - filemtime($a);
 }
 
 function sort_name($a, $b)

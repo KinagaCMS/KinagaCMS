@@ -106,7 +106,7 @@ if ($use_forum)
 {
 	if ($forum_topic_glob = glob('./forum/[!#]*/[!#]*[!threader]*', GLOB_NOSORT))
 	{
-		usort($forum_topic_glob, function($a, $b){return filemtime($a) < filemtime($b);});
+		usort($forum_topic_glob, 'sort_time');
 		$aside .= '<div id=recent-topics class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[5]. '">'. $n.
 		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[11]. '</div>'. $n;
 		foreach ($forum_topic_glob as $k => $v)

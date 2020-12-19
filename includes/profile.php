@@ -247,7 +247,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 			{
 				$p = !filter_has_var(INPUT_GET, 'p') ? 1 : (int)filter_input(INPUT_GET, 'p', FILTER_SANITIZE_NUMBER_INT);
 				$article .= '<h3 id=users>'. $prof_title[2]. ($p > 1 ? ' <small>'. sprintf($page_prefix, $p) .'</small>': ''). '</h3>'. $n;
-				usort($glob_userdir, function($a, $b){return filemtime($a) < filemtime($b);});
+				usort($glob_userdir, 'sort_time');
 				$count_glob_userdir = count($glob_userdir);
 				$mx = ceil($count_glob_userdir/$users_per_page);
 				if ($p > $mx) $p = $mx;
@@ -326,7 +326,7 @@ if (is_dir($user_profdir = $usersdir. ($userstr = str_rot13($user)). '/prof/') &
 		if (isset($logdir) && $glogs = glob($logdir. '*', GLOB_NOSORT))
 		{
 			$article .= '<h2>'. $prof_title[3]. '</h2>'. $n;
-			usort($glogs, function($a, $b){return filemtime($a) < filemtime($b);});
+			usort($glogs, 'sort_time');
 			$article .= '<ul class="list-group my-4">'. $n;
 			foreach ($glogs as $key => $glog)
 			{

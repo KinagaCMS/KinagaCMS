@@ -1,7 +1,7 @@
 <?php
 include 'includes/functions.php';
 include 'includes/config.php';
-$atom_files = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT);
+$atom_files = glob('{contents/*/[!!]*/index.html,contents/[!!]*.html}', GLOB_BRACE + GLOB_NOSORT);
 if ($atom_files)
 {
 	header('Content-Type: application/xml; charset='. $encoding);
@@ -18,6 +18,7 @@ if ($atom_files)
 	'<link rel="self" type="application/atom+xml" href="', $url, 'atom.php" />', $n,
 	'<rights>Copyright ', date('Y'), ', ', $site_name, '.</rights>', $n,
 	'<generator>kinaga</generator>', $n;
+	$session_txt = './'. sha1(__DIR__). '.txt';
 	usort($atom_files, 'sort_time');
 	foreach ($atom_files as $key => $atoms)
 	{
@@ -69,11 +70,11 @@ if ($atom_files)
 		'<updated>', date(DATE_ATOM, $atom_filetime), '</updated>', $n,
 		'<content type="xhtml" xml:lang="', $lang, '">', $n,
 		'<div xmlns="http://www.w3.org/1999/xhtml">', $n,
-		'<p>', $atom_description, ' <a class="stretched-link" href="', $id, '">', $more_link_text, '</a></p>', $n,
+		'<p>', $atom_description, ' <a class="stretched-link" href="', $id, '">', $btn[9], '</a></p>', $n,
 		$atom_image, $atom_background_image, $n,
 		'</div>', $n,
 		'</content>', $n,
-		'<author><name>', $site_name, '</name></author>', $n,
+		'<author><name>', (is_file($author_txt = 'contents/'. $atom_categ. '/'. $atom_title. '/author.txt') && is_dir($author_prof = 'users/'. basename(file_get_contents($author_txt)). '/prof/') ? handle($author_prof) : $site_name), '</name></author>', $n,
 		'</entry>', $n;
 	}
 	echo '</feed>';

@@ -12,7 +12,7 @@ $xml->insertBefore($style, $insert);
 echo $xml->saveXML(),
 '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9/">', $n;
 
-if ($glob = glob('{'. $glob_dir. 'index.html,contents/*.html}', GLOB_BRACE + GLOB_NOSORT))
+if ($glob = glob('{contents/[!!]*/[!!]*/index.html,contents/[!!]*.html}', GLOB_BRACE + GLOB_NOSORT))
 {
 	usort($glob, 'sort_time');
 

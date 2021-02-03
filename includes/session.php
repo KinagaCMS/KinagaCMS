@@ -16,7 +16,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 			{
 				if ($session_gtext = get_png_tEXt($_FILES['i']['tmp_name']))
 				{
-					$session_excom = explode('@', str_replace($pngtext, '', $session_gtext));
+					$session_excom = explode('@', $session_gtext);
 					$session_rotcom = str_rot13($session_excom[1]);
 				}
 				if ($session_c === $session_excom[0] && $session_rotcom && $session_rotcom === $session_f)
@@ -27,18 +27,19 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 						$_SESSION['l'] = strip_tags($session_rotcom);
 						$_SESSION['n'] = (int)$_SESSION['m'];
 
-						if (!is_dir($userdir = $usersdir. $_SESSION['l']))
+						if (!is_dir($userdir = 'users/'. $_SESSION['l']))
 							mkdir($userdir, 0757, true);
 						elseif (!is_permitted($userdir))
 						{
 							unset($_SESSION['l'], $_SESSION['n']);
 							exit(header('Location: '. $url. '?user='. $session_rotcom));
 						}
-						if (!is_dir($logdir = $userdir. '/log/')) mkdir($logdir, 0757, true);
-						if (!is_dir($profdir = $userdir. '/prof/')) mkdir($profdir, 0757, true);
+						if (!is_dir($logdir = $userdir. '/log/')) mkdir($logdir);
+						if (!is_dir($profdir = $userdir. '/prof/')) mkdir($profdir);
 						if (!is_file($handle = $profdir. '/handle')) file_put_contents($handle, '');
+						if (!is_dir($upload = $userdir. '/upload/')) mkdir($upload);
 						counter($userdir. '/logged-in.txt', 1);
-						file_put_contents($logdir. (int)$_SESSION['n'], $remote_addr. $delimiter. $user_agent);
+						file_put_contents($logdir. (int)$_SESSION['n'], $remote_addr. $delimiter. $user_agent, LOCK_EX);
 						header('Location: '. $scheme. $server. $port. $request_uri. '#logout');
 					}
 					else
@@ -109,7 +110,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 					'</div>'. $n.
 					'</div>'. $n.
 					'</div>';
-					$footer .= '<script>$("#b").modal({backdrop:"static"})</script>';
+					$footer .= '<script defer>$("#b").modal({backdrop:"static"})</script>';
 					unset($_SESSION['t']);
 				}
 				else
@@ -126,9 +127,9 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		$_SESSION['t'] = $token;
 		$aside .=
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'. $n.
-		'<div class="'. $sidebox_title_class[0]. '">'. $login. '</div>'. $n.
+		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[4]. '</div>'. $n.
 		'<form class="'. $sidebox_content_class[3]. '" method=post>'. $n.
-		'<input class="text-reset form-control my-2" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '"'. (filter_has_var(INPUT_GET, $login) ? ' autofocus' : ''). '>'. $n.
+		'<input class="form-control mb-3" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '"'. (filter_has_var(INPUT_GET, $login) ? ' autofocus' : ''). '>'. $n.
 		'<input type=hidden name=t value="'. $token. '">'. $n.
 		'<p>'. $login_message[1]. '</p>'. $n.
 		'</form>'. $n.
@@ -148,13 +149,12 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 }
 if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === $_SESSION['m'])
 {
-	if (is_dir($userdir = $usersdir. $_SESSION['l']) && is_permitted($userdir))
+	if (is_dir($userdir = 'users/'. $_SESSION['l']) && is_permitted($userdir))
 	{
 		$useraddr = str_rot13(basename($userdir));
-		$session_usermail = dec($_SESSION['l']);
-		if (filter_var($session_usermail, FILTER_VALIDATE_EMAIL))
+		if (filter_var($session_usermail = dec($_SESSION['l']), FILTER_VALIDATE_EMAIL))
 		{
-			if (!is_dir($profdir = $userdir. '/prof/')) mkdir($profdir, 0757, true);
+			if (!is_dir($profdir = $userdir. '/prof/')) mkdir($profdir);
 			if (!is_file($handle = $profdir. '/handle')) file_put_contents($handle, '');
 
 			if (!is_dir($userdir))
@@ -163,18 +163,18 @@ if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === 
 				$_SESSION['h'] = $handlename = handle($profdir);
 
 			if (!is_file($bgcolor = $profdir. 'bgcolor'))
-				file_put_contents($bgcolor, 'hsl('. random_int(1, 360). ',80%,40%)');
+				file_put_contents($bgcolor, 'hsl('. random_int(1, 360). ',80%,40%)', LOCK_EX);
 
 			if (!is_dir($logdir = $userdir. '/log/'))
 			{
-				mkdir($logdir, 0757, true);
-				file_put_contents($logdir. $_SESSION['n'], $remote_addr. $delimiter. $user_agent);
+				mkdir($logdir);
+				file_put_contents($logdir. $_SESSION['n'], $remote_addr. $delimiter. $user_agent, LOCK_EX);
 			}
 			$aside .=
 			'<div id=logout class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'. $n.
 			'<div class="'. $sidebox_title_class[2]. '">'. sprintf($sidebox_title[5], $handlename). '</div>'. $n.
 			'<div class="'. $sidebox_content_class[3]. '">'. $n.
-			'<a class="btn btn-info btn-lg btn-block my-3" href="'. $url. '?user='. $useraddr. '">'. $myprof. '</a>'. $n.
+			'<a class="btn btn-info btn-lg btn-block my-3" href="'. $url. '?user='. $useraddr. '">'. $prof_title[0]. '</a>'. $n.
 			'<a class="btn btn-danger btn-lg btn-block my-3" href="'. $url. '?'. r($logout). '">'. $logout. '</a>'. $n.
 			'</div>'. $n.
 			'</div>'. $n;

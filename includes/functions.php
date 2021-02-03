@@ -10,7 +10,10 @@ function r($path)
 
 function d($enc)
 {
-	return rawurldecode(basename(html_entity_decode($enc)));
+	global $get_page;
+	if (false !== strpos($enc ,'/&pages')) $enc = dirname($enc);
+	if (false !== strpos($enc , $get_page. '&pages')) $enc = explode('&', $enc)[0];
+	return rawurldecode(html_entity_decode(basename($enc)));
 }
 
 function h($str)
@@ -19,13 +22,34 @@ function h($str)
 	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
 }
 
-function size_unit($size)
+function size_unit($num, $filesize=true)
 {
-	if (0 < $size)
+	if (900 > $num)
 	{
-		$unit = ['B', 'KB', 'MB', 'GB'];
-		return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2). $unit[$i];
+		$num_format = number_format($num, 1);
+		$unit = $filesize ? 'B' : '';
 	}
+	elseif (900000 > $num)
+	{
+		$num_format = number_format($num/1000, 1);
+		$unit = $filesize ? 'kB' : 'K';
+	}
+	elseif (900000000 > $num)
+	{
+		$num_format = number_format($num/1000000, 1);
+		$unit = $filesize ? 'MB' : 'M';
+	}
+	elseif (900000000000 > $num)
+	{
+		$num_format = number_format($num/1000000000, 1);
+		$unit = $filesize ? 'GB' : 'B';
+	}
+	else
+	{
+		$num_format = number_format($num/1000000000000, 1);
+		$unit = $filesize ? 'TB' : 'T';
+	}
+	return str_replace('.'. str_repeat(0, 1), '', str_replace('.'. str_repeat(0, 1), '', $num_format)). $unit;
 }
 
 function timestamp()
@@ -51,7 +75,9 @@ function get_hsl($colour)
 {
 	if ('h' === $colour[0])
 		if (list ($h, $s, $l) = explode(',', str_replace(['hsl', '(', ')', '%'], '', $colour))) return [$h, $s, $l];
-	elseif ('r' !== $colour[0])
+	if ('r' === $colour[0])
+		list ($r, $g, $b) = explode(',', str_replace(['rgb', '(', ')'], '', $colour));
+	if ('#' === $colour[0])
 	{
 		$colour = ltrim($colour, '#');
 		if (3 === strlen($colour))
@@ -67,35 +93,37 @@ function get_hsl($colour)
 			$b = hexdec(substr($colour, 4, 2));
 		}
 	}
-	else list ($r, $g, $b) = explode(',', str_replace(['rgb', '(', ')'], '', $colour));
-	$r /= 255;
-	$g /= 255;
-	$b /= 255;
-	$max = max($r, $g, $b);
-	$min = min($r, $g, $b);
-	$l = ($max + $min) / 2;
-	if ($max === $min) $h = $s = 0;
-	else
+	if (isset($r, $g, $b))
 	{
-		$d = $max - $min;
-		$s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
-		switch($max)
+		$r /= 255;
+		$g /= 255;
+		$b /= 255;
+		$max = max($r, $g, $b);
+		$min = min($r, $g, $b);
+		$l = ($max + $min) / 2;
+		if ($max === $min) $h = $s = 0;
+		else
 		{
-			case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0); break;
-			case $g: $h = ($b - $r) / $d + 2; break;
-			case $b: $h = ($r - $g) / $d + 4; break;
+			$d = $max - $min;
+			$s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+			switch($max)
+			{
+				case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0); break;
+				case $g: $h = ($b - $r) / $d + 2; break;
+				case $b: $h = ($r - $g) / $d + 4; break;
+			}
+			$h /= 6;
 		}
-		$h /= 6;
+		$h = round($h * 360);
+		$s = round($s * 100);
+		$l = round($l * 100);
+		return [$h, $s, $l];
 	}
-	$h = round($h * 360);
-	$s = round($s * 100);
-	$l = round($l * 100);
-	return [$h, $s, $l];
 }
 
 function get_dirs($dir, $nosort=true)
 {
-	if ($dirs = glob($dir. '/*' , !$nosort ? GLOB_ONLYDIR : GLOB_ONLYDIR + GLOB_NOSORT))
+	if ($dirs = glob($dir. '/'. (is_admin() || is_subadmin() ? '*' : '[!!]*'), !$nosort ? GLOB_ONLYDIR : GLOB_ONLYDIR + GLOB_NOSORT))
 	{
 		foreach($dirs as $dir_names) if ($dir_names) $all_dirs[] = basename($dir_names);
 		if (isset($all_dirs)) return $all_dirs;
@@ -108,6 +136,7 @@ function get_summary($file)
 	ob_start();
 	echo preg_replace('/<script.*?\/script>/s', '', file_get_contents($file));
 	$text = strip_tags(ob_get_clean());
+	$text = str_replace("\t", '', $text);
 	$text = str_replace([$n. $n. $n, $n. $n], $n, $text);
 	$text = mb_strimwidth($text, 0, $summary_length, $ellipsis, $encoding);
 	return trim($text);
@@ -117,8 +146,9 @@ function get_description($str)
 {
 	global $description_length, $encoding, $line_breaks, $ellipsis;
 	$text = strip_tags(preg_replace('/<script.*?\/script>/s', '', $str));
-	$text = mb_strimwidth($text, 0, $description_length, $ellipsis, $encoding);
+	$text = str_replace("\t", '', $text);
 	$text = str_replace($line_breaks, '', $text);
+	$text = mb_strimwidth($text, 0, $description_length, $ellipsis, $encoding);
 	return h(trim($text));
 }
 
@@ -140,15 +170,13 @@ function get_page($nr)
 	if ($get_categ && $get_title)
 		return $current_url. '&amp;pages='. $nr;
 	elseif ($get_categ && !$get_title)
-		return $url. $get_categ. '&amp;pages='. $nr;
-	elseif ($query)
+		return $url. $get_categ. (!$query ? '' : '?query='. $query). '&amp;pages='. $nr;
+	elseif ($query && 1 !== $fquery)
 		return $url. '?query='. $query. '&amp;pages='. $nr;
-	elseif ($fquery)
-		return $url. $forum. '?fquery='. $fquery. '&amp;pages='. $nr;
 	elseif ($page_name === $download_contents)
 		return $url. r($download_contents). '&amp;pages='. $nr;
 	elseif ($page_name === $forum)
-		return $url. r($forum). (!$forum_thread ? '' : '&amp;thread='. r($forum_thread)). '&amp;pages='. $nr;
+		return $url. r($forum). (!$forum_thread ? '' : '&amp;thread='. r($forum_thread)). (!$fquery? '' : '?fquery='. $fquery). '&amp;pages='. $nr;
 	else
 		return $url. '?pages='. $nr;
 }
@@ -218,12 +246,12 @@ function img($src, $class='', $show_exif_comment=false)
 		$video_extensions = ['.mp4', '.ogg', '.webm'];
 		if ($src_scheme = strpos($src, '://')) $addr = parse_url($src);
 		$data = !$use_datasrc ? '' : 'data-';
-		if (false !== array_search(strtolower($extension), $image_extensions))
+		if (false !== array_search($lower_ext = strtolower($extension), $image_extensions))
 		{
 			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
 			$exif_thumbnail = isset ($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
-			$exif_comment = isset ($exif['COMMENT']) && $show_exif_comment ? str_replace($line_breaks, '<br>', h(trim(strip_tags($exif['COMMENT'][0])))) : '';
+			$exif_comment = !$show_exif_comment ? '' : (isset($exif['COMMENT']) && 'png' !== $lower_ext ? h(strip_tags($exif['COMMENT'][0])) : h(strip_tags(get_png_tEXt($src))));
 			list ($width, $height, $type, $attr) = @getimagesize($src);
 			if ($exif_thumbnail) list ($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
@@ -250,7 +278,7 @@ function img($src, $class='', $show_exif_comment=false)
 					'<a data-fancybox=gallery class="d-inline-block mb-2 mr-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
 					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'. $n.
-					'<figcaption class="text-center mb-2">'. $exif_comment. '</figcaption>'. $n.
+					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'. $n.
 					'</figure>'. $n;
 				else
 					return
@@ -320,7 +348,7 @@ function img($src, $class='', $show_exif_comment=false)
 					'</video>';
 			}
 			else
-				return '<video class="align-top '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>'. $n;
+				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>'. $n;
 		}
 	}
 }
@@ -344,8 +372,8 @@ function timeformat($time, array $intervals)
 
 function pager(int $num, int $max)
 {
-	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $n;
-	$article .= '<ul class="justify-content-center pagination my-4">'. $n;
+	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $pager_wrapper, $n;
+	$article .= '<ul class="pagination '. $pager_wrapper. '">'. $n;
 
 	if(2 < $num)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page(1). '">'. $nav_laquo. $nav_laquo. '</a></li>';
@@ -403,17 +431,17 @@ function sideless($hide=false, $force=false)
 	{
 		$header .= '<style>';
 		if ($hide)
-			$header .= '#side{display:none!important}#main{max-width:100%;flex:0 0 100%}';
+			$header .= '#main,#main>article,#main>div,#main.col-lg-8,#main.col-lg-9{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}#main>header{margin:0}#side{display:none!important}';
 		else
-			$header .= '#main,#side{max-width:100%;flex:0 0 100%}';
+			$header .= '#main,#side{max-width:inherit;flex:0 0 100%}';
 		$header .= '</style>';
 	}
 }
 
 function nowrap()
 {
-	global $header, $get_title, $get_page;
-	if ($get_title || $get_page) $header .= '<style>.article{white-space:normal}</style>';
+	global $header;
+	$header .= '<style>.article,header .wrap{white-space:normal}</style>';
 }
 
 function redirect($link)
@@ -440,13 +468,13 @@ function get_logo($name=false, $class='')
 
 function not_found()
 {
-	global $article, $breadcrumb, $header, $site_name, $not_found, $n;
+	global $article, $breadcrumb, $header, $site_name, $not_found, $h1_title, $n;
 	http_response_code(404);
 	$header .= '<title>'. $not_found[0]. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>'. $n;
 	$article .=
-	'<h1 class="h3 mb-4">'. $not_found[0]. '</h1>'. $n.
-	'<div class="article p-4 not-found">'. $not_found[1]. '</div>'. $n;
+	'<h1 class="'. $h1_title[0]. '">'. $not_found[0]. '</h1>'. $n.
+	'<div class="'. $h1_title[1]. ' not-found">'. $not_found[1]. '</div>'. $n;
 }
 
 function toc($in_article=false)
@@ -457,13 +485,15 @@ function toc($in_article=false)
 		$toc_content = '<div class="'. $sidebox_title_class[4]. '">'. $sidebox_title[9];
 		if ($in_article)
 			$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=0><span class=navbar-toggler-icon></span></button>';
-		$toc_content .= '</div><div id=toctoggle class="'. $sidebox_wrapper_class[1]. ' show"></div>';
+		$toc_content .= '</div>';
+		$toc_content .= '<div id=toctoggle class="'. $sidebox_wrapper_class[1]. (!$in_article ? '' : ' collapse pb-3'). '"></div>';
 
 		if ($in_article)
 			$article .= '<div id=toc class="'. $sidebox_wrapper_class[2]. '">'. $toc_content. '</div>';
 		else
 			$aside .= '<div id=toc class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[8]. '">'. $toc_content. '</div>';
-		$footer .= '<script>let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toctoggle").html(toc)</script>';
+
+		$footer .= '<script defer>let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toctoggle").html(toc)</script>';
 	}
 }
 
@@ -532,14 +562,14 @@ function get_extension($f)
 function enc($str)
 {
 	global $session_txt;
-	if ($str && isset($session_txt))
+	if ($str && is_file($session_txt))
 		return trim(strtr(base64_encode(openssl_encrypt(serialize(basename($str)), 'AES-256-CBC', hash('whirlpool', file_get_contents($session_txt)), OPENSSL_RAW_DATA, substr(sha1_file($session_txt), 5, 16))), '+/', '-_'), '=');
 }
 
 function dec($str)
 {
 	global $session_txt;
-	if ($str && isset($session_txt))
+	if ($str && is_file($session_txt))
 		return @unserialize(rtrim(openssl_decrypt(base64_decode(strtr(basename($str), '-_', '+/')), 'AES-256-CBC', hash('whirlpool', file_get_contents($session_txt)), OPENSSL_RAW_DATA, substr(sha1_file($session_txt), 5, 16)), "\0"));
 }
 
@@ -551,39 +581,51 @@ function sess_err($str)
 	'<div class="'. $sidebox_title_class[3]. '">'. $str. '</div>'. $n.
 	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $​ask_admin : $login_try_again). '</p>'. $n.
 	'</div>'. $n;
-	$footer .= '<script>location.hash="login"</script>';
+	$footer .= '<script defer>location.hash="login"</script>';
 }
 
 function handle($dir)
 {
-	global $mail_address, $admin_suffix;
-	if (is_file($handle = $dir. 'handle') && filesize($handle))
-		$handle = h(file_get_contents($handle));
-	else
-		$handle = h(explode('@', dec(basename(dirname($dir))))[0]);
-	if ($mail_address === dec(basename(dirname($dir))))
-		$handle .= $admin_suffix;
-	return $handle;
+	if (filter_var($usermail = dec($userstr = basename(dirname($dir))), FILTER_VALIDATE_EMAIL))
+	{
+		global $mail_address;
+		if (is_file($handle = $dir. 'handle') && filesize($handle))
+			$handle = h(file_get_contents($handle));
+		else
+			$handle = h(explode('@', $usermail)[0]);
+		return $handle;
+	}
 }
 
-function avatar($dir)
+function avatar($dir, $size=100)
 {
 	if (is_file($img = $dir. 'avatar') && filesize($img) && false !== strpos($base64_img = file_get_contents($img), 'base64'))
-		return '<img src="'. strip_tags($base64_img). '" class="d-block rounded-circle mx-auto" alt="">';
+		$avatar = '<img'. (!$size ? '' : ' style="object-fit:cover;width:'. $size. 'px;height:'. $size. 'px"'). ' src="'. strip_tags($base64_img). '" class="align-text-bottom d-inline-block rounded-circle mx-auto" alt="">';
+	elseif (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor))
+		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
 	else
-		return '<span style="background-color:'. (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) ? h(file_get_contents($bgcolor)) : ''). '" class="avatar align-items-center d-flex justify-content-center font-weight-bold display-3 rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+	{
+		global $color;
+		$avatar = '<span style="background-color:'. ($color ? hsla($color, 5.5, -7,.9) : 'rgba(0,0,0,.5)'). ';'. (!$size ? '': 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). '" class="d-inline-flex justify-content-center font-weight-bold rounded-circle mx-auto text-center text-white">'. mb_substr($dir, 0, 1). '</span>';
+	}
+	if (100 <= $size)
+	{
+		global $mail_address, $admin_suffix;
+		if ($mail_address === dec(basename(dirname($dir)))) $avatar .= '<div class="badge badge-pill badge-primary my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[0]). 'rem;display:inherit">'. $admin_suffix[0]. '</div>';
+		elseif (is_file($dir. 'subadmin')) $avatar .= '<div class="badge badge-pill badge-success my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[1]). 'rem;display:inherit">'. $admin_suffix[1]. '</div>';
+	}
+	return $avatar;
 }
 
 function flow($a, $b, $c, $d)
 {
-	global $n;
 	return
-	'<h3>'. $a[0]. '</h3>'. $n.
-	'<ol class=flow>'. $n.
-	'<li'. (1 === $d ? ' class=active' : ''). '>'. sprintf($a[1], $b, $c). '</li>'. $n.
-	'<li'. (2 === $d ? ' class=active' : ''). '>'. sprintf($a[2], $c). '</li>'. $n.
-	'<li'. (3 === $d ? ' class=active' : ''). '>'. sprintf($a[3], $b). '</li>'. $n.
-	'<li'. (4 === $d ? ' class=active' : ''). '>'. sprintf($a[4], $c). '</li>'. $n.
+	'<h3>'. $a[0]. '</h3>'.
+	'<ol class="flow list-unstyled d-flex justify-content-between my-4">'.
+	'<li class="w-25 pt-3 border-top border-10 '. (1 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[1], $b, $c). '</li>'.
+	'<li class="w-25 pt-3 mx-5 border-top border-10 '. (2 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[2], $c). '</li>'.
+	'<li class="w-25 pt-3 mr-5 border-top border-10 '. (3 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[3], $b). '</li>'.
+	'<li class="w-25 pt-3 border-top border-10 '. (4 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[4], $c). '</li>'.
 	'</ol>';
 }
 
@@ -602,7 +644,7 @@ function counter($txt, $put=false)
 
 function is_permitted($dir)
 {
-	if (is_dir($dir) && '700' !== substr(decoct(fileperms($dir)), 2)) return true;
+	return is_dir($dir) && '700' === substr(decoct(fileperms($dir)), 2) ? 0 : 1;
 }
 
 function hs($s)
@@ -635,7 +677,7 @@ function hs($s)
 	return $s;
 }
 
-function blacklist($email, $blacklist = './forum/blacklist.txt')
+function blacklist($email, $blacklist = './forum/#blacklist.txt')
 {
 	$list = file($blacklist, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	if (!in_array($email, $list, true)) return $email;
@@ -677,7 +719,7 @@ function booking(
 	}
 	$header .= '<style>.a{opacity:1!important;visibility:visible!important}.b{opacity:0;visibility:hidden}.c{opacity:.8;cursor:not-allowed}.g{background:#3ddb80}.h{cursor:pointer;text-align:center;width:5%}.i{background:mediumseagreen;border:none;bottom:0;cursor:pointer;opacity:0;padding:5px 10px;position:absolute;right:0;text-align:center;transition:opacity .1s,visibility .1s;visibility:hidden}[data-placeholder]:empty:before{content:attr(data-placeholder);display:block;text-align:center}[contenteditable=false][data-placeholder]:empty:before{opacity:.8;cursor:not-allowed}[contenteditable=true][data-placeholder]:empty:before{cursor:pointer}#booking td{position:relative}#booking th,#booking td{padding:.8em .6em}#booking th:empty{width:5em}#booking th{background:dimgray;color:#fff;font-weight:inherit;vertical-align:middle;white-space:nowrap}#booking td div{word-wrap:break-word;white-space:pre-wrap}.g:hover{opacity:.8}#booking tr:hover,#booking tr:nth-child(odd){filter:brightness(105%)}@media print{*,a{color:#000000!important;font-size:8pt!important;opacity:1!important}aside,#side,footer,form,header,nav,p,.breadcrumb{display:none!important}html,body{background:#ffffff!important;margin:0!important;padding:0!important}th,td{background:#ffffff!important}th{white-space:nowrap!important}}</style>';
 
-	if (isset($_SESSION['l'], $session_usermail) && $session_usermail === $mail_address)
+	if (is_admin() || is_subadmin())
 	{
 		global $url, $long_time_format, $reminder, $remind_header, $separator;
 		if (filter_has_var(INPUT_POST, 'remind-addr') && filter_has_var(INPUT_POST, 'remind-date') && filter_has_var(INPUT_POST, 'remind-title') && filter_has_var(INPUT_POST, 'remind-contents'))
@@ -723,7 +765,7 @@ function booking(
 				}
 			}
 			echo '</table>', $n;
-			$footer .= '<script>function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);const x=new XMLHttpRequest();x.open("post","'. $current_url. '");x.send(f);x.addEventListener("loadend",function(){if(x.status===200){document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")}});setTimeout(function(){document.getElementById(b).remove()},5000)}function d(f){$.post("'. $current_url. '",{"del":f},function(data,status){if(status==="success"){let c=$(data).find("#booking").html();$("#booking").html(c)}})}</script>';
+			$footer .= '<script defer>function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);const x=new XMLHttpRequest();x.open("post","'. $current_url. '");x.send(f);x.addEventListener("loadend",function(){if(x.status===200){document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")}});setTimeout(function(){document.getElementById(b).remove()},5000)}function d(f){$.post("'. $current_url. '",{"del":f},function(data,status){if(status==="success"){let c=$(data).find("#booking").html();$("#booking").html(c)}})}</script>';
 		}
 		else
 		{
@@ -740,7 +782,7 @@ function booking(
 			$accepted = count(glob($bookings_dir. '*/'. $_SESSION['l']. '.txt', GLOB_NOSORT));
 			if ($accepted === $accepts_per_person)
 				echo '<caption class="bg-success px-3 py-2 text-right text-white">', sprintf($booking_msg[0], $accepted), '</caption>', $n;
-			elseif ($accepted === 0)
+			elseif (0 === $accepted)
 				echo '<caption class="bg-primary px-3 py-2 text-right text-white">', sprintf($booking_msg[2], $accepts_per_person), '</caption>', $n;
 			else
 				echo '<caption class="bg-info px-3 py-2 text-right text-white">', sprintf($booking_msg[1], $accepted), '</caption>', $n;
@@ -752,7 +794,7 @@ function booking(
 		'<thead class=text-center>', $n,
 		'<tr>', $n,
 		'<th></th>', $n;
-		if (count($hours) === 2)
+		if (2 === count($hours))
 		{
 			global $meridian;
 			echo '<th>', $meridian[0], '</th><th>', $meridian[1], '</th>';
@@ -814,7 +856,7 @@ function booking(
 		echo
 		'</tbody>', $n,
 		'</table>', $n;
-		$footer .= '<script>const d=document;'. (isset($_SESSION['l']) ? 'd.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=d.createElement("form");f.style.display="none";f.method="post";let g=d.createElement("input"),h=d.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);d.body.appendChild(f);f.submit()}' : ''). 'const t=d.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}</script>';
+		$footer .= '<script defer>const d=document;'. (isset($_SESSION['l']) ? 'd.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=d.createElement("form");f.style.display="none";f.method="post";let g=d.createElement("input"),h=d.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);d.body.appendChild(f);f.submit()}' : ''). 'const t=d.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}</script>';
 
 		if ($g = glob($bookings_dir. '*', GLOB_ONLYDIR+GLOB_NOSORT))
 		{
@@ -824,18 +866,21 @@ function booking(
 	}
 }
 
-function put_png_tEXt($png, $key, $val='')
+function put_png_tEXt($png, $key, $val='', $enc=true)
 {
 	if ('image/png' === getimagesize($png)['mime'])
 	{
 		$str = $key. "\0". $val;
 		$iend = hex2bin('0000000049454e44ae426082');
-		return base64_encode(str_replace($iend, pack('N', strlen($str)). 'tEXt'. $str. pack('N', crc32('tEXt'. $str)). $iend, file_get_contents($png)));
+		$rep = str_replace($iend, pack('N', strlen($str)). 'tEXt'. $str. pack('N', crc32('tEXt'. $str)). $iend, file_get_contents($png));
+		if ($enc) return base64_encode($rep);
+		else file_put_contents($png, $rep, LOCK_EX);
 	}
 }
 
 function get_png_tEXt($png)
 {
+	global $pngtext;
 	$fp = fopen($png, 'rb');
 	if ("\x89PNG\x0d\x0a\x1a\x0a" === fread($fp, 8))
 	{
@@ -853,11 +898,92 @@ function get_png_tEXt($png)
 		}
 	}
 	fclose($fp);
-	if (isset($key, $val)) return $key. $val;
+	if (isset($key, $val) && $key === $pngtext) return $val;
 }
 
 function is_admin()
 {
 	global $session_usermail, $mail_address;
-	return isset($session_usermail, $mail_address) && $mail_address === $session_usermail ? true : false;
+	return isset($_SESSION['l']) && filter_var_array([$session_usermail, $mail_address], FILTER_VALIDATE_EMAIL) && $mail_address === $session_usermail ? $_SESSION['l'] : false;
+}
+
+function is_subadmin($userstr='')
+{
+	if ($userstr && is_file('users/'. basename($userstr). '/prof/subadmin')) return 2;
+	elseif (isset($_SESSION['l']) && is_file('users/'. $_SESSION['l']. '/prof/subadmin')) return 1;
+}
+
+function is_author($dir)
+{
+	return isset($_SESSION['l']) && is_file($author_txt = $dir. '/author.txt') && is_dir('users/'. basename($author = file_get_contents($author_txt)). '/prof/') && $_SESSION['l'] === $author ? $_SESSION['l'] : false;
+}
+
+function get_thumbnail($src)
+{
+	global $use_datasrc;
+	$data = !$use_datasrc ? '' : 'data-';
+	if ($src) $exif = @exif_read_data($src, '', '', true);
+	if (isset($exif['THUMBNAIL']['THUMBNAIL'])) return '<img class="d-block img-fluid mb-1" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif['THUMBNAIL']['THUMBNAIL']). '" alt="">';
+}
+function html_assist()
+{
+	global $footer, $form_label, $html_assist;
+	$footer .=
+	'<div class="dropup flex-grow-1" id=h>'.
+	'<button class="btn btn-outline-primary dropdown-toggle" id=a data-toggle=dropdown tabindex=1 accesskey=h>'. $html_assist[0]. '</button>'.
+	'<div class="dropdown-menu p-3" style="max-height:200px;overflow-x:hidden">'.
+	'<ul class=list-inline>'.
+	'<li class="list-inline-item"><a href="#" data-select=success class="dropdown-item mb-2 bg-success text-white">'. $html_assist[2]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=green class="dropdown-item mb-2 bg-success text-success">'. $html_assist[3]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=danger class="dropdown-item mb-2 bg-danger text-white">'. $html_assist[4]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=pink class="dropdown-item mb-2 bg-danger text-danger">'. $html_assist[5]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=primary class="dropdown-item mb-2 bg-primary text-white">'. $html_assist[6]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=info class="dropdown-item mb-2 bg-info text-info">'. $html_assist[7]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=warning class="dropdown-item mb-2 bg-warning text-white">'. $html_assist[8]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=yellow class="dropdown-item mb-2 bg-warning text-warning">'. $html_assist[9]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=dark class="dropdown-item mb-2 bg-dark text-white">'. $html_assist[10]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=secondary class="dropdown-item mb-2 bg-secondary text-white">'. $html_assist[11]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=light class="dropdown-item mb-2 bg-light text-body">'. $html_assist[12]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=white class="dropdown-item mb-2 bg-white text-body">'. $html_assist[13]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=hr class="dropdown-item">'. $html_assist[14]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=table class="dropdown-item">'. $html_assist[15]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=li class="dropdown-item">'. $html_assist[16]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=a class="dropdown-item">'. $html_assist[17]. '</a></li>'.
+	'</ul>'.
+	'<div class=dropdown-divider></div>'.
+	'<ul class=list-inline>'.
+	'<li class="list-inline-item"><a href="#" data-select=h1 class="dropdown-item">'. $html_assist[18]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=h2 class="dropdown-item">'. $html_assist[19]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=h3 class="dropdown-item">'. $html_assist[20]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=h4 class="dropdown-item">'. $html_assist[21]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=h5 class="dropdown-item">'. $html_assist[22]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=h6 class="dropdown-item">'. $html_assist[23]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=right class="dropdown-item">'. $html_assist[24]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=center class="dropdown-item">'. $html_assist[25]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=lead class="dropdown-item">'. $html_assist[26]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=small class="dropdown-item">'. $html_assist[27]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=b class="dropdown-item">'. $html_assist[28]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=em class="dropdown-item">'. $html_assist[29]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=strong class="dropdown-item">'. $html_assist[30]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=del class="dropdown-item">'. $html_assist[31]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=ins class="dropdown-item">'. $html_assist[32]. '</a></li>'.
+	'</ul>'.
+	'<div class=dropdown-divider></div>'.
+	'<ul class=list-inline>'.
+	'<li class="list-inline-item"><a href="#" data-select=ltgt class="dropdown-item">'. $html_assist[33]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=br class="dropdown-item">'. $html_assist[34]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=address class="dropdown-item">'. $html_assist[35]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=blockquote class="dropdown-item">'. $html_assist[36]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=cite class="dropdown-item">'. $html_assist[37]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=code class="dropdown-item">'. $html_assist[38]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=dl class="dropdown-item">'. $html_assist[39]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=kbd class="dropdown-item">'. $html_assist[40]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=mark class="dropdown-item">'. $html_assist[41]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=samp class="dropdown-item">'. $html_assist[42]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=sub class="dropdown-item">'. $html_assist[43]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=sup class="dropdown-item">'. $html_assist[44]. '</a></li>'.
+	'</ul>'.
+	'</div>'.
+	'</div>'.
+	'<script defer>$(".creates").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$(".max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$(".creates").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$(".creates").removeClass("is-invalid");$(":submit").prop("disabled",false)}});$(".dropdown-item").on("click",function(){add(this)});function h(select){return select.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function add(tag){let select=tag.dataset.select;if("hr"===select||"br"===select)single(select);else between(select)}function single(tag){let target=document.getElementById("textarea"),pos=getAreaRange(target),val=target.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode= val.slice(pos.end),insertNode;if(range||pos.start!==pos.end){insertNode=range+"<"+tag+">"}else if(pos.start===pos.end){insertNode="<"+tag+">"}target.value=beforeNode+insertNode+afterNode;localStorage.setItem("textarea",target.value);target.setSelectionRange(pos.end,pos.end);target.focus()}function between(tag){let target=document.getElementById("textarea"),pos=getAreaRange(target),val=target.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode=val.slice(pos.end),insertNode;target.focus();if("code"===tag)range=h(range);if("a"===tag){if(range||pos.start!==pos.end){insertNode="<a href=\"\">"+range+"<\/a>"}else if(pos.start===pos.end){insertNode="<a href=\"\"><\/a>"}}else if("right"===tag){if(range||pos.start!==pos.end){insertNode="<p class=text-right>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-right><\/p>"}}else if("lead"===tag){if(range||pos.start!==pos.end){insertNode="<span class=lead>"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=lead><\/span>"}}else if("center"===tag){if(range||pos.start!==pos.end){insertNode="<p class=text-center>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-center><\/p>"}}else if("primary"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-primary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-primary text-white px-1\"><\/span>"}}else if("success"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-white px-1\"><\/span>"}}else if("green"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-success px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-success px-1\"><\/span>"}}else if("info"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-info text-info px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-info text-info px-1\"><\/span>"}}else if("warning"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-white px-1\"><\/span>"}}else if("yellow"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-warning px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-warning px-1\"><\/span>"}}else if("danger"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-white px-1\"><\/span>"}}else if("pink"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-danger px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-danger px-1\"><\/span>"}}else if("secondary"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-secondary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-secondary text-white px-1\"><\/span>"}}else if("dark"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-dark text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-dark text-white px-1\"><\/span>"}}else if("light"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-light text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-light text-body px-1\"><\/span>"}}else if("white"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-white text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-white text-body px-1\"><\/span>"}}else if("dl"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<dl class=dl-horizontal>\u000D<dt>"+range+"<\/dt>\u000D<dd><\/dd>\u000D<\/dl>\u000D"}else if(pos.start===pos.end){insertNode="<dl class=dl-horizontal>\u000D<dt><\/dt>\u000D<dd><\/dd>\u000D<\/dl>\u000D"}}else if("li"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<ul class=list-group>\u000D<li class=\"list-group-item bg-transparent\">"+range+"<\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<\/ul>\u000D"}else if(pos.start===pos.end){insertNode="<ul class=list-group>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<\/ul>\u000D"}}else if("table"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<table class=\"table table-striped table-dark\">\u000D<tr>\u000D<td>"+range+"<\/td>\u000D<\/tr>\u000D<\/table>\u000D"}else if(pos.start===pos.end){insertNode="\u000D<table class=\"table table-striped table-dark\">\u000D<tr>\u000D<td><\/td>\u000D<\/tr>\u000D<\/table>\u000D"}}else if("ltgt"===tag){if(range||pos.start!==pos.end){insertNode="&lt;"+range+"&gt;"}else if(pos.start===pos.end){insertNode="&lt;&gt;"}}else{if(range||pos.start!==pos.end){insertNode="<"+tag+">"+range+"<\/"+tag+">"}else if(pos.start===pos.end){insertNode="<"+tag+">"+"<\/"+tag+">"}}target.value=beforeNode+insertNode+afterNode;localStorage.setItem("textarea",target.value);target.setSelectionRange(pos.end,pos.end);target.focus()}function getAreaRange(obj){const pos=new Object();if(window.getSelection()){pos.start=obj.selectionStart;pos.end=obj.selectionEnd}return pos}$(".dropdown-menu").on({"click":function(e){e.stopPropagation();return false}});$("img").onerror=null</script>';
 }

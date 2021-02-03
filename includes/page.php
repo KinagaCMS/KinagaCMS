@@ -1,21 +1,31 @@
 <?php
-if (!filter_has_var(INPUT_GET, 'page')) exit;
+if (!filter_has_var(INPUT_GET, 'page') || (!is_admin() && !is_subadmin() && '!' === $page_name[0])) exit;
 if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 {
+	ob_start();
+	include $pages_file;
 	$basetitle = h($page_name);
 	$header .=
 	'<title>'. $basetitle. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .=
 	'<li class="breadcrumb-item active">'. $basetitle. '</li>';
-	$article .=
-	'<header><small class=text-muted>'. sprintf($last_modified, date($time_format, filemtime($pages_file))). '</small>'. $n.
-	'<h1 class="h3 mb-4">'. $basetitle. '</h1></header>';
-
-	ob_start();
-	include $pages_file;
+	$article .= '<header>';
+	if (isset($author) && is_dir($author_prof = 'users/'. basename($author). '/prof/'))
+		$article .= '<a class=mr-3 href="'. $url. '?user='. str_rot13($author). '">'. avatar($author_prof, 20). ' '. handle($author_prof). '</a>';
+	if (isset($editor) && is_dir($editor_prof = 'users/'. basename($editor). '/prof/'))
+		$article .= '<a class=mr-3 href="'. $url. '?user='. str_rot13($editor). '">'. avatar($editor_prof, 20). ' '. handle($editor_prof). '</a>';
+	$article .= '<small class=text-muted>'. sprintf($last_modified, date($time_format, filemtime($pages_file))). '</small>'. $n.
+	'<h1 class="'. $h1_title[0]. '">'.
+	(is_admin() || (isset($author, $_SESSION['l']) && $author === $_SESSION['l']) ? '!' !== $page_name[0] ?
+		'<a class="btn btn-sm btn-danger mr-2" href="'. $url. '&amp;delete='. $page_name. '">'. $btn[4]. '</a>'
+	:
+		'<a class="btn btn-sm btn-success mr-2" href="'. $url. '&amp;post='. $page_name. '">'. $btn[6]. '</a>'.
+		'<a class="btn btn-sm btn-info mr-2" href="'. $url. '&amp;sedit='. $page_name. '">'. $btn[7]. '</a>'
+	: '').
+	$basetitle. '</h1></header>';
 	$pages_content = trim(ob_get_clean());
 	$header .= '<meta name=description content="'. get_description($pages_content). '">'. $n;
-	$article .= '<div class="article p-5 mb-5 clearfix">'. $pages_content. '</div>'. $n;
+	$article .= '<article class="article p-5 mb-5 clearfix">'. $pages_content. '</article>'. $n;
 
 	if ($use_social) social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
 	if ($use_permalink) permalink($basetitle. ' - '. $site_name, $current_url);
@@ -25,7 +35,7 @@ elseif ($use_contact && $page_name === $contact_us)
 	$header .= '<title>'. $contact_us. ' - '. $site_name. '</title>'. $n;
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $contact_us. '</li>';
 	if ($contact_subtitle)
-		$article .= '<h1 class="h3 mb-4">'. $contact_us. ' <small class="ml-3 wrap text-muted">'. $contact_subtitle. '</small></h1>'. $n;
+		$article .= '<h1 class="'. $h1_title[0]. '">'. $contact_us. ' <small class="'. $h1_title[1]. '">'. $contact_subtitle. '</small></h1>'. $n;
 	if ($privacy_policy)
 		$article .= '<p class="alert alert-warning wrap">'. $privacy_policy. '</p>'. $n;
 	ob_start();
@@ -46,7 +56,7 @@ elseif ($dl && $page_name === $download_contents)
 	$header .= '<title>'. $download_contents. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
 
 	if ($download_subtitle)
-		$article .= '<h1 class="h3 mb-4">'. $download_contents. ' <small class="ml-3 wrap text-muted">'. $download_subtitle. '</small></h1>'. $n;
+		$article .= '<h1 class="'. $h1_title[0]. '">'. $download_contents. ' <small class="'. $h1_title[1]. '">'. $download_subtitle. '</small></h1>'. $n;
 	if ($download_notice)
 		$article .= '<p class="alert alert-warning wrap">'. $download_notice. '</p>'. $n;
 	$dl_files = glob($downloads_dir. '/*', GLOB_NOSORT);

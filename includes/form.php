@@ -2,7 +2,7 @@
 if (filter_has_var(INPUT_POST, 'preview'))
 {
 	$previews = [
-		'name' => FILTER_SANITIZE_STRIPPED,
+		'name' => FILTER_SANITIZE_STRING,
 		'email' => FILTER_VALIDATE_EMAIL,
 		'message' => FILTER_SANITIZE_SPECIAL_CHARS
 	];
@@ -70,22 +70,22 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	'</div>'. $n.
 	'</div>'. $n.
 	'</div>'. $n;
-	$footer .= '<script>$("#preview").modal().on("hidden.bs.modal",function(){$("#form").find("[name=message]").focus()});</script>';
+	$footer .= '<script defer>$("#preview").modal().on("hidden.bs.modal",function(){$("#form").find("[name=message]").focus()});</script>';
 }
 elseif (filter_has_var(INPUT_POST, 'send'))
 {
 	if (isset($_SESSION['token']) && filter_has_var(INPUT_POST, 'token') && $_SESSION['token'] === $_POST['token'])
 	{
 		$sendings = [
-			'preview_name' => FILTER_SANITIZE_STRIPPED,
-			'preview_email' => FILTER_SANITIZE_STRIPPED,
-			'preview_message' => FILTER_SANITIZE_STRIPPED
+			'preview_name' => FILTER_SANITIZE_STRING,
+			'preview_email' => FILTER_SANITIZE_STRING,
+			'preview_message' => FILTER_SANITIZE_STRING
 		];
 
 		$filtered_sendings = filter_input_array(INPUT_POST, $sendings);
-		$filtered_sending_name = filter_var(base64_decode($filtered_sendings['preview_name']), FILTER_SANITIZE_STRIPPED);
+		$filtered_sending_name = filter_var(base64_decode($filtered_sendings['preview_name']), FILTER_SANITIZE_STRING);
 		$filtered_sending_email = filter_var(base64_decode($filtered_sendings['preview_email']), FILTER_VALIDATE_EMAIL);
-		$filtered_sending_message = filter_var(base64_decode($filtered_sendings['preview_message']), FILTER_SANITIZE_STRIPPED);
+		$filtered_sending_message = filter_var(base64_decode($filtered_sendings['preview_message']), FILTER_SANITIZE_STRING);
 
 		if ($filtered_sending_name && $filtered_sending_email && $filtered_sending_message)
 		{
@@ -123,7 +123,8 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$subject = sprintf($contact_subject_suffix, $filtered_sending_name). $site_name;
 				$body .= $filtered_sending_message. $n. $n;
 			}
-			if (mail($mail_address, $subject, $body, $headers))
+			$to = isset($author) && filter_var($author_mail = dec($author), FILTER_VALIDATE_EMAIL) ? "$mail_address, $author_mail" : $mail_address;
+			if (mail($to, $subject, $body, $headers))
 			{
 				if (isset($_SESSION['l'], $userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-success.txt', 1);
 				$article .=
@@ -159,7 +160,7 @@ if (__FILE__ === implode(get_included_files())) exit;
 $article .=
 '<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
 '<div class=form-row>'. $n.
-(isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. $_SESSION['h']. '"><input name=email type=hidden value="'. $session_usermail. '">' :
+(isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. trim(strip_tags($_SESSION['h'])). '"><input name=email type=hidden value="'. $session_usermail. '">' :
 '<div class="form-group col-xl-6">'. $n.
 '<label class=input-group-text>'. $contact_label[0]. $n.
 '<input required name=name maxlength=60 type=text value="'. ($_SESSION['h'] ?? $filtered_preview_name ?? ''). '" class="form-control ml-md-2" accesskey=n'. ($placeholder[2] ? ' placeholder="'. $placeholder[2]. '"' : ''). '>'. $n.

@@ -20,7 +20,7 @@
 
 ## スクリーンショット
 
-![screenshot](https://user-images.githubusercontent.com/25574701/77500292-f5223c00-6e97-11ea-814e-4775411f18d2.png)
+![screenshot](https://user-images.githubusercontent.com/25574701/106701937-dbf72980-662a-11eb-867d-5ca376733587.png)
 
 ---
 

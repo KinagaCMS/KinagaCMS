@@ -6,7 +6,7 @@ $template = 'default';
 $social_medias = ['facebook', 'twitter', 'hatena', 'line'];
 
 #if (!is_file(contents/index.html)), set 1 to 5
-$index_type = 5;
+$index_type = 1;
 #$index_type = 2 - 5, set the number of links in each category
 $index_items = 3;
 

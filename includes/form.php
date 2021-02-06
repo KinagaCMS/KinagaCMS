@@ -29,7 +29,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	'<tr>'. $n.
 	'<th>'. $contact_label[2]. '</th>'. $n.
 	'<td class=wrap>'. ($filtered_preview_message ?: '<span class=text-danger>'. $contact_message[2]. '</span>'). '</td>'. $n.
-	'</tr>'. $n. ($get_categ && $get_title ?
+	'</tr>'. $n. ($get_categ && $get_title && !isset($userdir) ?
 	'<tr><td colspan=2 class=text-right>'. $comment_note. '</td></tr>' : '');
 
 	if (!isset($_COOKIE[$session_name]))
@@ -124,9 +124,16 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$body .= $filtered_sending_message. $n. $n;
 			}
 			$to = isset($author) && filter_var($author_mail = dec($author), FILTER_VALIDATE_EMAIL) ? "$mail_address, $author_mail" : $mail_address;
-			if (mail($to, $subject, $body, $headers))
+
+			if (isset($userdir, $comment_dir) && is_dir($userdir) && is_dir($comment_dir))
 			{
-				if (isset($_SESSION['l'], $userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-success.txt', 1);
+				file_put_contents($comment_dir. '/'. $filename, $filtered_sending_message);
+				counter($userdir. '/comment-success.txt', 1);
+				header('Location: '. $current_url. '#cid-'. $now);
+			 }
+			 elseif (mail($to, $subject, $body, $headers))
+			{
+				if (isset($userdir) && is_dir($userdir)) counter($userdir. '/contact-success.txt', 1);
 				$article .=
 				'<div id=form_result class="alert alert-dismissible alert-success">'. $n.
 				'<button type=button class=close data-dismiss=alert tabindex=0>&times;</button>'. $n.
@@ -135,19 +142,18 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 			}
 			else
 			{
-				if (isset($_SESSION['l'], $userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-error.txt', 1);
+				if (isset($userdir) && is_dir($userdir)) counter($userdir. '/contact-error.txt', 1);
 				$article .=
 				'<div id=form_result class="alert alert-dismissible alert-danger">'. $n.
 				'<button type=button class=close data-dismiss=alert tabindex=0>&times;</button>'. $n.
 				'<strong>'. $contact_message[5]. '</strong>'. $n.
 				'</div>';
 			}
-
 			if (isset($_SESSION['token'])) unset($_SESSION['token']);
 		}
 		else
 		{
-			if (isset($_SESSION['l'], $userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-error.txt', 1);
+			if (isset($userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-error.txt', 1);
 			if (isset($_SESSION['token'])) unset($_SESSION['token']);
 			$article .=
 			'<div id=form_result class="alert alert-dismissible alert-danger">'. $n.

@@ -143,6 +143,6 @@ if (is_file($bg_img = '../../../contents/'. $get_categ. '/background.jpg')|| is_
 || is_file($bg_img = '../../../images/background.jpg') || is_file($bg_img = 'background.jpg')
 || is_file($bg_img = '../../../images/background.png') || is_file($bg_img = 'background.png'))
 echo '
-#TOP{position:relative}#TOP::after{background:url("'. $bg_img. '") center/cover no-repeat fixed;content:"";position:absolute;top:0;right:0;bottom:0;left:0;opacity:.35;z-index:-1}#header:before,#footer:after{z-index:0}';
+#TOP{position:relative}#TOP::after{background:url("'. $bg_img. '") center/cover no-repeat fixed;content:"";position:absolute;top:0;right:0;bottom:0;left:0;opacity:.35;z-index:-2}';
 
 echo '#copyright{z-index:1}@media(max-width:1200px){#side div[id]{flex-basis:49%}}@media(max-width:767px){.index{flex-direction:column}.index div{width:100%!important}#main .card-columns{column-count:1}#search{text-align:center}#form .input-group-text{display:block}#side div[id]{flex-basis:100%}}';

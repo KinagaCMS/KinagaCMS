@@ -1,5 +1,6 @@
 EnableMMAP Off
 FileETag None
+AddType text/vtt .vtt
 
 <IfModule mod_rewrite.c>
 RewriteEngine on
@@ -42,7 +43,7 @@ ExpiresDefault "access plus 1 week"
 <IfModule mod_headers.c>
 Header always append X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options "nosniff"
-Header set X-Powered-By "kinaga/7.5.1"
+Header set X-Powered-By "kinaga/8.0.1"
 Header set X-XSS-Protection "1; mode=block"
 Header unset ETag
 <FilesMatch "\.(js|css|xml|gz|html)$">

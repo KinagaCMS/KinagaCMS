@@ -221,7 +221,9 @@ if ($forum_topic && false === $fpos)
 }
 elseif ($forum_thread && false === $fpos)
 {
-	if (is_file($threader_file = './forum/'. $forum_thread. '/#threader'))
+	$threader_file = './forum/'. $forum_thread. '/#threader';
+	if (is_file($threader_oldfile = './forum/'. $forum_thread. '/threader')) rename($threader_oldfile, $threader_file);
+	if (is_file($threader_file))
 	{
 		$threader_name = file_get_contents($threader_file);
 		if (is_dir($threader_profdir = 'users/'. $threader_name. '/prof/'))
@@ -407,7 +409,9 @@ elseif (!isset($v[0]))
 		foreach ($sliced_threads as $key => $threads)
 		{
 			$thread_name = basename($threads);
+			$threader_file = $threads. '/#threader';
 			$thread_title = '#' === $thread_name[0] || '!' === $thread_name[0] || '@' === $thread_name[0] ?substr($thread_name, 1) : $thread_name;
+			if (is_file($threader_old = $threads. '/threader')) rename($threader_old, $threader_file);
 			$threader_name = file_get_contents($threads. '/#threader');
 			if (is_dir($threader_profdir = 'users/'. $threader_name. '/prof/'))
 				$threader_name = '<a href="'. $url. '?user='. str_rot13($threader_name). '">'. avatar($threader_profdir, 20). ' '. handle($threader_profdir). '</a>';

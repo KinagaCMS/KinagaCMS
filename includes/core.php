@@ -29,6 +29,7 @@ if ($use_forum)
 	$forum_url = $url. r($forum);
 	if ($forum_thread = !filter_has_var(INPUT_GET, 'thread') ? '' : basename(filter_input(INPUT_GET, 'thread', FILTER_SANITIZE_STRING)))
 	{
+		if ('@' === $forum_thread[0]) $allow_guest_creates = false;
 		$thread_title = '!' === $forum_thread[0] || '@' === $forum_thread[0] ? h(substr($forum_thread, 1)) : h($forum_thread);
 		$thread_url = $forum_url. '/'. r($forum_thread). '/';
 	}

@@ -237,7 +237,7 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 	'</a>';
 }
 
-function img($src, $class='', $show_exif_comment=false)
+function img($src, $class='', $show_exif_comment=false, $per=1)
 {
 	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks, $use_datasrc;
 	if ($extension = get_extension($src))
@@ -292,21 +292,12 @@ function img($src, $class='', $show_exif_comment=false)
 			}
 			else
 			{
-				if (!$get_categ && !$get_title)
-				{
-					switch($index_type)
-					{
-						case 2: $class .= 'd-block mx-auto rounded-circle'; break;
-						case 3: $class .= 'rounded-sm'; break;
-						case 4: $class .= 'd-block mx-auto mr-4 rounded-lg'; break;
-					}
-				}
 				if ($exif_thumbnail && $use_categ_thumbnails)
 				{
 					if ($get_categ || 1 === $index_type)
 						$img =
 						'<span class="card-header d-block text-center">'. $n.
-						'<img class="img-fluid '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'<img class="img-fluid card-img-top '. $class. '"'. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
 						'</span>';
 					else
 						$img =
@@ -317,7 +308,7 @@ function img($src, $class='', $show_exif_comment=false)
 				else
 					$img =
 					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'. $n.
-					'<img class="img-fluid '. $class. ' card-img-top" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
+					'<img class="img-fluid '. (1 === $index_type ? 'card-img-top ' : ''). $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" width="'. ($width * $per). '" height="'. ($height * $per). '">'. $n.
 					'</span>';
 
 				return '<a href="'. $url. r(basename(dirname($dirname = dirname(dirname($src)))). '/'. basename($dirname)). '">'. $img. '</a>';
@@ -426,12 +417,12 @@ function pager(int $num, int $max)
 
 function sideless($hide=false, $force=false)
 {
-	global $header, $get_title, $get_page;
+	global $header, $get_title, $get_page, $template;
 	if ($get_title || $get_page || $force)
 	{
 		$header .= '<style>';
 		if ($hide)
-			$header .= '#main,#main>article,#main>div,#main.col-lg-8,#main.col-lg-9{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}#main>header{margin:0}#side{display:none!important}';
+			$header .= '#main,#main>article,#main>div,#main.col-lg-8,#main.col-lg-9{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}#main>header{margin:0}'. ('lightside' === $template ? '' : '#side{display:none!important}');
 		else
 			$header .= '#main,#side{max-width:inherit;flex:0 0 100%}';
 		$header .= '</style>';

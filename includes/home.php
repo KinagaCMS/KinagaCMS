@@ -272,13 +272,14 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 	}
 	else
 	{
+		$header .= '<style>#side div[id],#index>div{margin:.75rem;flex-basis:32%}@media(max-width:1200px){#side div[id],#index>div{flex-basis:49%}}@media(max-width:767px){.index{flex-direction:column}.index div{width:100%!important}#side div[id],#index>div{flex-basis:100%}}</style>';
 		if (5 === $index_type)
 		{
 			sideless(1,1);
 			nowrap();
 			$article .= '<section class="bg-primary p-5 text-white"><div class="container-fluid">';
 		}
-		$article .= '<div class=row>';
+		$article .= '<div id=index class="d-flex '. (4 === $index_type ? 'flex-column' : 'justify-content-between'). ' flex-wrap p-0">';
 		foreach($glob_files as $k => $a)
 		{
 			$c = get_categ($a);
@@ -287,24 +288,22 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			if ($i = glob('contents/'. $c. '/'. $t. '/images'. $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 			{
 				sort($i);
-				$img = img($i[0]);
 				if (2 === $index_type)
-					$a = $img. '<span class="d-inline-block mt-2">'. h($t). '</span>';
+					$a = img($i[0], 'd-block mx-auto rounded-circle', 0, .5). '<span class="d-inline-block mt-2">'. h($t). '</span>';
 				elseif (3 === $index_type)
-					$a = $img. h($t);
+					$a = img($i[0], 'rounded-sm'). '<br>'. h($t);
 				elseif (4 === $index_type)
 				{
-					preg_match('/width="(\d+)"/', $img, $width);
-					$a = $img. '<span class="d-inline-block text-truncate" style="max-width:'. ($width[1] ?? '200'). 'px">'. h($t). '</span>';
+					$a = img($i[0], '', 0, .4). '<br>'. h($t);
 				}
 				elseif (5 === $index_type)
 				{
 					$b[] =
-					'<div class="order-a flex-fill text-center">'. $img. '</div>'.
+					'<div class="order-a flex-fill text-center">'. img($i[0], 'w-100'). '</div>'.
 					'<div class="order-b flex-fill mb-5">'.
 					'<h2 class="my-3">'. h($t). '</h2>'.
 					'<p>'. get_summary('contents/'. $c. '/'. $t. '/index.html'). '</p>'.
-					'<p><a class="btn btn-secondary" href="'. $url. r($c. '/'. $t). '">'. $btn[9].'</a></p>'.
+					'<p class=text-right><a class="btn btn-secondary" href="'. $url. r($c. '/'. $t). '">'. $btn[9].'</a></p>'.
 					'</div>';
 				}
 			}
@@ -329,7 +328,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 				$ab = array_filter($b);
 				foreach ($ab as $ad)
 				{
-					$article .= '<div class=col-lg-4>'. $ad. '</div>';
+					$article .= '<div class="col-lg-4 mx-0">'. $ad. '</div>';
 					if ($index_items <= $j) break;
 					++$j;
 				}
@@ -358,9 +357,9 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 					if (2 === $index_type)
 						$article .= '<div class="col-md p-4 text-center bg-light"><span class="h5 border-bottom pb-1">'. $k. '</span><ul class="mt-4 list-group list-group-flush"><li class="list-group-item bg-transparent">'. implode('</li><li class="list-group-item bg-transparent">', $s). '</li></ul></div>';
 					if (3 === $index_type)
-						$article .= '<div class="col-md bg-light p-0 m-1"><div class="h5 bg-light p-3">'. $k. '</div><div class=m-4>'. implode('</div><div class=m-4>', $s). '</div></div>';
+						$article .= '<div class="bg-light p-0 mx-0"><div class="h5 bg-light p-3">'. $k. '</div><div class=m-4>'. implode('</div><div class=m-4>', $s). '</div></div>';
 					if (4 === $index_type)
-						$article .= '<div class="col-md-12 mb-4"><div class="h3 border-bottom px-2 py-1 my-3">'. $k. '</div><div class=row><div class="m-2 col-md-auto">'. implode('</div><div class="m-2 col-md-auto">', $s). '</div></div></div>';
+						$article .= '<div class="mb-4"><div class="h3 border-bottom px-2 py-1 my-3">'. $k. '</div><div class=row><div class="m-2 col-md-auto">'. implode('</div><div class="m-2 col-md-auto">', $s). '</div></div></div>';
 				}
 			}
 		}

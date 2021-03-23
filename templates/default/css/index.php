@@ -82,6 +82,7 @@ a:hover,.comment:target{color:white}
 .page-top{border-bottom:thin dotted;position:relative;text-decoration:none!important}
 .permit{left:.5em}
 .popover{max-width:70%}
+.popover-body{overflow:auto;max-height:200px}
 .similar-article{height:2rem}
 .sticky-top{top:10px}
 .text-light{color:'. ($color ? hsla($color, -5, 20, .9) : 'inherit'). ' !Important}

@@ -70,7 +70,7 @@ if (filter_has_var(INPUT_POST, 'preview'))
 	'</div>'. $n.
 	'</div>'. $n.
 	'</div>'. $n;
-	$footer .= '<script defer>$("#preview").modal().on("hidden.bs.modal",function(){$("#form").find("[name=message]").focus()});</script>';
+	$javascript .= '$("#preview").modal().on("hidden.bs.modal",function(){$("#form").find("[name=message]").focus()});';
 }
 elseif (filter_has_var(INPUT_POST, 'send'))
 {

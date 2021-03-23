@@ -113,22 +113,18 @@ if (is_admin() || is_subadmin())
 			$edit_sidepage_content = preg_replace('/<\?php \$author.*?\?>/', '', $edit_sidepage_content);
 		if (preg_match('/<\?php \$editor="(.*?)"\?>/', $edit_sidepage_content, $editor))
 			$edit_sidepage_content = preg_replace('/<\?php \$editor.*?\?>/', '', $edit_sidepage_content);
-		$footer .= '<script defer>$("#sidepage-form")';
+		$javascript .= '$("#sidepage-form")';
 
 		if (!isset($author[1]) && !isset($editor[1]))
-			$footer .= '.append("<input type=hidden name=author value=\"'. $_SESSION['l']. '\">")';
+			$javascript .= '.append("<input type=hidden name=author value=\"'. $_SESSION['l']. '\">")';
 
 		if (isset($author[1], $editor[1]))
-			$footer .=
-			'.append("<input type=hidden name=author value=\"'. $author[1]. '\">")'.
-			'.append("<input type=hidden name=editor value=\"'. $editor[1]. '\">")';
+			$javascript .=
+			'.append("<input type=hidden name=author value=\"'. $author[1]. '\">").append("<input type=hidden name=editor value=\"'. $editor[1]. '\">")';
 
 		if (isset($author[1]) && !isset($editor[1]) && ($_SESSION['l'] !== $author[1]))
-			$footer .=
-			'.append("<input type=hidden name=author value=\"'. $author[1]. '\">")'.
-			'.append("<input type=hidden name=editor value=\"'. $_SESSION['l']. '\">")';
-
-		$footer .= '</script>';
+			$javascript .=
+			'.append("<input type=hidden name=author value=\"'. $author[1]. '\">").append("<input type=hidden name=editor value=\"'. $_SESSION['l']. '\">");';
 	}
 	$article .=
 	'<div class="bg-light p-3 mb-5"><div class=accordion id=admin-menu>
@@ -189,7 +185,7 @@ if (is_admin() || is_subadmin())
 	'</form>'.
 	'</div></div>';
 	html_assist();
-	$footer .= '<script defer>$(".collapse").on("show.bs.collapse",function(){t=$(this).find("textarea");t.attr("id","textarea").prev().children().last().attr("id","i");$("#h").insertBefore($("#i"))});$(".collapse").on("hidden.bs.collapse",function(){$(this).find("textarea").removeAttr("id").prev().children().last().removeAttr("id");$("#h").insertBefore($("#i"))});'. (filter_has_var(INPUT_GET, 'edit') || filter_has_var(INPUT_GET, 'sedit') ? '$("#h").insertBefore($("form[class*=\"show\"]>textarea").attr("id","textarea").prev().children().last().attr("id","i"))' : '$(".collapse").collapse("show")'). '</script>';
+	$javascript .= '$(".collapse").on("show.bs.collapse",function(){t=$(this).find("textarea");t.attr("id","textarea").prev().children().last().attr("id","i");$("#h").insertBefore($("#i"))});$(".collapse").on("hidden.bs.collapse",function(){$(this).find("textarea").removeAttr("id").prev().children().last().removeAttr("id");$("#h").insertBefore($("#i"))});'. (filter_has_var(INPUT_GET, 'edit') || filter_has_var(INPUT_GET, 'sedit') ? '$("#h").insertBefore($("form[class*=\"show\"]>textarea").attr("id","textarea").prev().children().last().attr("id","i"));' : '$(".collapse").collapse("show");');
 }
 if (is_file($index_file = 'contents/index.html'))
 {
@@ -272,7 +268,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 	}
 	else
 	{
-		$header .= '<style>#side div[id],#index>div{margin:.75rem;flex-basis:32%}@media(max-width:1200px){#side div[id],#index>div{flex-basis:49%}}@media(max-width:767px){.index{flex-direction:column}.index div{width:100%!important}#side div[id],#index>div{flex-basis:100%}}</style>';
+		$stylesheet .= '#side div[id],#index>div{margin:.75rem;flex-basis:32%}@media(max-width:1200px){#side div[id],#index>div{flex-basis:49%}}@media(max-width:767px){.index{flex-direction:column}.index div{width:100%!important}#side div[id],#index>div{flex-basis:100%}}';
 		if (5 === $index_type)
 		{
 			sideless(1,1);

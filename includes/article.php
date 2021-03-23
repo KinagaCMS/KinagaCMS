@@ -62,8 +62,6 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	{
 		if (is_dir($background_images_dir = $current_article_dir. '/background-images') && $glob_background_images = glob($background_images_dir. '/*', GLOB_NOSORT))
 		{
-			$header .= '<style>';
-
 			foreach ($glob_background_images as $background_images)
 			{
 				if (list($width, $height) = @getimagesize($background_images))
@@ -73,26 +71,23 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					if ('.png' === strtolower($extention)) $bg_text = get_png_tEXt($background_images);
 					$classname = '.'. basename($background_images, $extention);
 					$aspect = round($height / $width * 100, 1);
-					$header .= '@media(max-width:'. ($width * 1.5). 'px){'. $classname. '{'. ($height > 400 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}}'. $classname. '{max-width:'. $width. 'px;background-image:url('. $url. r($background_images). ');background-size:100%;background-repeat:no-repeat;'. ($height > 1000 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}'. (isset($exif['COMMENT']) || isset($bg_text) ? $classname. ':after{background-color:rgba(0,0,0,.3);color:white;content:"'. str_replace($line_breaks, '\00a', h(strip_tags($exif['COMMENT'][0] ?? $bg_text))). '";display:block;line-height:1.1;padding:.7% 1%;word-wrap:break-word;white-space:pre-wrap}' : '');
+					$stylesheet .= '@media(max-width:'. ($width * 1.5). 'px){'. $classname. '{'. ($height > 400 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}}'. $classname. '{max-width:'. $width. 'px;background-image:url('. $url. r($background_images). ');background-size:100%;background-repeat:no-repeat;'. ($height > 1000 ? 'height:0px!important;padding-bottom:'. $aspect. '%' : 'height:'. $height. 'px'). '}'. (isset($exif['COMMENT']) || isset($bg_text) ? $classname. ':after{background-color:rgba(0,0,0,.3);color:white;content:"'. str_replace($line_breaks, '\00a', h(strip_tags($exif['COMMENT'][0] ?? $bg_text))). '";display:block;line-height:1.1;padding:.7% 1%;word-wrap:break-word;white-space:pre-wrap}' : '');
 				}
 			}
-			$header .= '</style>'. $n;
 		}
 		if (is_dir($tooltip_images_dir = $current_article_dir. '/tooltip-images') && $glob_tooltip_images = glob($tooltip_images_dir. '/*', GLOB_NOSORT))
 		{
 			$tooltip_color = $color ? hsla($color) : 'black';
-			$header .= '<style>.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';padding:2px;max-width:inherit}</style>';
-			$footer .= '<script defer>';
+			$stylesheet .= '.tooltip.bs-tooltip-auto[x-placement^=top] .arrow::before,.tooltip.bs-tooltip-top .arrow::before{border-top-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=bottom] .arrow::before,.tooltip.bs-tooltip-bottom .arrow::before{border-bottom-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before,.tooltip.bs-tooltip-right .arrow::before{border-right-color:'. $tooltip_color. '}.tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before,.tooltip.bs-tooltip-left .arrow::before{border-left-color:'. $tooltip_color. '}.tooltip-inner{background-color:'. $tooltip_color. ';padding:2px;max-width:inherit}';
 			foreach ($glob_tooltip_images as $tooltip_images)
 			{
 				if (list($width, $height) = @getimagesize($tooltip_images))
 				{
 					$extention = get_extension($tooltip_images);
 					$id = basename($tooltip_images, $extention);
-					$footer .= '$("#'. $id. '").attr({"style":"border-bottom:thin dotted;cursor:pointer"}).tooltip({html:true,placement:"auto",title:"<img src=\"'. $url. r($tooltip_images). '\" class=\"img-fluid rounded\">"});';
+					$javascript .= '$("#'. $id. '").attr({"style":"border-bottom:thin dotted;cursor:pointer"}).tooltip({html:true,placement:"auto",title:"<img src=\"'. $url. r($tooltip_images). '\" class=\"img-fluid rounded\">"});';
 				}
 			}
-			$footer .= '</script>'. $n;
 		}
 		if (is_dir($slide_images_dir = $current_article_dir. '/slide-images'))
 		{
@@ -166,7 +161,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					else
 						chmod($permit_comment, 0700);
 				}
-				$footer .= '<script>function permit(e){let f=$(e).parents(".comment");if(e.checked)f.removeClass("banned");else f.addClass("banned");$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".c-user").data("user")+"&cid="+f.attr("id")+"&val="+(e.checked?true:false))}</script>';
+				$javascript .= 'function permit(e){let f=$(e).parents(".comment");if(e.checked)f.removeClass("banned");else f.addClass("banned");$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".c-user").data("user")+"&cid="+f.attr("id")+"&val="+(e.checked?true:false))}';
 			}
 			if (is_admin() || (isset($author, $_SESSION['l']) && $author === $_SESSION['l']))
 			{

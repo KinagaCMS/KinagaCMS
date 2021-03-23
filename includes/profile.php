@@ -236,7 +236,7 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 			'</div>'. $n.
 			'<div class=text-center><input type=submit value="'. $btn[2]. '" class="btn btn-primary btn-lg" id=approachers-submit disabled></div>'. $n.
 			'</form>';
-			$footer .= '<script defer> $("#approachers").change(function(){$("#approachers-submit").prop("disabled",false)})</script>';
+			$javascript .= '$("#approachers").change(function(){$("#approachers-submit").prop("disabled",false)});';
 		}
 		if (is_admin() || is_subadmin())
 		{
@@ -333,7 +333,7 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 					'</div>'. $n;
 				}
 				$article .= '</div>'. $n;
-				$footer .= '<script defer>function permit(e){let f=$(e).parents(".user");if(e.checked)f.removeClass("banned");else f.addClass("banned");$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".user").attr("id")+"&val="+(e.checked?1:0))}function subadmin(e){$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".user").attr("id")+"&add="+(e.checked?1:0))}</script>';
+				$javascript .= 'function permit(e){let f=$(e).parents(".user");if(e.checked)f.removeClass("banned");else f.addClass("banned");$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".user").attr("id")+"&val="+(e.checked?1:0))}function subadmin(e){$.post("'. $scheme. $server. $port. $request_uri. '","user="+$(e).parents(".user").attr("id")+"&add="+(e.checked?1:0))}';
 
 				if ($count_glob_userdir >= $users_per_page)
 				{

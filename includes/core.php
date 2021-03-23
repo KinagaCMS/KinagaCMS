@@ -1,6 +1,6 @@
 <?php
 if (__FILE__ === implode(get_included_files())) exit;
-$header = $nav = $article = $aside = $footer = $search = '';
+$header = $nav = $article = $aside = $search = $javascript = $stylesheet = $footer = '';
 $pos = strpos($request_uri, '?query=');
 $fpos = strpos($request_uri, '?fquery=');
 $get_title = !filter_has_var(INPUT_GET, 'title') ? '' : get_uri(basename($request_uri), 'title');
@@ -86,28 +86,30 @@ if ($use_search)
 
 include 'sideboxes.php';
 
-if ($checklist === $title_name || $checklist === $page_name) $footer .= '<script>let s=$("<section class=checklist>"),o=$("<ol class=\"list-group list-group-flush mb-5 mt-2\">");s.append(o);$.each($("article.article").html().split("\n"),function(i,v){if(v){if("H2"===$(v).prop("tagName"))l=$("<li class=\"list-group-item active\">").append($(v));else l=$("<li class=\"list-group-item list-group-item-action\">").append($("<label class=\"d-block mb-0 user-select-none\">").text(v).prepend($("<input class=mr-3 type=checkbox>")))}else l=$("<li class=list-group-item>");l.appendTo(o)});$("article.article").html(s);$(".checklist").each(function(){$("input[type=checkbox]",this).each(function(i,v){v.after(i+". ")})});let a=JSON.parse(localStorage.getItem("checked"))||[];a.forEach((c,i)=>$(".checklist input[type=checkbox]").eq(i).prop("checked",c));$(".checklist input[type=checkbox]").click(()=>{a=$(".checklist input[type=checkbox]").map((i,e)=>e.checked).get();localStorage.setItem("checked",JSON.stringify(a))})</script>';
+if ($checklist === $title_name || $checklist === $page_name) $javascript .= 'let s=$("<section class=checklist>"),o=$("<ol class=\"list-group list-group-flush mb-5 mt-2\">");s.append(o);$.each($("article.article").html().split("\n"),function(i,v){if(v){if("H2"===$(v).prop("tagName"))l=$("<li class=\"list-group-item active\">").append($(v));else l=$("<li class=\"list-group-item list-group-item-action\">").append($("<label class=\"d-block mb-0 user-select-none\">").text(v).prepend($("<input class=mr-3 type=checkbox>")))}else l=$("<li class=list-group-item>");l.appendTo(o)});$("article.article").html(s);$(".checklist").each(function(){$("input[type=checkbox]",this).each(function(i,v){v.after(i+". ")})});let a=JSON.parse(localStorage.getItem("checked"))||[];a.forEach((c,i)=>$(".checklist input[type=checkbox]").eq(i).prop("checked",c));$(".checklist input[type=checkbox]").click(()=>{a=$(".checklist input[type=checkbox]").map((i,e)=>e.checked).get();localStorage.setItem("checked",JSON.stringify(a))});';
 
 $header .=
 '<meta name=application-name content=KinagaCMS>'. $n.
 '<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'. $n.
 (!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/favicon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">'). $n;
-$footer .=
-(!$use_datasrc ? '' : '<script defer>const x=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const y=entry.target;if(y.dataset.src){y.src=y.dataset.src}}})}),z=document.querySelectorAll("img[data-src]");z.forEach(z=>x.observe(z))</script>').
-'<div id=copyright class="d-flex justify-content-center align-items-center h-100">'. $n.
-'<img alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'. $n.
+
+if ($stylesheet) $header .= '<style>'. $stylesheet. '</style>';
+$footer .= '<script defer>const d=document;$("img").onerror=null;'. $javascript.
+(!$use_datasrc ? '' : 'const x=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const y=entry.target;if(y.dataset.src){y.src=y.dataset.src}}})}),z=d.querySelectorAll("img[data-src]");z.forEach(z=>x.observe(z));').
+(!$use_wikipedia_popover ? '' : '$("dfn").css("border-bottom","thin dotted");$("dfn").mouseover(function(e){$(this).css("cursor","progress");const l="https://"+($(this).attr("lang")||"'. $lang. '")+".wikipedia.org";$.getJSON(l+"/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&redirects=1&titles="+$(this).text(),function(w,s,x){if("success"===s&&200===x.status){$(e.currentTarget).css("cursor","pointer").css("border-bottom","thin solid");for(i in w.query.pages)$(e.currentTarget).popover({placement:"auto",title:w.query.pages[i].title||"",content:w.query.pages[i].extract||"",template:"<div class=popover><div class=arrow><\/div><div class=\"d-flex justify-content-between\"><h3 class=\"popover-header flex-grow-1\"><\/h3><a class=\"btn btn-dark lead btn-close\">&times;</a><\/div><div class=popover-body><\/div><small class=\"d-flex justify-content-between bg-info px-2 py-1\"><a href=\"http://www.gnu.org/licenses/fdl-1.3.html\" target=_blank title=\"GNU Free Documentation License\">GFDL<\/a><a href=\""+l+"/wiki/"+w.query.pages[i].title+"\" target=_blank>"+l+"/wiki/"+w.query.pages[i].title+"<\/a><\/small><\/div>"})}})}).mouseout(function(){$(this).css("border-bottom","thin dotted")});$(document).on("click",".btn-close",function(){$(this).parents(".popover").popover("hide")});').
+'</script>'.
+'<div id=copyright class="d-flex justify-content-center align-items-center h-100">'.
+'<img alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'.
 '<small class="ml-3 text-muted">&copy; '. date('Y'). ' '. $site_name. '. '. ($copyright ?? '').
-(!$use_benchmark ? '' : '<br>'. sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem)). $n).
-'</small>'. $n.
-'</div>'. $n.
-'<div class="modal fade" id=powered-by-kinaga aria-hidden=true>'. $n.
-'<div class="modal-dialog modal-dialog-centered modal-sm">'. $n.
-'<div class=modal-content>'. $n.
-'<button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button>'. $n.
-'<div class="modal-body text-black-50 text-center"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'. $n.
-'<div class=modal-footer>'. $n.
-'<small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a>'. $n.
-'</div>'. $n.
-'</div>'. $n.
-'</div>'. $n.
-'</div>'. $n;
+(!$use_benchmark ? '' : '<br>'. sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem))).
+'</small>'.
+'</div>'.
+'<div class="modal fade" id=powered-by-kinaga aria-hidden=true>'.
+'<div class="modal-dialog modal-dialog-centered modal-sm">'.
+'<div class=modal-content>'.
+'<button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button>'.
+'<div class="modal-body text-black-50 text-center"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'.
+'<div class=modal-footer><small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a></div>'.
+'</div>'.
+'</div>'.
+'</div>';

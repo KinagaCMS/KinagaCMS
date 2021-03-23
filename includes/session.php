@@ -110,7 +110,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 					'</div>'. $n.
 					'</div>'. $n.
 					'</div>';
-					$footer .= '<script defer>$("#b").modal({backdrop:"static"})</script>';
+					$javascript .= '$("#b").modal({backdrop:"static"});';
 					unset($_SESSION['t']);
 				}
 				else

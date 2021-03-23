@@ -31,9 +31,9 @@ if ($forum_topic && false === $fpos)
 		else
 		{
 			$count_lines = count($topic_lines);
-			$header .= '<style>.media:target{animation:1s target;text-shadow:0 2px 2px rgba(0,0,0,.4)}@keyframes target{from{background:#ccc}to{background:inherit}</style>'. $n;
+			$stylesheet .= '.media:target{animation:1s target;text-shadow:0 2px 2px rgba(0,0,0,.4)}@keyframes target{from{background:#ccc}to{background:inherit}';
 			if ($count_lines <= $forum_limit) $article .= '<form'. (!isset($_SESSION['l']) ? '' : ' enctype="multipart/form-data"'). ' method=post>';
-			$footer .= '<script defer>$(".re").tooltip({trigger:"hover"})'. (isset($_SESSION['l']) ? '' : ';$("#resser").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"})'). '</script>';
+			$javascript .= '$(".re").tooltip({trigger:"hover"});'. (isset($_SESSION['l']) ? '' : '$("#resser").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});');
 			if (is_admin() || is_subadmin())
 			{
 				if (filter_has_var(INPUT_GET, 'resdel') && ($d = (int)filter_input(INPUT_GET, 'resdel', FILTER_SANITIZE_NUMBER_INT)))
@@ -178,7 +178,7 @@ if ($forum_topic && false === $fpos)
 						if (!filter_var($resser, FILTER_CALLBACK, ['options' => 'blacklist']))
 						{
 							$article .= $blacklist_alert;
-							$footer .= '<script defer>$("#blacklist-alert").modal();</script>';
+							$javascript .= '$("#blacklist-alert").modal();';
 						}
 						else
 						{
@@ -328,7 +328,7 @@ elseif ($forum_thread && false === $fpos)
 						if (!filter_var($topicer, FILTER_CALLBACK, ['options' => 'blacklist']))
 						{
 							$article .= $blacklist_alert;
-							$footer .= '<script defer>$("#blacklist-alert").modal();</script>';
+							$javascript .= '$("#blacklist-alert").modal();';
 						}
 						else
 						{
@@ -367,7 +367,7 @@ elseif ($forum_thread && false === $fpos)
 				'<div class=input-group-append><input class="btn btn-primary" type=submit accesskey=c></div>'. $n.
 				'</div>'. $n.
 				'</form>';
-				$footer .= '<script defer>$("#topic").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#topicer").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#topic").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#topic").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#topic").removeClass("is-invalid");$(":submit").prop("disabled",false)}})</script>';
+				$javascript .= '$("#topic").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#topicer").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#topic").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#topic").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#topic").removeClass("is-invalid");$(":submit").prop("disabled",false)}});';
 			}
 			else
 				$article .= '<p class="alert alert-warning mt-3">'. $forum_guests[6]. '</p>';
@@ -471,7 +471,7 @@ elseif (!isset($v[0]))
 				if (!filter_var($threader, FILTER_CALLBACK, ['options' => 'blacklist']))
 				{
 					$article .= $blacklist_alert;
-					$footer .= '<script defer>$("#blacklist-alert").modal();</script>';
+					$javascript .= '$("#blacklist-alert").modal();';
 				}
 				else
 				{
@@ -510,7 +510,7 @@ elseif (!isset($v[0]))
 		'<div class=input-group-append><input class="btn btn-primary" type=submit accesskey=c></div>'. $n.
 		'</div>'. $n.
 		'</form>';
-		$footer .= '<script defer>$("#thread").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#threader").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#thread").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#thread").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#thread").removeClass("is-invalid");$(":submit").prop("disabled",false)}})</script>';
+		$javascript .= '$("#thread").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#threader").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#thread").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#thread").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#thread").removeClass("is-invalid");$(":submit").prop("disabled",false)}});';
 	}
 	else
 		$article .= '<p class="alert alert-warning mt-3">'. $forum_guests[6]. '</p>';

@@ -971,6 +971,7 @@ function html_assist()
 	'<li class="list-inline-item"><a href="#" data-select=samp class="dropdown-item">'. $html_assist[42]. '</a></li>'.
 	'<li class="list-inline-item"><a href="#" data-select=sub class="dropdown-item">'. $html_assist[43]. '</a></li>'.
 	'<li class="list-inline-item"><a href="#" data-select=sup class="dropdown-item">'. $html_assist[44]. '</a></li>'.
+	'<li class="list-inline-item"><a href="#" data-select=dfn class="dropdown-item">'. $html_assist[45]. '</a></li>'.
 	'</ul>'.
 	'</div>'.
 	'</div>';

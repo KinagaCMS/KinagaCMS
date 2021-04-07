@@ -111,8 +111,15 @@ if ($address)
 {
 	$aside .=
 	'<div id=address class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[9]. '">'. $n.
-	'<div class="'. $sidebox_title_class[1]. '">'. ($address_title ?: $site_name). '</div>'. $n.
-	'<div class="'. $sidebox_content_class[2]. '">'. trim($address). '</div>'. $n;
+	'<div class="'. $sidebox_title_class[1]. '">'. ($address_title ?: $site_name). '</div>'. $n;
+	if ($geocoder)
+	{
+		$header .= '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=anonymous>';
+		$footer .= '<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=anonymous></script>';
+		$aside .= '<div id=map style="height:180px" class="'. $sidebox_content_class[2]. '"></div>';
+		$javascript .= 'if(navigator.onLine){let map=L.map("map");L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"<a href=\"http://osm.org/copyright\">OpenStreetMap</a>"}).addTo(map);$.getJSON("'. $geocoder. r($address). '",function(w,s,x){if("success"===s&&200===x.status){if(w[0]){c=[w[0].geometry.coordinates[1],w[0].geometry.coordinates[0]],t=w[0].properties.title;map.setView(c,17);L.marker(c,{title:t}).addTo(map).bindPopup("<strong>' . ($address_title ?: $site_name) .'</strong><br><small>"+t+"</small>").openPopup()}}})}';
+	}
+	$aside .= '<div class="'. $sidebox_content_class[2]. '">'. trim($address). '</div>'. $n;
 	foreach ($additional_address as $adds)
 		if ($adds) $aside .= '<div class="'. $sidebox_content_class[2]. '">'. trim($adds). '</div>';
 	$aside .='</div>';

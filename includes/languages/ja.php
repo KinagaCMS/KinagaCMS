@@ -24,6 +24,8 @@ $address = '';
 $address_title = '';
 #住所下の追加情報：配列を増やすことで複数行に表示
 $additional_address = ['', '', '', '', ];
+#ジオコーダ：住所を座標に変換するサイト
+$geocoder = 'https://msearch.gsi.go.jp/address-search/AddressSearch?q=';
 
 #キャッチコピー：トップページのメタ情報とヘッダーに表示
 $meta_description = 'ここにはサイトの概要を記入して下さい。';

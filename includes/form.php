@@ -1,92 +1,82 @@
 <?php
 if (filter_has_var(INPUT_POST, 'preview'))
 {
-	$previews = [
-		'name' => FILTER_SANITIZE_STRING,
-		'email' => FILTER_VALIDATE_EMAIL,
-		'message' => FILTER_SANITIZE_SPECIAL_CHARS
-	];
-	$filtered_previews = filter_input_array(INPUT_POST, $previews);
-	$filtered_preview_name = str_replace($delimiter, '', trim($filtered_previews['name']));
-	$filtered_preview_email = trim($filtered_previews['email']);
-	$filtered_preview_message = str_replace($line_breaks, $n, $filtered_previews['message']);
-
+	$filtered_preview_name = str_replace($delimiter, '', trim(filter_input(INPUT_POST,'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)));
+	$filtered_preview_email = filter_input(INPUT_POST, 'email', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+	$filtered_preview_message = str_replace($line_breaks, '&#10;', filter_input(INPUT_POST, 'message', FILTER_SANITIZE_SPECIAL_CHARS));
 	$article .=
-	'<div id=preview class="modal fade">'. $n.
-	'<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">'. $n.
-	'<div class=modal-content>'. $n.
-	'<div class="modal-body p-0">'. $n.
-	'<table class="table table-bordered text-secondary m-0">'. $n.
-	'<thead class=thead-light><tr><th colspan=2>'. $contact_preview. '</th></tr></thead>'. $n.
-	'<tr>'. $n.
-	'<th class=w-25>'. $contact_label[0]. '</th>'. $n.
-	'<td>'. ($filtered_preview_name ?: '<span class=text-danger>'. $contact_message[0]. '</span>'). '</td>'. $n.
-	'</tr>'. $n.
-	'<tr>'. $n.
-	'<th>'. $contact_label[1]. '</th>'. $n.
-	'<td>'. ($filtered_preview_email ?: '<span class=text-danger>'. $contact_message[1]. '</span>'). '</td>'. $n.
-	'</tr>'. $n.
-	'<tr>'. $n.
-	'<th>'. $contact_label[2]. '</th>'. $n.
-	'<td class=wrap>'. ($filtered_preview_message ?: '<span class=text-danger>'. $contact_message[2]. '</span>'). '</td>'. $n.
+	'<div id=preview class="modal fade">'.
+	'<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">'.
+	'<div class=modal-content>'.
+	'<div class="modal-body p-0">'.
+	'<table class="table table-bordered text-secondary m-0">'.
+	'<thead class=thead-light><tr><th colspan=2>'. $contact_preview. '</th></tr></thead>'.
+	'<tr>'.
+	'<th class=w-25>'. $contact_label[0]. '</th>'.
+	'<td>'. ($filtered_preview_name ?: '<span class=text-danger>'. $contact_message[0]. '</span>'). '</td>'.
+	'</tr>'.
+	'<tr>'.
+	'<th>'. $contact_label[1]. '</th>'.
+	'<td>'. ($filtered_preview_email ?: '<span class=text-danger>'. $contact_message[1]. '</span>'). '</td>'.
+	'</tr>'.
+	'<tr>'.
+	'<th>'. $contact_label[2]. '</th>'.
+	'<td class=wrap>'. ($filtered_preview_message ?: '<span class=text-danger>'. $contact_message[2]. '</span>'). '</td>'.
 	'</tr>'. $n. ($get_categ && $get_title && !isset($userdir) ?
-	'<tr><td colspan=2 class=text-right>'. $comment_note. '</td></tr>' : '');
-
+	'<tr><td colspan=2 class=text-end>'. $comment_note[0]. '</td></tr>' : '');
 	if (!isset($_COOKIE[$session_name]))
 		$article .=
-		'<tr>'. $n.
-		'<td colspan=2 class=text-center><strong class=text-danger>'. $contact_message[3]. '</strong></td>'. $n.
-		'</tr>'. $n.
-		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
+		'<tr>'.
+		'<td colspan=2 class=text-center><strong class=text-danger>'. $contact_message[3]. '</strong></td>'.
+		'</tr>'.
+		'<tr>'.
+		'<td><button data-bs-dismiss=modal class="btn btn-outline-secondary d-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'.
+		'<td><button disabled class="btn btn-outline-danger d-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'.
 		'</tr>';
 	elseif ($filtered_preview_name && $filtered_preview_email && $filtered_preview_message)
 	{
 		$_SESSION['token'] = $token;
 		$article .=
-		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</a></td>'. $n.
-		'<td>'. $n.
-		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#form_result' : r($contact_us)). '">'. $n.
-		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'. $n.
-		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'. $n.
-		'<input type=hidden name=token value="'. $token. '">'. $n.
-		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'. $n.
-		'<button name=send type=submit class="btn btn-outline-success btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button>'. $n.
-		'</form>'. $n.
-		'</td>'. $n.
+		'<tr>'.
+		'<td><button data-bs-dismiss=modal class="btn btn-outline-secondary d-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'.
+		'<td>'.
+		'<form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#form_result' : r($contact_us)). '">'.
+		'<input type=hidden name=preview_name value="'. base64_encode($filtered_preview_name). '">'.
+		'<input type=hidden name=preview_email value="'. base64_encode($filtered_preview_email). '">'.
+		'<input type=hidden name=token value="'. $token. '">'.
+		'<input type=hidden name=preview_message value="'. base64_encode($filtered_preview_message). '">'.
+		'<button name=send type=submit class="btn btn-outline-success d-block" accesskey=z tabindex=0>'. $btn[1]. '</button>'.
+		'</form>'.
+		'</td>'.
 		'</tr>';
 	}
 	else
 		$article .=
-		'<tr>'. $n.
-		'<td><button data-dismiss=modal class="btn btn-outline-secondary btn-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'. $n.
-		'<td><button disabled class="btn btn-outline-danger btn-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'. $n.
+		'<tr>'.
+		'<td><button data-bs-dismiss=modal class="btn btn-outline-secondary d-block" accesskey=y tabindex=0>'. $btn[0]. '</button></td>'.
+		'<td><button disabled class="btn btn-outline-danger d-block" accesskey=z tabindex=0>'. $btn[1]. '</button></td>'.
 		'</tr>';
 	$article .=
-	'</table>'. $n.
-	'</div>'. $n.
-	'</div>'. $n.
-	'</div>'. $n.
-	'</div>'. $n;
-	$javascript .= '$("#preview").modal().on("hidden.bs.modal",function(){$("#form").find("[name=message]").focus()});';
+	'</table>'.
+	'</div>'.
+	'</div>'.
+	'</div>'.
+	'</div>';
+	$javascript .= 'if(previd=document.getElementById("preview")){new bootstrap.Modal(previd).show();previd.addEventListener("hidden.bs.modal",()=>document.getElementById("form").querySelector("[name=message]").focus())}';
 }
 elseif (filter_has_var(INPUT_POST, 'send'))
 {
 	if (isset($_SESSION['token']) && filter_has_var(INPUT_POST, 'token') && $_SESSION['token'] === $_POST['token'])
 	{
 		$sendings = [
-			'preview_name' => FILTER_SANITIZE_STRING,
-			'preview_email' => FILTER_SANITIZE_STRING,
-			'preview_message' => FILTER_SANITIZE_STRING
+			'preview_name' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			'preview_email' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			'preview_message' => FILTER_SANITIZE_FULL_SPECIAL_CHARS
 		];
-
 		$filtered_sendings = filter_input_array(INPUT_POST, $sendings);
-		$filtered_sending_name = filter_var(base64_decode($filtered_sendings['preview_name']), FILTER_SANITIZE_STRING);
-		$filtered_sending_email = filter_var(base64_decode($filtered_sendings['preview_email']), FILTER_VALIDATE_EMAIL);
-		$filtered_sending_message = filter_var(base64_decode($filtered_sendings['preview_message']), FILTER_SANITIZE_STRING);
-
+		$filtered_sending_name = filter_var(base64_decode($filtered_sendings['preview_name']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$filtered_sending_email = filter_var(base64_decode($filtered_sendings['preview_email']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$filtered_sending_message = filter_var(base64_decode($filtered_sendings['preview_message']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		if ($filtered_sending_name && $filtered_sending_email && $filtered_sending_message)
 		{
 			$headers = $mime;
@@ -123,8 +113,7 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 				$subject = sprintf($contact_subject_suffix, $filtered_sending_name). $site_name;
 				$body .= $filtered_sending_message. $n. $n;
 			}
-			$to = isset($author) && filter_var($author_mail = dec($author), FILTER_VALIDATE_EMAIL) ? "$mail_address, $author_mail" : $mail_address;
-
+			$to = isset($author) && ($author_mail = filter_var(dec($author), FILTER_VALIDATE_EMAIL)) && $mail_address !== $author_mail ? "$mail_address, $author_mail" : $mail_address;
 			if (isset($userdir, $comment_dir) && is_dir($userdir) && is_dir($comment_dir))
 			{
 				file_put_contents($comment_dir. '/'. $filename, $filtered_sending_message);
@@ -135,19 +124,21 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 			{
 				if (isset($userdir) && is_dir($userdir)) counter($userdir. '/contact-success.txt', 1);
 				$article .=
-				'<div id=form_result class="alert alert-dismissible alert-success">'. $n.
-				'<button type=button class=close data-dismiss=alert tabindex=0>&times;</button>'. $n.
-				'<strong>'. $contact_message[4]. '</strong>'. $n.
+				'<div id=form_result class="alert alert-dismissible alert-success">'.
+				'<button type=button class=btn-close data-bs-dismiss=alert tabindex=0></button>'.
+				'<strong>'. $contact_message[4]. '</strong>'.
 				'</div>';
+				$javascript .= 'document.getElementById("form_result").addEventListener("closed.bs.alert",()=>location=location.href);';
 			}
 			else
 			{
 				if (isset($userdir) && is_dir($userdir)) counter($userdir. '/contact-error.txt', 1);
 				$article .=
-				'<div id=form_result class="alert alert-dismissible alert-danger">'. $n.
-				'<button type=button class=close data-dismiss=alert tabindex=0>&times;</button>'. $n.
-				'<strong>'. $contact_message[5]. '</strong>'. $n.
+				'<div id=form_result class="alert alert-dismissible alert-danger">'.
+				'<button type=button class=btn-close data-bs-dismiss=alert tabindex=0></button>'.
+				'<strong>'. $contact_message[5]. '</strong>'.
 				'</div>';
+				$javascript .= 'document.getElementById("form_result").addEventListener("closed.bs.alert",()=>location=location.href);';
 			}
 			if (isset($_SESSION['token'])) unset($_SESSION['token']);
 		}
@@ -156,32 +147,28 @@ elseif (filter_has_var(INPUT_POST, 'send'))
 			if (isset($userdir)) counter($userdir. '/'. ($get_categ && $get_title ? 'comment' : 'contact'). '-error.txt', 1);
 			if (isset($_SESSION['token'])) unset($_SESSION['token']);
 			$article .=
-			'<div id=form_result class="alert alert-dismissible alert-danger">'. $n.
-			'<button type=button class=close data-dismiss=alert tabindex=0>&times;</button><strong>'. $contact_message[5]. '</strong>'. $n.
+			'<div id=form_result class="alert alert-dismissible alert-danger">'.
+			'<button type=button class=btn-close data-bs-dismiss=alert tabindex=0></button><strong>'. $contact_message[5]. '</strong>'.
 			'</div>';
+			$javascript .= 'document.getElementById("form_result").addEventListener("closed.bs.alert",()=>location=location.href);';
 		}
 	}
 }
 if (__FILE__ === implode(get_included_files())) exit;
 $article .=
-'<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'. $n.
-'<div class=form-row>'. $n.
-(isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. trim(strip_tags($_SESSION['h'])). '"><input name=email type=hidden value="'. $session_usermail. '">' :
-'<div class="form-group col-xl-6">'. $n.
-'<label class=input-group-text>'. $contact_label[0]. $n.
-'<input required name=name maxlength=60 type=text value="'. ($_SESSION['h'] ?? $filtered_preview_name ?? ''). '" class="form-control ml-md-2" accesskey=n'. ($placeholder[2] ? ' placeholder="'. $placeholder[2]. '"' : ''). '>'. $n.
-'</label>'. $n.
-'</div>'. $n.
-'<div class="form-group col-xl-6">'. $n.
-'<label class=input-group-text>'. $contact_label[1]. $n.
-'<input required name=email type=email value="'. ($filtered_preview_email ?? ''). '" class="form-control ml-md-2" accesskey=m'. ($placeholder[3] ? ' placeholder="'. $placeholder[3]. '"' : ''). '>'. $n.
-'</label>'. $n.
-'</div>'). $n.
-'<div class="form-group col-md-12">'. $n.
-'<label class=input-group-text>'. $contact_label[2]. $n.
-'<textarea required name=message class="form-control ml-md-2" accesskey=t rows=10 tabindex=0'. ($placeholder[4] ? ' placeholder="'. $placeholder[4]. '"' : ''). '>'. ($filtered_preview_message ?? ''). '</textarea>'. $n.
-'</label>'. $n.
-'<button name=preview type=submit class="btn btn-outline-primary float-right mt-3" accesskey=s tabindex=0>'. $contact_preview. '</button>'. $n.
-'</div>'. $n.
-'</div>'. $n.
-'</form>'. $n;
+'<form id=form method=post action="'. $url. ($get_categ && $get_title ? $get_categ. $get_title. '#privacy-policy' : r($contact_us)). '">'.
+(isset($_SESSION['l'], $_SESSION['h']) ? '<input name=name type=hidden value="'. trim($_SESSION['h']). '"><input name=email type=hidden value="'. $session_usermail. '">' :
+'<div class="mb-3 row">'.
+'<label class="col-sm-2 col-form-label" for=name>'. $contact_label[0]. '</label>'.
+'<div class="col-sm-10"><input required name=name id=name maxlength='. $title_length. ' type=text value="'. ($_SESSION['h'] ?? $filtered_preview_name ?? ''). '" class="form-control" accesskey=n'. ($placeholder[2] ? ' placeholder="'. $placeholder[2]. '"' : ''). '></div>'.
+'</div>'.
+'<div class="mb-3 row">'.
+'<label class="col-sm-2 col-form-label" for=email>'. $contact_label[1]. '</label>'.
+'<div class="col-sm-10"><input required name=email id=email type=email value="'. ($filtered_preview_email ?? ''). '" class="form-control" accesskey=m'. ($placeholder[3] ? ' placeholder="'. $placeholder[3]. '"' : ''). '></div>'.
+'</div>').
+'<div class="mb-3 row">'.
+'<label class="col-sm-2 col-form-label" for=message>'. $contact_label[2]. '</label>'.
+'<div class="col-sm-10"><textarea required name=message id=message class="form-control" accesskey=t rows=10 tabindex=0'. ($placeholder[4] ? ' placeholder="'. $placeholder[4]. '"' : ''). '>'. ($filtered_preview_message ?? ''). '</textarea></div>'.
+'</div>'.
+'<button name=preview type=submit class="btn btn-outline-primary" accesskey=s tabindex=0>'. $contact_preview. '</button>'.
+'</form>';

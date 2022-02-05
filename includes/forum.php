@@ -1,7 +1,16 @@
 <?php
 if (__FILE__ === implode(get_included_files())) exit;
 $delete_lines = $upload_time = $upload_user = [];
-$sidebox_order[11] = 0;
+$sidebox_order[11] = 1;
+$blacklist_alert =
+'<div class="modal fade" id=blacklist-alert>'.
+'<div class="modal-dialog modal-dialog-centered">'.
+'<div class=modal-content><div class="modal-header"><h5 class="border-0 text-black-50">'. $user_not_found_title[1]. '</h5>'.
+'<button type=button class=btn-close data-bs-dismiss=modal tabindex=-1></button></div>'.
+'<div class="modal-body text-center">'. $​ask_admin. '</div>'.
+'</div>'.
+'</div>'.
+'</div>';
 if ($forum_topic && false === $fpos)
 {
 	if (is_file($topic_file = './forum/'. $forum_thread. '/'. $forum_topic))
@@ -9,11 +18,16 @@ if ($forum_topic && false === $fpos)
 		$topic_lines = array_unique(file($topic_file));
 		$topic_header = str_getcsv($topic_lines[0]);
 		$topicer_name = $topic_header[1];
+
+
+		$forum_limit = $topic_header[3] ?? $forum_limit;
+
+
 		if (is_dir($topicer_profdir = 'users/'. $topicer_name. '/prof/'))
 			$topicer_name = '<a href="'. $url. '?user='. str_rot13($topicer_name). '">'. avatar($topicer_profdir, 20). ' '. handle($topicer_profdir). '</a>';
 		else
 		{
-			$topicer_name = filter_var($topicer_email = dec($topicer_name), FILTER_VALIDATE_EMAIL) ? avatar($topicer_email, 20). ' '. explode('@', $topicer_email)[0] : '';
+			$topicer_name = ($topicer_email = filter_var(dec($topicer_name), FILTER_VALIDATE_EMAIL)) ? avatar($topicer_email, 20). ' '. explode('@', $topicer_email)[0] : '';
 			if (is_admin()) $topicer_name = '<a href="mailto:'. $topicer_email. '">'. $topicer_name. '</a>';
 		}
 		if ($get_page || $get_title) $header .= '<title>'. $topic_title. ' - '. $site_name. '</title>';
@@ -22,18 +36,19 @@ if ($forum_topic && false === $fpos)
 		'<li class=breadcrumb-item><a href="'. $thread_url. '">'. $thread_title. '</a></li>'.
 		'<li class="breadcrumb-item active">'. $topic_title. '</li>';
 		$article .=
-		'<header class=mb-5>'.
+		'<header class=mb-3>'.
 		$topicer_name. ' <small class="mx-1 text-muted">'. date($time_format, $topic_header[0]). '</small>'.
-		'<h1 class=h3>'. $topic_title. '</h1>'.
+		'<h1 class="h3 my-2">'. $topic_title. '</h1>'.
 		'</header>';
 		if (('!' === $forum_thread[0] || '!' === $forum_topic[0]) && !isset($_SESSION['l']))
-			$article .= '<p class="alert alert-danger mt-3">'. $login_required[0]. '</p>';
+			$article .= '<div class="alert alert-danger">'. $login_required[0]. '</div>';
 		else
 		{
 			$count_lines = count($topic_lines);
-			$stylesheet .= '.media:target{animation:1s target;text-shadow:0 2px 2px rgba(0,0,0,.4)}@keyframes target{from{background:#ccc}to{background:inherit}';
+			$stylesheet .= 'div[id]:target{animation:1s target;box-shadow:0 2px 2px rgba(0,0,0,.4)}@keyframes target{from{background:#ccc}to{background:inherit}';
 			if ($count_lines <= $forum_limit) $article .= '<form'. (!isset($_SESSION['l']) ? '' : ' enctype="multipart/form-data"'). ' method=post>';
-			$javascript .= '$(".re").tooltip({trigger:"hover"});'. (isset($_SESSION['l']) ? '' : '$("#resser").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});');
+			$javascript .= '[].slice.call(document.querySelectorAll(".re")||[]).map(e=>new bootstrap.Tooltip(e,{trigger:"hover"}));'.
+			(isset($_SESSION['l']) ? '' : 'if(resserid=document.getElementById("resser"))new bootstrap.Popover(resserid,{html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});');
 			if (is_admin() || is_subadmin())
 			{
 				if (filter_has_var(INPUT_GET, 'resdel') && ($d = (int)filter_input(INPUT_GET, 'resdel', FILTER_SANITIZE_NUMBER_INT)))
@@ -49,7 +64,7 @@ if ($forum_topic && false === $fpos)
 			}
 			if (($reid = (int)filter_input(INPUT_GET, 'r', FILTER_SANITIZE_NUMBER_INT)) && ($unixtime = (int)filter_input(INPUT_GET, 't', FILTER_SANITIZE_NUMBER_INT)))
 			{
-				$guest_file = $tmpdir. $reid. $delimiter. $unixtime. $delimiter. $remote_addr. '.txt';
+				$guest_file = $tmpdir. $reid. $delimiter. $unixtime. '.txt';
 				if (is_file($guest_file) && $now <= $unixtime + $time_limit * 60)
 				{
 					if (file_put_contents($topic_file, file_get_contents($guest_file), FILE_APPEND | LOCK_EX))
@@ -76,14 +91,14 @@ if ($forum_topic && false === $fpos)
 				}
 				else
 				{
-					$topic_user = filter_var($topic_user_email = dec($topic_str[1]), FILTER_VALIDATE_EMAIL) ? explode('@', $topic_user_email)[0] : '';
+					$topic_user = ($topic_user_email = filter_var(dec($topic_str[1]), FILTER_VALIDATE_EMAIL)) ? explode('@', $topic_user_email)[0] : '';
 					$topic_user_avatar = avatar($topic_user);
 					if (is_admin()) $topic_user = '<a href="mailto:'. $topic_user_email. '">'. $topic_user. '</a>';
 				}
 				$article .=
-				'<div class="media p-4 mb-4'. ($k & 1 ? '': ' bg-light'). '" id="re'. $k. '">'.
-				'<div class="mr-4">'. $topic_user_avatar. '</div>'.
-				'<div class=media-body>';
+				'<div class="d-flex p-4 mb-4'. ($k & 1 ? '': ' bg-light'). '" id="re'. $k. '">'.
+				'<div class="me-4">'. $topic_user_avatar. '</div>'.
+				'<div class=flex-grow-1>';
 				if (is_admin() || is_subadmin())
 				{
 					if ('#' !== $first_letter)
@@ -96,17 +111,17 @@ if ($forum_topic && false === $fpos)
 				{
 					$topic_ref = explode(',', $topic_str[3]);
 					$end = end($topic_ref);
-					$article .= '<p class=mt-3>';
+					$article .= '<p>';
 					foreach ($topic_ref as $ref) $article .= '<a href="#re'. $ref. '">&gt;&gt;'. $ref. '</a>'. ($ref === $end ? '' : ', ');
 					$article .= '</p>';
 				}
-				$article .= '<p class="lead wrap mt-3">';
+				$article .= '<p class="lead wrap">';
 				if ((is_admin() || is_subadmin()) && '#' === $first_letter)
 				{
 					$article .= '<del>'. hs($topic_str[2]). '</del>';
 					$ltrim_sharp = ltrim($topic_str[0], '#');
 					if (isset($topic_str[4]) && is_file($userimg = 'users/'. $topic_str[1]. '/upload/'. $ltrim_sharp))
-						$article .= '<br><a class="btn btn-outline-primary mt-4" data-fancybox href="?user='. str_rot13($topic_str[1]). '&amp;t='. $ltrim_sharp.'&amp;f='. $topic_str[4]. '">'. $icon_image. ' '. $topic_str[0].'.'. $topic_str[4]. '</a>';
+						$article .= '<br><a class="btn btn-outline-primary" data-fancybox href="?user='. str_rot13($topic_str[1]). '&amp;t='. $ltrim_sharp.'&amp;f='. $topic_str[4]. '">'. $icon_image. ' '. $topic_str[0].'.'. $topic_str[4]. '</a>';
 				}
 				elseif (!is_admin() && !is_subadmin() && '#' === $first_letter)
 				{
@@ -117,15 +132,15 @@ if ($forum_topic && false === $fpos)
 				{
 					$article .= hs($topic_str[2]);
 					if (isset($topic_str[4]) && is_file($userimg = 'users/'. $topic_str[1]. '/upload/'. $topic_str[0]))
-						$article .= '<br><a class="btn btn-outline-primary mt-4" data-fancybox href="?user='. str_rot13($topic_str[1]). '&amp;t='. $topic_str[0].'&amp;f='. $topic_str[4]. '">'. $icon_image. ' '. $topic_str[0].'.'. $topic_str[4]. '</a>';
+						$article .= '<hr><a class="btn btn-outline-primary" data-fancybox href="?user='. str_rot13($topic_str[1]). '&amp;t='. $topic_str[0].'&amp;f='. $topic_str[4]. '">'. $icon_image. ' '. $topic_str[0].'.'. $topic_str[4]. '</a>';
 				}
 				$article .= '</p>'.
 				'</div>';
 				if ($count_lines <= $forum_limit)
 					$article .=
-					'<div class="custom-control custom-checkbox re" data-toggle=tooltip data-placement=left title="'. $form_label[0]. '">'.
-					'<input class="custom-control-input" type=checkbox name=ressid[] id="ressid'. $k. '" value="'. $k. '">'.
-					'<label class="custom-control-label" for="ressid'. $k. '"></label>'.
+					'<div class="form-check re" title="'. $form_label[0]. '">'.
+					'<input class=form-check-input type=checkbox name=ressid[] id="ressid'. $k. '" value="'. $k. '">'.
+					'<label class=form-check-label for="ressid'. $k. '"></label>'.
 					'</div>';
 				$article .= '</div>';
 			}
@@ -150,23 +165,23 @@ if ($forum_topic && false === $fpos)
 			if ($count_lines <= $forum_limit)
 			{
 				if (('@' === $forum_thread[0] || '@' === $forum_topic[0]) && !isset($_SESSION['l']))
-					$article .= '<p class="alert alert-warning mt-5">'. $login_required[1]. '</p>';
+					$article .= '<p class="alert alert-warning">'. $login_required[1]. '</p>';
 				else
 				{
-					$article .= ('check' === filter_input(INPUT_GET, 'guest') ? '<div class="alert alert-success mt-5" id=email>'. $forum_guests[2]. '</div>' : '').
-					'<fieldset class=mt-5>'. $n.
+					$article .= ('check' !== filter_input(INPUT_GET, 'guest') ? '' : '<div class="alert alert-success" id=email>'. $forum_guests[2]. '</div>').
+					'<fieldset>'.
 					(!isset($_SESSION['l']) ?
 						'<input class="form-control mb-3" name=resser id=resser placeholder="'. $placeholder[1]. '" type=email required>'
 					:
-						'<input name=resser type=hidden value="'. $_SESSION['l']. '">'. $n.
+						'<input name=resser type=hidden value="'. $_SESSION['l']. '">'.
 						'<input class=form-control-file type=file name=a accesskey=a accept="image/jpeg,image/png,image/gif" title="&lt;='. (int)ini_get('upload_max_filesize') .'MB">'
-					). $n.
-					'<textarea class="form-control mb-3" name=ress accesskey=q required rows=5 tabindex=0></textarea>'. $n.
-					'<input class="btn btn-primary btn-lg btn-block" type=submit accesskey=c>'. $n.
-					'</fieldset>'. $n;
+					).
+					'<textarea class="form-control mb-3" name=ress accesskey=q required rows=5 tabindex=0></textarea>'.
+					'<input class="btn btn-primary" type=submit accesskey=c>'.
+					'<p>'. $forum_title[3]. sprintf($accepting, (int)($forum_limit - $count_lines)).'</p></fieldset>';
 				}
-				$ress = !filter_has_var(INPUT_POST, 'ress') ? '' : trim(filter_input(INPUT_POST, 'ress', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-				$resser = filter_input(INPUT_POST, 'resser', FILTER_SANITIZE_STRING) ?? '';
+				$ress = !filter_has_var(INPUT_POST, 'ress') ? '' : filter_input(INPUT_POST, 'ress');
+				$resser = !filter_has_var(INPUT_POST, 'resser') ? '' : filter_input(INPUT_POST, 'resser', FILTER_CALLBACK, ['options' => 'sanitize_mail']);
 				$ressid = !filter_has_var(INPUT_POST, 'ressid') ? '' : filter_input_array(INPUT_POST, ['ressid' => ['flags' => FILTER_REQUIRE_ARRAY, 'filter' => FILTER_SANITIZE_NUMBER_INT]]);
 				if ($ress && $resser)
 				{
@@ -178,14 +193,14 @@ if ($forum_topic && false === $fpos)
 						if (!filter_var($resser, FILTER_CALLBACK, ['options' => 'blacklist']))
 						{
 							$article .= $blacklist_alert;
-							$javascript .= '$("#blacklist-alert").modal();';
+							$javascript .= 'new bootstrap.Modal(document.getElementById("blacklist-alert")).show();';
 						}
 						else
 						{
-							if (file_put_contents($tmpdir. $k. $delimiter. $resstime. $delimiter. $remote_addr. '.txt', $resstime. ',"'. enc($resser). '","'. $ress. '"'. (!isset($ressid['ressid']) ? '' : ',"'. implode(',', $ressid['ressid']). '"'). $n, LOCK_EX))
+							if (file_put_contents($tmpdir. $k. $delimiter. $resstime. '.txt', $resstime. ',"'. enc($resser). '","'. $ress. '"'. (!isset($ressid['ressid']) ? '' : ',"'. implode(',', $ressid['ressid']). '"'). $n, LOCK_EX))
 							{
 								$ress_limit = date($time_format, $resstime + $time_limit * 60);
-								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 								$subject = $forum_guests[0]. ' - '. $site_name;
 								$body = sprintf($forum_guests[1], $ress_limit). $n. $topic_url. '&amp;r='. $k. '&amp;t='. $resstime. $n. $n. $separator. $n. $site_name. $n. $url;
 								if (mail($resser, $subject, $body, $headers)) header('Location: '. $forum_url. '&guest=check#email');
@@ -230,24 +245,24 @@ elseif ($forum_thread && false === $fpos)
 			$threader_name = '<a href="'. $url. '?user='. str_rot13($threader_name). '">'. avatar($threader_profdir, 20). ' '. handle($threader_profdir). '</a>';
 		else
 		{
-			$threader_name = filter_var($threader_email = dec($threader_name), FILTER_VALIDATE_EMAIL) ? avatar($threader_email, 20). ' '. explode('@', $threader_email)[0] : '';
+			$threader_name = ($threader_email = filter_var(dec($threader_name), FILTER_VALIDATE_EMAIL)) ? avatar($threader_email, 20). ' '. explode('@', $threader_email)[0] : '';
 			if (is_admin() || is_subadmin())
 				$threader_name = '<a href="mailto:'. $threader_email. '">'. $threader_name. '</a>';
 		}
 		$article .=
-		'<header class=mb-5>'.
+		'<header class=my-3>'.
 		$threader_name. ' <small class="mx-1 text-muted">'. date($time_format, filemtime($threader_file)). '</small>'.
-		'<h1 class=h3>'. $thread_title. '</h1>'.
+		'<h1 class="h3 my-2">'. $thread_title. '</h1>'.
 		'</header>';
 		if ('!' === $forum_thread[0] && !isset($_SESSION['l']))
 		{
-			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. $site_name. '</title>'. $n;
+			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. $site_name. '</title>';
 			$breadcrumb .= '<li class="breadcrumb-item active"><a href="'. $forum_url. '">'. h($forum). '</a></li><li class="breadcrumb-item active">'. $thread_title. '</li>';
-			$article .= '<p class="alert alert-danger mt-3">'. $login_required[0]. '</p>';
+			$article .= '<p class="alert alert-danger">'. $login_required[0]. '</p>';
 		}
 		else
 		{
-			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
+			if ($get_page || $get_title) $header .= '<title>'. $thread_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>';
 			$breadcrumb .=
 			($pages > 1 ?
 				'<li class=breadcrumb-item><a href="'. $forum_url. '">'. h($forum). '</a></li>'.
@@ -259,14 +274,14 @@ elseif ($forum_thread && false === $fpos)
 			);
 			if (is_admin() || is_subadmin())
 			{
-				if ($d = basename(filter_input(INPUT_GET, 'topicdel', FILTER_SANITIZE_STRING)))
+				if ($d = !filter_has_var(INPUT_GET, 'topicdel') ? '' : filter_input(INPUT_GET, 'topicdel', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
 					if (is_file('./forum/'. $forum_thread. '/'. $d)) if (rename('./forum/'. $forum_thread. '/'. $d, './forum/'. $forum_thread. '/#'. $d)) exit (header('Location: '. $thread_url));
-				if ($r = basename(filter_input(INPUT_GET, 'topicrepost', FILTER_SANITIZE_STRING)))
+				if ($r = !filter_has_var(INPUT_GET, 'topicrepost') ? '' : filter_input(INPUT_GET, 'topicrepost', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
 					if (is_file('./forum/'. $forum_thread. '/#'. $r)) if (rename('./forum/'. $forum_thread. '/#'. $r, './forum/'. $forum_thread. '/'. $r)) exit (header('Location: '. $thread_url));
 			}
-			if (($guest = basename(filter_input(INPUT_GET, 'g', FILTER_SANITIZE_STRING))) && ($unixtime = (int)filter_input(INPUT_GET, 't', FILTER_SANITIZE_NUMBER_INT)))
+			if (($guest = !filter_has_var(INPUT_GET, 'g') ? '' : filter_input(INPUT_GET, 'g', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])) && ($unixtime = !filter_has_var(INPUT_GET, 't') ? '' : (int)filter_input(INPUT_GET, 't', FILTER_SANITIZE_NUMBER_INT)))
 			{
-				$guest_file = $tmpdir. $unixtime. $delimiter. str_rot13($guest). $delimiter. $remote_addr;
+				$guest_file = $tmpdir. $unixtime. $delimiter. str_rot13($guest);
 				if (is_file($guest_file) && $now <= $unixtime + $time_limit * 60)
 				{
 					 $guest_content = str_getcsv($guest_str = file_get_contents($guest_file));
@@ -302,11 +317,11 @@ elseif ($forum_thread && false === $fpos)
 					if ('#' !== $thread_topic[0])
 						$article .=
 						(!is_admin() && !is_subadmin() ? '' : '<a class="btn btn-sm btn-danger" href="'. $thread_url. '&amp;topicdel='. r($thread_topic). '">'. $btn[4]. '</a>').
-						'<a class="flex-grow-1 ml-2" href="'. $thread_url. r($thread_topic). '">'. h($topic_name). '</a>';
+						'<a class="h5 flex-grow-1 ms-2" href="'. $thread_url. r($thread_topic). '">'. h($topic_name). '</a>';
 					else
 						$article .=
 						(!is_admin() && !is_subadmin() ? '' : '<a class="btn btn-sm btn-success" href="'. $thread_url. '&amp;topicrepost='. r(substr($thread_topic, 1)). '">'. $btn[6]. '</a>').
-						'<del class="flex-grow-1 ml-2">'. h($topic_name). '</del>';
+						'<del class="flex-grow-1 ms-2">'. h($topic_name). '</del>';
 					$article .=
 					'<span class="d-flex flex-column text-center">'.
 					'<small class="bg-light px-3 py-2">'. timeformat(filemtime($thread_topics), $intervals). '</small>'.
@@ -317,8 +332,9 @@ elseif ($forum_thread && false === $fpos)
 				$article .= '</ul>';
 				if ($count_topics > $forum_contents_per_page) pager($max_page, $page_ceil);
 			}
-			$topic = !filter_has_var(INPUT_POST, 'topic') ? '' : trim(str_replace($disallow_symbols, $replace_symbols, filter_input(INPUT_POST, 'topic')));
-			$topicer = !filter_has_var(INPUT_POST, 'topicer') ? '' : filter_input(INPUT_POST, 'topicer', FILTER_SANITIZE_EMAIL) ?? trim(filter_input(INPUT_POST, 'topicer', FILTER_SANITIZE_STRING));
+			$topic = !filter_has_var(INPUT_POST, 'topic') ? '' : filter_input(INPUT_POST, 'topic', FILTER_CALLBACK, ['options' => 'trim_str_replace_basename']);
+			$topicer = !filter_has_var(INPUT_POST, 'topicer') ? '' : filter_input(INPUT_POST, 'topicer', FILTER_CALLBACK, ['options' => 'sanitize_mail']);
+			$topic_limit = !filter_has_var(INPUT_POST, 'topic-limit') ? '' : filter_input(INPUT_POST, 'topic-limit', FILTER_SANITIZE_NUMBER_INT);
 			if ($topic && $topicer)
 			{
 				if (!is_file($topicfile = './forum/'. $forum_thread. '/'. $topic) && !is_file('./forum/'. $forum_thread. '/#'. $topic))
@@ -328,16 +344,16 @@ elseif ($forum_thread && false === $fpos)
 						if (!filter_var($topicer, FILTER_CALLBACK, ['options' => 'blacklist']))
 						{
 							$article .= $blacklist_alert;
-							$javascript .= '$("#blacklist-alert").modal();';
+							$javascript .= 'new bootstrap.Modal(document.getElementById("blacklist-alert")).show();';
 						}
 						else
 						{
 							$topictime = $now;
 							$enctopicer = enc($topicer);
-							if (file_put_contents($tmpdir. $topictime. $delimiter. $enctopicer. $delimiter. $remote_addr, $topictime. ',"'. $enctopicer. '","'. $topic. '"'. $n, LOCK_EX))
+							if (file_put_contents($tmpdir. $topictime. $delimiter. $enctopicer, $topictime. ',"'. $enctopicer. '","'. $topic. '",'. $topic_limit. $n, LOCK_EX))
 							{
 								$topic_limit = date($time_format, $topictime + $time_limit * 60);
-								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+								$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 								$subject = $forum_guests[0]. ' - '. $site_name;
 								$body = sprintf($forum_guests[1], $topic_limit). $n. $thread_url. '&amp;g='. str_rot13($enctopicer). '&amp;t='. $topictime. $n. $n. $separator. $n. $site_name. $n. $url;
 								if (mail($topicer, $subject, $body, $headers)) header('Location: '. $thread_url. '&guest=check#email');
@@ -346,7 +362,7 @@ elseif ($forum_thread && false === $fpos)
 					}
 					elseif (is_dir('users/'. $topicer. '/prof/'))
 					{
-						file_put_contents($topicfile, $now. ',"'. $topicer. '","'. $topic. '"'. $n, FILE_APPEND | LOCK_EX);
+						file_put_contents($topicfile, $now. ',"'. $topicer. '","'. $topic. '",'. $topic_limit. $n, FILE_APPEND | LOCK_EX);
 						counter($userdir. '/forum-topic.txt', 1);
 						touch('./forum/'. $forum_thread, $now);
 						exit (header('Location: '. $thread_url. r($topic)));
@@ -358,26 +374,31 @@ elseif ($forum_thread && false === $fpos)
 			if ($allow_guest_creates || isset($_SESSION['l']))
 			{
 				$article .=
-				('check' === filter_input(INPUT_GET, 'guest') ? '<div class="alert alert-success mt-5" id=email>'. $forum_guests[2]. '</div>' : '').
-				'<form class="bg-light mt-5 p-4" method=post>'.
-				'<label class="h5 mb-4" for=topic>'. $form_label[1]. ' <small class=text-muted id=max></small></label>'. $n.
-				'<div class=input-group>'. $n.
-				'<input class=form-control type=text name=topic id=topic accesskey=t required placeholder="'. $form_label[2]. '">'. $n.
+				('check' !== filter_input(INPUT_GET, 'guest') ? '' : '<div class="alert alert-success" id=email>'. $forum_guests[2]. '</div>').
+				'<form class="bg-light p-4" method=post>'.
+				'<label class="h5 mb-4" for=topic>'. $form_label[1]. ' <small class=text-muted id=max></small></label>'.
+				'<div class=input-group>'.
+				'<input class=form-control type=text name=topic id=topic accesskey=t maxlength='. $title_length. ' required placeholder="'. $form_label[2]. '">'.
 				(isset($_SESSION['l']) ? '<input type=hidden name=topicer value="'. $_SESSION['l']. '">' : '<input class=form-control name=topicer id=topicer placeholder="'. $placeholder[1]. '" type=email required>').
-				'<div class=input-group-append><input class="btn btn-primary" type=submit accesskey=c></div>'. $n.
-				'</div>'. $n.
+				'<select class=form-select name=topic-limit id=topic-limit style="flex:0 10%" data-bs-toggle="tooltip" data-bs-placement="top" title="'. $forum_title[3]. '">'.
+				'<option selected>'. sprintf($hitcount, $forum_limit). '</option>'.
+				'<option value="500">'. sprintf($hitcount, 500). '</option>'.
+				'<option value="1000">'. sprintf($hitcount, 1000). '</option>'.
+				'</select>'.
+				'<input class="btn btn-primary" type=submit accesskey=c>'.
+				'</div>'.
 				'</form>';
-				$javascript .= '$("#topic").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#topicer").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#topic").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#topic").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#topic").removeClass("is-invalid");$(":submit").prop("disabled",false)}});';
+				$javascript .= 'if(topicerid=document.getElementById("topicer"))new bootstrap.Popover(topicerid,{html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});if(topicid=document.getElementById("topic")){new bootstrap.Popover(topicid,{html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});topicid.addEventListener("input",ev=>{l=encodeURIComponent(ev.target.value).replace(/%../g,"x").length,m='. $title_length. ';document.getElementById("max").innerText="'. sprintf($form_label[5], '"+(m-l)+"'). '";if(l>=m){topicid.classList.add("is-invalid");document.querySelector("input[type=submit]").setAttribute("disabled",true)}else{topicid.classList.remove("is-invalid");document.querySelector("input[type=submit]").removeAttribute("disabled")}})}';
 			}
 			else
-				$article .= '<p class="alert alert-warning mt-3">'. $forum_guests[6]. '</p>';
+				$article .= '<p class="alert alert-warning">'. $forum_guests[6]. '</p>';
 		}
 	}
 	else not_found();
 }
 elseif (!isset($v[0]))
 {
-	if ($get_page || $get_title) $header .= '<title>'. h($forum). ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>'. $n;
+	if ($get_page || $get_title) $header .= '<title>'. h($forum). ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>';
 	$breadcrumb .=
 	($pages > 1 ?
 		'<li class=breadcrumb-item><a href="'. $forum_url. '">'. h($forum). '</a></li><li class="breadcrumb-item active">'. sprintf($page_prefix, $pages). '</li>'
@@ -388,9 +409,9 @@ elseif (!isset($v[0]))
 	{
 		if (is_admin() || is_subadmin())
 		{
-			if ($d = basename(filter_input(INPUT_GET, 'del', FILTER_SANITIZE_STRING)))
+			if ($d = !filter_has_var(INPUT_GET, 'del') ? '' : filter_input(INPUT_GET, 'del', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
 				if (is_dir('./forum/'. $d)) if (rename('./forum/'. $d, './forum/#'. $d)) exit (header('Location: '. $forum_url));
-			if ($r = basename(filter_input(INPUT_GET, 'repost', FILTER_SANITIZE_STRING)))
+			if ($r = !filter_has_var(INPUT_GET, 'repost') ? '' : filter_input(INPUT_GET, 'repost', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
 				if (is_dir('./forum/#'. $r)) if (rename('./forum/#'. $r, './forum/'. $r)) exit (header('Location: '. $forum_url));
 		}
 		usort($forum_thread_glob, 'sort_time');
@@ -399,10 +420,11 @@ elseif (!isset($v[0]))
 		$max_page = min($pages, $page_ceil);
 		$sliced_threads = array_slice($forum_thread_glob, ($max_page - 1) * $forum_contents_per_page, $forum_contents_per_page);
 		$article .=
-		'<header class=mb-5>'.
-		'<h2 class=h3>'. $forum. '</h2>'.
-		'<small class="px-3 py-2 bg-light m-2">'. $forum_title[1]. ' <span class="badge badge-light">'. $count_threads. '</span></small>'.
-		'<small class="px-3 py-2 bg-light m-2">'. $forum_title[0]. ' <span class="badge badge-light">'. count(array_filter(glob('forum/[!#]*/[!#]', GLOB_NOSORT), 'is_file')). '</span></small>'.
+		'<header class=mb-3>'.
+		'<h2 class="h3 my-2">'. $forum.
+		'<small class="h5 mx-4">'. $forum_title[1]. ' <span class="badge bg-secondary">'. $count_threads. '</span></small>'.
+		'<small class="h5">'. $forum_title[0]. ' <span class="badge bg-secondary">'. count(array_filter(glob('forum/[!#]*/[!#]*', GLOB_NOSORT), 'is_file')). '</span></small>'.
+		'</h2>'.
 		'</header>'.
 		'<div class="'. $forum_wrapper_class. '">';
 		if ($count_threads > $forum_contents_per_page) pager($max_page, $page_ceil);
@@ -410,42 +432,42 @@ elseif (!isset($v[0]))
 		{
 			$thread_name = basename($threads);
 			$threader_file = $threads. '/#threader';
-			$thread_title = '#' === $thread_name[0] || '!' === $thread_name[0] || '@' === $thread_name[0] ?substr($thread_name, 1) : $thread_name;
+			$thread_title = '#' === $thread_name[0] || '!' === $thread_name[0] || '@' === $thread_name[0] ? substr($thread_name, 1) : $thread_name;
 			if (is_file($threader_old = $threads. '/threader')) rename($threader_old, $threader_file);
 			$threader_name = file_get_contents($threads. '/#threader');
 			if (is_dir($threader_profdir = 'users/'. $threader_name. '/prof/'))
 				$threader_name = '<a href="'. $url. '?user='. str_rot13($threader_name). '">'. avatar($threader_profdir, 20). ' '. handle($threader_profdir). '</a>';
 			else
 			{
-				$threader_name = filter_var($threader_email = dec($threader_name), FILTER_VALIDATE_EMAIL) ? avatar($threader_email, 20). ' '. explode('@', $threader_email)[0] : '';
+				$threader_name = ($threader_email = filter_var(dec($threader_name), FILTER_VALIDATE_EMAIL)) ? avatar($threader_email, 20). ' '. explode('@', $threader_email)[0] : '';
 				if (is_admin() || is_subadmin())
 					$threader_name = '<a href="mailto:'. $threader_email. '">'. $threader_name. '</a>';
 			}
 			$article .=
-			'<div class="d-flex mb-5 p-3'. (!($key & 1) ? '' : ' bg-light'). '">'.
+			'<div class="d-flex mb-5 p-3'. (!($key & 1) ? '' : ' bg-body'). '">'.
 			'<div class="col-9">'.
-			'<small class="d-block mb-3">'. $threader_name. '</small>';
+			'<small class="d-block mb-2">'. $threader_name. '</small>';
 			if ('#' !== $thread_name[0])
 				$article .=
-				(!is_admin() && !is_subadmin() ? '' : '<a class="btn btn-sm btn-danger mr-2" href="'. $forum_url. '&amp;del='. r($thread_title). '">'. $btn[4]. '</a>').
-				'<a class="h4" href="'. $forum_url. '/'. r($thread_name). '/">'. h($thread_title). '</a>';
+				(!is_admin() && !is_subadmin() ? '' : '<a class="btn btn-sm btn-danger me-2" href="'. $forum_url. '&amp;del='. r($thread_title). '">'. $btn[4]. '</a>').
+				'<a class=h4 href="'. $forum_url. '/'. r($thread_name). '/">'. h($thread_title). '</a>';
 			else
 				$article .=
 				(!is_admin() && !is_subadmin() ? '' : ' <a class="btn btn-sm btn-success" href="'. $forum_url. '&amp;repost='. r($thread_title). '">'. $btn[6]. '</a>').
-				'<del class="h5 ml-2">'. h($thread_title). '</del>';
+				'<del class="h5 ms-2">'. h($thread_title). '</del>';
 			$article .=
 			'</div>'.
 			'<div class="col-3 bg-light text-center d-flex flex-column text-center">'.
 			'<small class="px-3 py-2">'. timeformat(filemtime($threads), $intervals). '</small>'.
 			'<small class="px-3 py-2">'.$forum_title[0]. ' '. count(array_filter(glob($threads. '/[!#]*', GLOB_NOSORT), 'is_file')). '</small></div>'.
-			'</div>'. $n;
+			'</div>';
 		}
 		$article .= '</div>';
 		if ($count_threads > $forum_contents_per_page) pager($max_page, $page_ceil);
 	}
-	if (($guest = basename(filter_input(INPUT_GET, 'g', FILTER_SANITIZE_STRING))) && ($unixtime = (int)filter_input(INPUT_GET, 't', FILTER_SANITIZE_NUMBER_INT)))
+	if (($guest = !filter_has_var(INPUT_GET, 'g') ? '' : filter_input(INPUT_GET, 'g', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])) && ($unixtime = !filter_has_var(INPUT_GET, 't') ? '' : (int)filter_input(INPUT_GET, 't', FILTER_SANITIZE_NUMBER_INT)))
 	{
-		$guest_file = $tmpdir. $unixtime. $delimiter. ($threader = str_rot13($guest)). $delimiter. $remote_addr;
+		$guest_file = $tmpdir. $unixtime. $delimiter. ($threader = str_rot13($guest));
 		if (is_file($guest_file) && $now <= $unixtime + $time_limit * 60)
 		{
 			if (!is_dir($threaddir = './forum/'. ($thread_name = file_get_contents($guest_file)). '/'))
@@ -460,8 +482,8 @@ elseif (!isset($v[0]))
 			$article .= '<div class="alert alert-danger mb-4">'. $not_found[0]. '</div>';
 		if (is_file($guest_file)) unlink($guest_file);
 	}
-	$thread = !filter_has_var(INPUT_POST, 'thread') ? '' : trim(str_replace($forum_disallow_symbols, $forum_replace_symbols, filter_input(INPUT_POST, 'thread')));
-	$threader = !filter_has_var(INPUT_POST, 'threader') ? '' : filter_input(INPUT_POST, 'threader', FILTER_SANITIZE_EMAIL) ?? trim(filter_input(INPUT_POST, 'threader', FILTER_SANITIZE_STRING));
+	$thread = !filter_has_var(INPUT_POST, 'thread') ? '' : filter_input(INPUT_POST, 'thread', FILTER_CALLBACK, ['options' => 'trim_str_replace_basename']);
+	$threader = !filter_has_var(INPUT_POST, 'threader') ? '' : filter_input(INPUT_POST, 'threader', FILTER_CALLBACK, ['options' => 'sanitize_mail']);
 	if ($thread && $threader)
 	{
 		if (!is_dir($threaddir = './forum/'. $thread. '/'))
@@ -471,7 +493,7 @@ elseif (!isset($v[0]))
 				if (!filter_var($threader, FILTER_CALLBACK, ['options' => 'blacklist']))
 				{
 					$article .= $blacklist_alert;
-					$javascript .= '$("#blacklist-alert").modal();';
+					$javascript .= 'new bootstrap.Modal(document.getElementById("blacklist-alert")).show();';
 				}
 				else
 				{
@@ -480,7 +502,7 @@ elseif (!isset($v[0]))
 					if (file_put_contents($tmpdir. $threadtime. $delimiter. $encthreader, $thread, LOCK_EX))
 					{
 						$thread_limit = date($time_format, $threadtime + $time_limit * 60);
-						$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n;
+						$headers = $mime. 'From: '. $from. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 						$subject = $forum_guests[0]. ' - '. $site_name;
 						$body = sprintf($forum_guests[1], $thread_limit). $n. $forum_url. '&amp;g='. str_rot13($encthreader). '&amp;t='. $threadtime. $n. $n. $separator. $n. $site_name. $n. $url;
 						if (mail($threader, $subject, $body, $headers)) header('Location: '. $forum_url. '&guest=check#email');
@@ -501,17 +523,17 @@ elseif (!isset($v[0]))
 	if ($allow_guest_creates || isset($_SESSION['l']))
 	{
 		$article .=
-		('check' === filter_input(INPUT_GET, 'guest') ? '<div class="alert alert-success my-4" id=email>'. $forum_guests[2]. '</div>' : '').
+		('check' !== filter_input(INPUT_GET, 'guest') ? '' : '<div class="alert alert-success my-4" id=email>'. $forum_guests[2]. '</div>').
 		'<form class="bg-light p-4" method=post>'.
-		'<label class="h5 mb-4" for=thread>'. $form_label[3]. ' <small class=text-muted id=max></small></label>'. $n.
-		'<div class=input-group>'. $n.
-		'<input class=form-control type=text name=thread id=thread accesskey=t required placeholder="'. $form_label[4]. '">'. $n.
+		'<label class="h5 mb-4" for=thread>'. $form_label[3]. ' <small class=text-muted id=max></small></label>'.
+		'<div class=input-group>'.
+		'<input class=form-control type=text name=thread id=thread accesskey=t maxlength='. $title_length. ' required placeholder="'. $form_label[4]. '">'.
 		(isset($_SESSION['l']) ? '<input type=hidden name=threader value="'. $_SESSION['l']. '">' : '<input class=form-control name=threader id=threader placeholder="'. $placeholder[1]. '" type=email required>').
-		'<div class=input-group-append><input class="btn btn-primary" type=submit accesskey=c></div>'. $n.
-		'</div>'. $n.
+		'<input class="btn btn-primary" type=submit accesskey=c>'.
+		'</div>'.
 		'</form>';
-		$javascript .= '$("#thread").popover({html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});$("#threader").popover({html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});$("#thread").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$("#max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$("#thread").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$("#thread").removeClass("is-invalid");$(":submit").prop("disabled",false)}});';
+		$javascript .= 'if(threaderid=document.getElementById("threader"))new bootstrap.Popover(threaderid,{html:true,trigger:"focus",placement:"bottom",content:"'. $forum_guests[5]. '"});if(threadid=document.getElementById("thread")){new bootstrap.Popover(threadid,{html:true,trigger:"focus",placement:"bottom",title:"'. $forum_guests[3]. '",content:"'. $forum_guests[4]. '"});threadid.addEventListener("input",ev=>{l=encodeURIComponent(ev.target.value).replace(/%../g,"x").length,m='. $title_length. ';document.getElementById("max").innerText="'. sprintf($form_label[5], '"+(m-l)+"'). '";if(l>=m){threadid.classList.add("is-invalid");document.querySelector("input[type=submit]").setAttribute("disabled",true)}else{threadid.classList.remove("is-invalid");document.querySelector("input[type=submit]").removeAttribute("disabled")}})}';
 	}
 	else
-		$article .= '<p class="alert alert-warning mt-3">'. $forum_guests[6]. '</p>';
+		$article .= '<p class="alert alert-warning">'. $forum_guests[6]. '</p>';
 }

@@ -120,6 +120,49 @@ function get_hsl($colour)
 		return [$h, $s, $l];
 	}
 }
+function hsl2rgb($h, $s, $l)
+{
+	$c = (1 - abs(2 * ($l / 100) - 1)) * $s / 100;
+	$x = $c * (1 - abs(fmod(($h / 60), 2) - 1));
+	$m = ($l / 100) - ($c / 2);
+	if (60 > $h)
+	{
+		$r = $c;
+		$g = $x;
+		$b = 0;
+	}
+	elseif (120 > $h)
+	{
+		$r = $x;
+		$g = $c;
+		$b = 0;
+	}
+	elseif (180 > $h)
+	{
+		$r = 0;
+		$g = $c;
+		$b = $x;
+	}
+	elseif (240 > $h)
+	{
+		$r=0;
+		$g=$x;
+		$b=$c;
+	}
+	elseif (300 > $h)
+	{
+		$r = $x;
+		$g = 0;
+		$b = $c;
+	}
+	else
+	{
+		$r = $c;
+		$g = 0;
+		$b = $x;
+	}
+	return [floor(($r + $m) * 255), floor(($g + $m) * 255), floor(($b + $m) * 255)];
+}
 
 function get_dirs($dir, $nosort=true)
 {
@@ -132,12 +175,13 @@ function get_dirs($dir, $nosort=true)
 
 function get_summary($file)
 {
-	global $summary_length, $encoding, $n, $ellipsis;
+	global $summary_length, $encoding, $n, $ellipsis, $line_breaks;
 	ob_start();
 	echo preg_replace('/<script.*?\/script>/s', '', file_get_contents($file));
 	$text = strip_tags(ob_get_clean());
 	$text = str_replace("\t", '', $text);
 	$text = str_replace([$n. $n. $n, $n. $n], $n, $text);
+	$text = str_replace($line_breaks, '&#10;', $text);
 	$text = mb_strimwidth($text, 0, $summary_length, $ellipsis, $encoding);
 	return trim($text);
 }
@@ -188,41 +232,41 @@ function ht($str)
 
 function social($t, $u)
 {
-	global $aside, $sidebox_order, $sidebox_title, $social_medias, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $n;
+	global $aside, $sidebox_order, $sidebox_title, $social_medias, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class;
 	if ($social_medias)
 	{
 		$aside .=
-		'<div id=social class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[2]. '">'. $n.
-		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[7]. '</div>'. $n.
-		'<div class="'. $sidebox_content_class[3]. '">'. $n;
+		'<div id=social class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[2]. '">'.
+		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[7]. '</div>'.
+		'<div class="'. $sidebox_content_class[3]. '">';
 		$social_link = include 'socials.php';
 		foreach($social_medias as $social_name)
-			$aside .= $social_link[$social_name]. $n;
-		$aside .= '</div></div>'. $n;
+			$aside .= $social_link[$social_name];
+		$aside .= '</div></div>';
 	}
 }
 
 function permalink($t, $u)
 {
-	global $aside, $sidebox_order, $sidebox_title, $permalink, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $n;
+	global $aside, $sidebox_order, $sidebox_title, $permalink, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class;
 	$aside .=
-	'<div id=permalink class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[3]. '">'. $n.
-	'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[8]. '</div>'. $n.
-	'<div class="'. $sidebox_content_class[3]. '">'. $n.
-	'<div class="input-group input-group-sm mb-3">'. $n.
-	'<div class=input-group-prepend><label class=input-group-text for=html>'. $permalink[0]. '</label></div>'. $n.
-	'<input readonly onclick="this.select()" id=html type=text class=form-control value="&lt;a href=&quot;'. $u. '&quot; target=&quot;_blank&quot;&gt;'. htmlentities(h($t)). '&lt;/a&gt;">'. $n.
-	'</div>'. $n.
-	'<div class="input-group input-group-sm mb-3">'. $n.
-	'<div class=input-group-prepend><label class=input-group-text for=wiki>'. $permalink[1]. '</label></div>'. $n.
-	'<input readonly onclick="this.select()" id=wiki type=text class=form-control value="['. $u. ' '. htmlentities(h($t)). ']">'. $n.
-	'</div>'. $n.
-	'<div class="input-group input-group-sm mb-2">'. $n.
-	'<div class=input-group-prepend><label class=input-group-text for=forum>'. $permalink[2]. '</label></div>'. $n.
-	'<input readonly onclick="this.select()" id=forum type=text class=form-control value="[URL='. $u. ']'. htmlentities(h($t)). '[/URL]">'. $n.
-	'</div>'. $n.
-	'</div>'. $n.
-	'</div>'. $n;
+	'<div id=permalink class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[3]. '">'.
+	'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[8]. '</div>'.
+	'<div class="'. $sidebox_content_class[3]. '">'.
+	'<div class="input-group input-group-sm mb-3">'.
+	'<label class=input-group-text for=html>'. $permalink[0]. '</label>'.
+	'<input readonly onclick="this.select()" id=html type=text class="form-control bg-white" value="&lt;a href=&quot;'. $u. '&quot; target=&quot;_blank&quot;&gt;'. htmlentities(h($t)). '&lt;/a&gt;">'.
+	'</div>'.
+	'<div class="input-group input-group-sm mb-3">'.
+	'<label class=input-group-text for=wiki>'. $permalink[1]. '</label>'.
+	'<input readonly onclick="this.select()" id=wiki type=text class="form-control bg-white" value="['. $u. ' '. htmlentities(h($t)). ']">'.
+	'</div>'.
+	'<div class="input-group input-group-sm mb-2">'.
+	'<label class=input-group-text for=forum>'. $permalink[2]. '</label>'.
+	'<input readonly onclick="this.select()" id=forum type=text class="form-control bg-white" value="[URL='. $u. ']'. htmlentities(h($t)). '[/URL]">'.
+	'</div>'.
+	'</div>'.
+	'</div>';
 }
 
 function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
@@ -230,16 +274,16 @@ function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 	return
 	'<a href="'. $uri. '" target="'. $target. '"' .
 	($class ? ' class="'. $class. '"' : '') .
-	($title ? ' data-toggle="tooltip" title="'. $title. '" data-html="true"' : '') .
+	($title ? ' data-bs-toggle=tooltip title="'. $title. '" data-html=true' : '') .
 	($position ? ' data-placement="'. $position. '"' : '') .
 	('_blank' === $target ? ' rel="noopener noreferrer"' : ''). '>' .
-	(!$name ? h($uri) : h($name)) .
+	(!$name ? h(urldecode($uri)) : h($name)) .
 	'</a>';
 }
 
 function img($src, $class='', $show_exif_comment=false, $per=1)
 {
-	global $url, $source, $n, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks, $use_datasrc;
+	global $url, $source, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks, $use_datasrc;
 	if ($extension = get_extension($src))
 	{
 		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
@@ -250,45 +294,50 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 		{
 			$alt = h(basename($src));
 			$exif = @exif_read_data($src, '', '', true);
-			$exif_thumbnail = isset ($exif['THUMBNAIL']['THUMBNAIL']) ? $exif['THUMBNAIL']['THUMBNAIL'] : '';
-			$exif_comment = !$show_exif_comment ? '' : (isset($exif['COMMENT']) && 'png' !== $lower_ext ? h(strip_tags($exif['COMMENT'][0])) : h(strip_tags(get_png_tEXt($src))));
+			$exif_comment = '';
+			$exif_thumbnail = !isset($exif['THUMBNAIL']['THUMBNAIL']) ? '' : $exif['THUMBNAIL']['THUMBNAIL'];
+			if ($show_exif_comment)
+			{
+				if (isset($exif['COMMENT'][0])) $exif_comment = h($exif['COMMENT'][0]);
+				if ('.png' === $lower_ext) $exif_comment = h(get_png_tEXt($src));
+			}
 			list ($width, $height, $type, $attr) = @getimagesize($src);
 			if ($exif_thumbnail) list ($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
-			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
-			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n.
-			'<p class="text-center wrap my-2">'. $exif_comment. '</p>'. $n.
-			'</figure>'. $n :
-			'<img class="align-top img-fluid img-thumbnail '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'. $n;
+			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
+			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
+			'<p class="text-center wrap my-2">'. $exif_comment. '</p>'.
+			'</figure>' :
+			'<img class="align-top img-fluid img-thumbnail '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>';
 			if ($get_title || $get_page)
 			{
 				if (false !== $src_scheme)
 					return
-					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'. $n.
-					'<a data-fancybox=gallery href="'. $src. '">'. $n.
-					'<img class=img-fluid '. $data. 'src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'. $n.
-					'</a>'. $n.
-					'<small class="blockquote-footer my-2 text-right">'. $n.
-					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
-					'</small>'. $n.
-					'</figure>'. $n;
+					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'.
+					'<a data-fancybox=gallery href="'. $src. '">'.
+					'<img class=img-fluid '. $data. 'src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'.
+					'</a>'.
+					'<small class="blockquote-footer my-2 text-end">'.
+					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'.
+					'</small>'.
+					'</figure>';
 				elseif ($exif_comment && !$exif_thumbnail)
 					return
-					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'. $n.
-					'<a data-fancybox=gallery class="d-inline-block mb-2 mr-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
+					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
+					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
 					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
-					'</a>'. $n.
-					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'. $n.
-					'</figure>'. $n;
+					'</a>'.
+					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'.
+					'</figure>';
 				else
 					return
-					'<figure class="d-inline-block m-2">'. $n.
-					'<a data-fancybox=gallery href="'. $url. r($src). '" data-caption="'. $exif_comment. '">'. $n.
+					'<figure class="d-inline-block m-2">'.
+					'<a data-fancybox=gallery href="'. $url. r($src). '" data-caption="'. $exif_comment. '">'.
 					($exif_thumbnail && $use_thumbnails ?
 					'<img class="'. $class. ' align-top img-thumbnail" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
 					$img).
-					'</a>'. $n.
-					'</figure>'. $n;
+					'</a>'.
+					'</figure>';
 			}
 			else
 			{
@@ -296,19 +345,19 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				{
 					if ($get_categ || 1 === $index_type)
 						$img =
-						'<span class="card-header d-block text-center">'. $n.
-						'<img class="img-fluid card-img-top '. $class. '"'. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'<span class="card-header d-block text-center">'.
+						'<img class="img-fluid card-img-top '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'.
 						'</span>';
 					else
 						$img =
-						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '>'. $n.
-						'<img class="img-fluid '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'. $n.
+						'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width_sm. 'px"' : ''). '>'.
+						'<img class="img-fluid '. $class. '" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>'.
 						'</span>';
 				}
 				else
 					$img =
-					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'. $n.
-					'<img class="img-fluid '. (1 === $index_type ? 'card-img-top ' : ''). $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" width="'. ($width * $per). '" height="'. ($height * $per). '">'. $n.
+					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'.
+					'<img class="img-fluid '. (1 === $index_type ? 'card-img-top ' : ''). $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" width="'. ($width * $per). '" height="'. ($height * $per). '">'.
 					'</span>';
 
 				return '<a href="'. $url. r(basename(dirname($dirname = dirname(dirname($src)))). '/'. basename($dirname)). '">'. $img. '</a>';
@@ -321,25 +370,25 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 			{
 				if (false !== $src_scheme)
 					return
-					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'. $n.
-					'<video controls preload=none>'. $n.
-					'<source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '">'. $n.
-					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '" default=default>'. $n.
-					'</video>'. $n.
-					'<small class="blockquote-footer my-2 text-right">'. $n.
-					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'. $n.
-					'</small>'. $n.
-					'</figure>'. $n;
+					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'.
+					'<video controls preload=none>'.
+					'<source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '">'.
+					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '" default=default>'.
+					'</video>'.
+					'<small class="blockquote-footer my-2 text-end">'.
+					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'.
+					'</small>'.
+					'</figure>';
 				else
 					return
-					'<a href="'. $url. r($src). '" class="sr-only mfp-iframe">video-iframe</a>'. $n.
-					'<video class="align-top img-thumbnail '. $class. '" controls preload=none>'. $n.
-					'<source src="'. $url. r($src). '">'. $n.
-					'<track src="'. $url. r($vtt). '" default=default>'. $n.
+					'<a href="'. $url. r($src). '" class="sr-only mfp-iframe visually-hidden">video-iframe</a>'.
+					'<video class="align-top img-thumbnail '. $class. '" controls preload=none>'.
+					'<source src="'. $url. r($src). '">'.
+					'<track src="'. $url. r($vtt). '" default=default>'.
 					'</video>';
 			}
 			else
-				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>'. $n;
+				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>';
 		}
 	}
 }
@@ -363,13 +412,13 @@ function timeformat($time, array $intervals)
 
 function pager(int $num, int $max)
 {
-	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $pager_wrapper, $n;
-	$article .= '<ul class="pagination '. $pager_wrapper. '">'. $n;
+	global $number_of_pager, $article, $nav_laquo, $nav_raquo, $pager_wrapper;
+	$article .= '<ul class="pagination '. $pager_wrapper. '">';
 
 	if(2 < $num)
 		$article .= '<li class=page-item><a class=page-link href="'. get_page(1). '">'. $nav_laquo. $nav_laquo. '</a></li>';
 	if (1 < $num)
-		$article .= '<li class=page-item><a class=page-link href="'. get_page($num-1). '">'. $nav_laquo. '</a></li>'. $n;
+		$article .= '<li class=page-item><a class=page-link href="'. get_page($num-1). '">'. $nav_laquo. '</a></li>';
 
 	$i = 1;
 	while ($i <= $number_of_pager)
@@ -379,9 +428,9 @@ function pager(int $num, int $max)
 		if (0 > $num - $ceil)
 		{
 			if ($num === $i)
-				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
+				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>';
 			else
-				$article .= '<li class=page-item><a class=page-link href="'. get_page($i). '">'. $i. '</a></li>'. $n;
+				$article .= '<li class=page-item><a class=page-link href="'. get_page($i). '">'. $i. '</a></li>';
 		}
 		elseif ($num + floor($half_page) > $max)
 		{
@@ -391,28 +440,28 @@ function pager(int $num, int $max)
 				$j = $i;
 
 			if ($num === $j)
-				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
+				$article .= '<li class="active page-item"><a class=page-link>'. $num. '</a></li>';
 			else
-				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
+				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>';
 		}
 		else
 		{
 			if ($i === $ceil)
-				$article .= '<li class="disable active page-item"><a class=page-link>'. $num. '</a></li>'. $n;
+				$article .= '<li class="disable active page-item"><a class=page-link>'. $num. '</a></li>';
 			else
 			{
 				$j = $num - $ceil + $i;
-				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>'. $n;
+				$article .= '<li class=page-item><a class=page-link href="'. get_page($j). '">'. $j. '</a></li>';
 			}
 		}
 		if ($max === $i) break;
 		++$i;
 	}
 	if ($max > $num)
-		$article .= '<li class=page-item><a class=page-link href="'. get_page($num+1). '">'. $nav_raquo. '</a></li>'. $n;
+		$article .= '<li class=page-item><a class=page-link href="'. get_page($num+1). '">'. $nav_raquo. '</a></li>';
 	if ($num < $max - 1)
-		$article .= '<li class=page-item><a class=page-link href="'. get_page($max). '">'. $nav_raquo. $nav_raquo. '</a></li>'. $n;
-	$article .= '</ul>'. $n;
+		$article .= '<li class=page-item><a class=page-link href="'. get_page($max). '">'. $nav_raquo. $nav_raquo. '</a></li>';
+	$article .= '</ul>';
 }
 
 function sideless($hide=false, $force=false)
@@ -423,8 +472,14 @@ function sideless($hide=false, $force=false)
 		if ($hide)
 			$stylesheet .= '#main,#main>article,#main>div,#main.col-lg-8,#main.col-lg-9{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}#main>header{margin:0}'. ('lightside' === $template ? '' : '#side{display:none!important}');
 		else
-			$stylesheet .= '#main,#side{max-width:inherit;flex:0 0 100%}';
+			$stylesheet .= '#wrapper{flex-direction:column!important}#main,#side{max-width:inherit;flex:0 0 100%}';
 	}
+}
+
+function widemain()
+{
+	global $stylesheet;
+	$stylesheet .= '#main,#main>article,#main>div{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}fieldset.admin{max-width:1320px;padding-right:var(--bs-gutter-x,.75rem);padding-left:var(--bs-gutter-x,.75rem);margin-right:auto;margin-left:auto;padding-top:1rem;padding-bottom:1rem}';
 }
 
 function nowrap()
@@ -444,26 +499,26 @@ function redirect($link)
 	}
 }
 
-function get_logo($name=false, $class='')
+function get_logo($name=false, $class='', $width='', $height='')
 {
 	global $site_name, $url;
 	if (!is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/logo.png'))
 		return $site_name;
 	else
-		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '">'.
-		(!$name ? '' : '<span class="'. (!$class ? 'border-0 d-block h1 mt-4' : $class). '">'. $site_name. '</span>');
+		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '"'. (!$width ? '' : ' width="'. $width. '"'). (!$height ? '' : ' height="'. $height. '"'). '>'.
+		(!$name ? '' : '<span class="'. (!$class ? '' : $class). '">'. $site_name. '</span>');
 }
 
 
 function not_found()
 {
-	global $article, $breadcrumb, $header, $site_name, $not_found, $h1_title, $n;
+	global $article, $breadcrumb, $header, $site_name, $not_found, $h1_title;
 	http_response_code(404);
-	$header .= '<title>'. $not_found[0]. ' - '. $site_name. '</title>'. $n;
-	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>'. $n;
+	$header .= '<title>'. $not_found[0]. ' - '. $site_name. '</title>';
+	$breadcrumb .= '<li class="breadcrumb-item active">'. http_response_code(). '</li>';
 	$article .=
-	'<h1 class="'. $h1_title[0]. '">'. $not_found[0]. '</h1>'. $n.
-	'<div class="'. $h1_title[1]. ' not-found">'. $not_found[1]. '</div>'. $n;
+	'<h1 class="'. $h1_title[0]. '">'. $not_found[0]. '</h1>'.
+	'<div class="'. $h1_title[1]. ' not-found">'. $not_found[1]. '</div>';
 }
 
 function toc($in_article=false)
@@ -471,18 +526,17 @@ function toc($in_article=false)
 	global $article, $aside, $javascript, $sidebox_title, $sidebox_order, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $get_title, $get_page;
 	if ($get_title || $get_page)
 	{
-		$toc_content = '<div class="'. $sidebox_title_class[4]. '">'. $sidebox_title[9];
+		$toc_content = '';
 		if ($in_article)
-			$toc_content .= '<button class="navbar-toggler btn-sm" data-toggle=collapse data-target=#toctoggle accesskey=p tabindex=0><span class=navbar-toggler-icon></span></button>';
-		$toc_content .= '</div>';
+			$toc_content .= '<div class="'. $sidebox_title_class[5]. '"><button class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle=collapse data-bs-target=#toctoggle accesskey=p tabindex=0><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16" width="1.5em" height="1.5em"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg></button>'. $sidebox_title[9]. '</div>';
+		else
+			$toc_content .= '<div class="'. $sidebox_title_class[4]. '">'. $sidebox_title[9]. '</div>';
 		$toc_content .= '<div id=toctoggle class="'. $sidebox_wrapper_class[1]. (!$in_article ? '' : ' collapse pb-3'). '"></div>';
-
 		if ($in_article)
 			$article .= '<div id=toc class="'. $sidebox_wrapper_class[2]. '">'. $toc_content. '</div>';
 		else
 			$aside .= '<div id=toc class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[8]. '">'. $toc_content. '</div>';
-
-		$javascript .= 'let num=1,toc="",toclv=lv=0;$(".article :header").each(function(){this.id="toc"+num;tag=this.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+this.id+"\" title=\""+$(this).text()+"\">"+$(this).text()+"<\/a><\/li>"});while(toclv>0){toc+="<\/ul>";toclv--}$("#toctoggle").html(toc);';
+		$javascript .= 'let num=1,toc="",toclv=lv=0,hx=document.querySelectorAll(".article h2, .article h3, .article h4, .article h5, .article h6");for(let elm of hx){elm.id="toc"+num;tag=elm.nodeName.toLowerCase();num++;if(tag==="h2")lv=1;else if(tag==="h3")lv=2;else if(tag==="h4")lv=3;else if(tag==="h5")lv=4;else if(tag==="h6")lv=5;while(toclv<lv){toc+="<ul>";toclv++}while(toclv>lv){toc+="<\/ul>";toclv--}toc+="<li><a class=\"'. $sidebox_content_class[4]. '\" href=\"#"+elm.id+"\" title=\""+elm.textContent+"\">"+elm.textContent+"<\/a><\/li>"};while(toclv>0){toc+="<\/ul>";toclv--}document.getElementById("toctoggle").innerHTML=toc;';
 	}
 }
 
@@ -564,18 +618,18 @@ function dec($str)
 
 function sess_err($str)
 {
-	global $aside, $javascript, $login_try_again, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $ticket_warning, $​ask_admin, $n;
+	global $aside, $javascript, $login_try_again, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $ticket_warning, $​ask_admin;
 	$aside .=
-	'<div id=login class="'. $sidebox_wrapper_class[0]. '">'. $n.
-	'<div class="'. $sidebox_title_class[3]. '">'. $str. '</div>'. $n.
-	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $​ask_admin : $login_try_again). '</p>'. $n.
-	'</div>'. $n;
-	$javascript .= 'location.hash="login";';
+	'<div id=login class="'. $sidebox_wrapper_class[0]. '">'.
+	'<div class="'. $sidebox_title_class[3]. '">'. $str. '</div>'.
+	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $​ask_admin : $login_try_again). '</p>'.
+	'</div>';
+	$javascript .= 'if(document.getElementById("side").classList.contains("offcanvas"))new bootstrap.Offcanvas(document.getElementById("side")).show();';
 }
 
 function handle($dir)
 {
-	if (filter_var($usermail = dec($userstr = basename(dirname($dir))), FILTER_VALIDATE_EMAIL))
+	if ($usermail = filter_var(dec($userstr = basename(dirname($dir))), FILTER_VALIDATE_EMAIL))
 	{
 		global $mail_address;
 		if (is_file($handle = $dir. 'handle') && filesize($handle))
@@ -591,17 +645,17 @@ function avatar($dir, $size=100)
 	if (is_file($img = $dir. 'avatar') && filesize($img) && false !== strpos($base64_img = file_get_contents($img), 'base64'))
 		$avatar = '<img'. (!$size ? '' : ' style="object-fit:cover;width:'. $size. 'px;height:'. $size. 'px"'). ' src="'. strip_tags($base64_img). '" class="align-text-bottom d-inline-block rounded-circle mx-auto" alt="">';
 	elseif (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor))
-		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold fw-bold rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
 	else
 	{
 		global $color;
-		$avatar = '<span style="background-color:'. ($color ? hsla($color, 5.5, -7,.9) : 'rgba(0,0,0,.5)'). ';'. (!$size ? '': 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). '" class="d-inline-flex justify-content-center font-weight-bold rounded-circle mx-auto text-center text-white">'. mb_substr($dir, 0, 1). '</span>';
+		$avatar = '<span style="background-color:'. ($color ? hsla($color, 5.5, -7,.9) : 'rgba(0,0,0,.5)'). ';'. (!$size ? '': 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). '" class="d-inline-flex justify-content-center font-weight-bold fw-bold rounded-circle mx-auto text-center text-white">'. mb_substr($dir, 0, 1). '</span>';
 	}
 	if (100 <= $size)
 	{
 		global $mail_address, $admin_suffix;
-		if ($mail_address === dec(basename(dirname($dir)))) $avatar .= '<div class="badge badge-pill badge-primary my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[0]). 'rem;display:inherit">'. $admin_suffix[0]. '</div>';
-		elseif (is_file($dir. 'subadmin')) $avatar .= '<div class="badge badge-pill badge-success my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[1]). 'rem;display:inherit">'. $admin_suffix[1]. '</div>';
+		if ($mail_address === dec(basename(dirname($dir)))) $avatar .= '<div class="badge badge-pill rounded-pill badge-primary bg-primary my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[0]). 'rem;display:inherit">'. $admin_suffix[0]. '</div>';
+		elseif (is_file($dir. 'subadmin')) $avatar .= '<div class="badge badge-pill rounded-pill badge-success bg-success my-2 mx-auto" style="width:'. mb_strlen($admin_suffix[1]). 'rem;display:inherit">'. $admin_suffix[1]. '</div>';
 	}
 	return $avatar;
 }
@@ -613,7 +667,7 @@ function flow($a, $b, $c, $d)
 	'<ol class="flow list-unstyled d-flex justify-content-between my-4">'.
 	'<li class="w-25 pt-3 border-top border-10 '. (1 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[1], $b, $c). '</li>'.
 	'<li class="w-25 pt-3 mx-5 border-top border-10 '. (2 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[2], $c). '</li>'.
-	'<li class="w-25 pt-3 mr-5 border-top border-10 '. (3 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[3], $b). '</li>'.
+	'<li class="w-25 pt-3 me-5 border-top border-10 '. (3 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[3], $b). '</li>'.
 	'<li class="w-25 pt-3 border-top border-10 '. (4 === $d ? 'border-success' : 'border-light'). '">'. sprintf($a[4], $c). '</li>'.
 	'</ol>';
 }
@@ -685,7 +739,7 @@ function booking(
 	$cancel = false,
 	$sideless = false
 ){
-	global $accepting, $btn, $current_url, $denial_attrs, $javascript, $stylesheet, $line_breaks, $mail_address, $n, $session_usermail, $week;
+	global $accepting, $btn, $current_url, $denial_attrs, $footer, $javascript, $stylesheet, $line_breaks, $mail_address, $n, $session_usermail, $week;
 	if ($sideless) sideless(0, 1);
 	$first_day = strtotime('today');
 	$last_day = strtotime("today + $term");
@@ -698,8 +752,7 @@ function booking(
 	if (isset($_SESSION['l']) && filter_has_var(INPUT_POST, 'date') && filter_has_var(INPUT_POST, 'booking'))
 	{
 		$date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_NUMBER_INT);
-		$booking = trim(filter_input(INPUT_POST, 'booking'));
-		$booking = filter_var($booking, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_LOW);
+		$booking = trim(filter_input(INPUT_POST, 'booking', FILTER_SANITIZE_SPECIAL_CHARS));
 		$booking = enc(str_replace($line_breaks, '&#10;', $booking));
 		if (!is_dir($date_dir = $bookings_dir. $date. '/')) mkdir($date_dir, 0757);
 		file_put_contents($booking_txt = $date_dir. $_SESSION['l']. '.txt', $booking, LOCK_EX);
@@ -708,32 +761,33 @@ function booking(
 	}
 	$stylesheet .= '.a{opacity:1!important;visibility:visible!important}.b{opacity:0;visibility:hidden}.c{opacity:.8;cursor:not-allowed}.g{background:#3ddb80}.h{cursor:pointer;text-align:center;width:5%}.i{background:mediumseagreen;border:none;bottom:0;cursor:pointer;opacity:0;padding:5px 10px;position:absolute;right:0;text-align:center;transition:opacity .1s,visibility .1s;visibility:hidden}[data-placeholder]:empty:before{content:attr(data-placeholder);display:block;text-align:center}[contenteditable=false][data-placeholder]:empty:before{opacity:.8;cursor:not-allowed}[contenteditable=true][data-placeholder]:empty:before{cursor:pointer}#booking td{position:relative}#booking th,#booking td{padding:.8em .6em}#booking th:empty{width:5em}#booking th{background:dimgray;color:#fff;font-weight:inherit;vertical-align:middle;white-space:nowrap}#booking td div{word-wrap:break-word;white-space:pre-wrap}.g:hover{opacity:.8}#booking tr:hover,#booking tr:nth-child(odd){filter:brightness(105%)}@media print{*,a{color:#000000!important;font-size:8pt!important;opacity:1!important}aside,#side,footer,form,header,nav,p,.breadcrumb{display:none!important}html,body{background:#ffffff!important;margin:0!important;padding:0!important}th,td{background:#ffffff!important}th{white-space:nowrap!important}}';
 
-	if (is_admin() || is_subadmin())
+	if (is_admin())
 	{
 		global $url, $long_time_format, $reminder, $remind_header, $separator;
 		if (filter_has_var(INPUT_POST, 'remind-addr') && filter_has_var(INPUT_POST, 'remind-date') && filter_has_var(INPUT_POST, 'remind-title') && filter_has_var(INPUT_POST, 'remind-contents'))
 		{
 			global $mime, $encoding, $site_name;
-			$to = filter_input(INPUT_POST, 'remind-addr', FILTER_SANITIZE_STRING);
-			$subject = filter_input(INPUT_POST, 'remind-title', FILTER_SANITIZE_STRING);
-			$body = sprintf(filter_input(INPUT_POST, 'remind-contents', FILTER_SANITIZE_STRING), filter_input(INPUT_POST, 'remind-date', FILTER_SANITIZE_STRING));
+			$to = strip_tags(filter_input(INPUT_POST, 'remind-addr'));
+			$subject = strip_tags(filter_input(INPUT_POST, 'remind-title'));
+			$body = sprintf(strip_tags(filter_input(INPUT_POST, 'remind-contents')), strip_tags(filter_input(INPUT_POST, 'remind-date')));
 			$body .= $n. $n. $separator. $n. $site_name. $n. $url;
 			$headers = $mime. 'From: '. $site_name. '<'. $mail_address. '>'. $n. 'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 			mail($to, $subject, $body, $headers);
 		}
-		if (filter_has_var(INPUT_POST, 'del') && is_file($file = filter_input(INPUT_POST, 'del'))) unlink($file);
+
+		if (is_file($file = !filter_has_var(INPUT_POST, 'del') ? '' : filter_input(INPUT_POST, 'del', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))) unlink($file);
 		if ($g = glob($bookings_dir. '*/*.txt'))
 		{
 			echo
-			'<div class="card nowrap mb-4">', $n,
-			'<div class=card-header>', $reminder[0], '</div>', $n,
-			'<div class=card-body>', $n,
-			'<pre contenteditable=true id=title>', $reminder[1], '</pre>', $n,
-			'<pre contenteditable=true id=contents>', $reminder[2], '</pre>', $n,
-			'</div>', $n,
-			'</div>', $n,
-			'<table class="small w-100" id=booking>', $n,
-			'<tr><th class=bg-danger></th><th>', $remind_header[0], '</th><th>', $remind_header[1], '</th><th>', $remind_header[2], '</th><th>', $remind_header[3], '</th></tr>', $n;
+			'<div class="card nowrap mb-4">',
+			'<div class=card-header>', $reminder[0], '</div>',
+			'<div class=card-body>',
+			'<pre contenteditable=true id=title>', $reminder[1], '</pre>',
+			'<pre contenteditable=true id=contents>', $reminder[2], '</pre>',
+			'</div>',
+			'</div>',
+			'<table class="small w-100" id=booking>',
+			'<tr><th class=bg-danger></th><th>', $remind_header[0], '</th><th>', $remind_header[1], '</th><th>', $remind_header[2], '</th><th>', $remind_header[3], '</th></tr>';
 			foreach ($g as $remind)
 			{
 				if (is_file($remind))
@@ -743,46 +797,46 @@ function booking(
 					{
 						$reserved_time = sprintf($long_time_format, $remind_y, $remind_m, $remind_d, $remind_h, $remind_i);
 						echo
-						'<tr>', $n,
-						'<td class="bg-danger text-white h" onclick="if(!confirm(\'', sprintf($reminder[5], $reserved_time), '\'))return false;d(\''. $remind. '\')">', $btn[4], '</td>', $n,
-						'<th class=w-25>', $reserved_time, '</th>', $n,
-						'<td><a href="', $url, '?user=', str_rot13($user), '">', handle($user. '/prof'), '</a></td>', $n,
-						'<td><div>', dec(file_get_contents($remind)), '</div></td>', $n,
-						'<td class="g text-white h" onclick="if(!confirm(\'', sprintf($reminder[3], $reserved_mail), '\'))return false;a(\'', $reserved_mail,'\',\'', sprintf($long_time_format, $remind_y, $remind_m, $remind_d, $remind_h, $remind_i), '\',$(\'#title\').text().replace(/^\s+|\s+$/g,\'\'),d.getElementById(\'contents\').innerText.replace(/^\s+|\s+$/g,\'\'))">', $btn[1], '</td>', $n,
-						'</tr>', $n;
+						'<tr>',
+						'<td class="bg-danger text-white h" onclick="if(!confirm(\'', sprintf($reminder[5], $reserved_time), '\'))return false;d(\''. $remind. '\')">', $btn[4], '</td>',
+						'<th class=w-25>', $reserved_time, '</th>',
+						'<td><a href="', $url, '?user=', str_rot13($user), '">', handle($user. '/prof'), '</a></td>',
+						'<td><div>', dec(file_get_contents($remind)), '</div></td>',
+						'<td class="g text-white h" onclick="if(!confirm(\'', sprintf($reminder[3], $reserved_mail), '\'))return false;a(\'', $reserved_mail,'\',\'', sprintf($long_time_format, $remind_y, $remind_m, $remind_d, $remind_h, $remind_i), '\',document.querySelector(\'#title\').textContent.replace(/^\s+|\s+$/g,\'\'),document.getElementById(\'contents\').innerText.replace(/^\s+|\s+$/g,\'\'))">', $btn[1], '</td>',
+						'</tr>';
 					}
 				}
 			}
-			echo '</table>', $n;
-			$javascript .= 'function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);const x=new XMLHttpRequest();x.open("post","'. $current_url. '");x.send(f);x.addEventListener("loadend",function(){if(x.status===200){d.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")}});setTimeout(function(){d.getElementById(b).remove()},5000)}function d(f){$.post("'. $current_url. '",{"del":f},function(data,status){if(status==="success"){let c=$(data).find("#booking").html();$("#booking").html(c)}})}';
+			echo '</table>';
+			$javascript .= 'function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:f}).then(()=>{document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")});setTimeout(()=>{document.getElementById(b).remove()},5000)}function d(g){const fd=new FormData();fd.append("del",g);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>{location.reload()})}';
 		}
 		else
 		{
 			global $booking_msg;
-			echo '<table class="small w-100" id=booking><tr><th class=bg-danger>', $booking_msg[4], '</th></tr></table>', $n;
+			echo '<table class="small w-100" id=booking><tr><th class=bg-danger>', $booking_msg[4], '</th></tr></table>';
 		}
 	}
 	else
 	{
 		global $booking_msg, $short_time_format;
-		echo '<table id=booking class="small w-100">', $n;
+		echo '<div class=table-responsive><table id=booking class="small w-100">';
 		if (isset($_SESSION['l']))
 		{
 			$accepted = count(glob($bookings_dir. '*/'. $_SESSION['l']. '.txt', GLOB_NOSORT));
-			if ($accepted === $accepts_per_person)
-				echo '<caption class="bg-success px-3 py-2 text-right text-white">', sprintf($booking_msg[0], $accepted), '</caption>', $n;
+			if ($accepted >= $accepts_per_person)
+				echo '<caption class="bg-success px-3 py-2 text-end text-white">', sprintf($booking_msg[0], $accepted), '</caption>';
 			elseif (0 === $accepted)
-				echo '<caption class="bg-primary px-3 py-2 text-right text-white">', sprintf($booking_msg[2], $accepts_per_person), '</caption>', $n;
+				echo '<caption class="bg-primary px-3 py-2 text-end text-white">', sprintf($booking_msg[2], $accepts_per_person), '</caption>';
 			else
-				echo '<caption class="bg-info px-3 py-2 text-right text-white">', sprintf($booking_msg[1], $accepted), '</caption>', $n;
+				echo '<caption class="bg-info px-3 py-2 text-end text-white">', sprintf($booking_msg[1], $accepts_per_person - $accepted), '</caption>';
 		}
 		else
-			echo '<caption class="bg-warning px-3 py-2 text-right text-white">', $booking_msg[3], '</caption>', $n;
+			echo '<caption class="bg-warning px-3 py-2 text-end text-white">', $booking_msg[3], '</caption>';
 
 		echo
-		'<thead class=text-center>', $n,
-		'<tr>', $n,
-		'<th></th>', $n;
+		'<thead class=text-center>',
+		'<tr>',
+		'<th></th>';
 		if (2 === count($hours))
 		{
 			global $meridian;
@@ -793,20 +847,20 @@ function booking(
 			foreach ($hours as $h)
 			{
 				$hi = date('H:i', $h);
-				echo '<th', (!in_array($hi, $denial_time, true) ? '' : $denial_attrs),'>', $hi, '</th>', $n;
+				echo '<th', (!in_array($hi, $denial_time, true) ? '' : $denial_attrs),'>', $hi, '</th>';
 			}
 		}
 		echo
-		'</tr>', $n,
-		'</thead>', $n,
-		'<tbody>', $n;
+		'</tr>',
+		'</thead>',
+		'<tbody>';
 		foreach ($days as $d)
 		{
 			$times = range($d+$start_time, $d+$end_time, $time_range);
 			$w = date('w', $d);
 			echo
-			'<tr>', $n,
-			'<th', (!in_array($week[$w], $denial_week, true) && !in_array(date('Y-m-d', $d), $denial_day, true) ? '' : $denial_attrs), '>', sprintf($short_time_format, date('n', $d), date('j', $d), $week[$w]), '</th>', $n;
+			'<tr>',
+			'<th', (!in_array($week[$w], $denial_week, true) && !in_array(date('Y-m-d', $d), $denial_day, true) ? '' : $denial_attrs), '>', sprintf($short_time_format, date('n', $d), date('j', $d), $week[$w]), '</th>';
 			foreach ($times as $t)
 			{
 				$time_dir = date('Y-m-d-H-i', $t);
@@ -837,16 +891,15 @@ function booking(
 					$abtn = '>';
 				}
 				echo '<td', (isset($f) && is_file($f) || $t > time() && $received > 0 && !$is_denial_week && !$is_denial_day && !$is_denial_time ?
-				' style="background:hsl(210,'. $percent. ',70%);color:#ffffff"'. $abtn. '<div'. $attr. '>' : '><div'. (!$books ? $denial_attrs : ' contenteditable=true style="opacity:.6"'). '>'), $books, '</div></td>', $n;
+				' style="background:hsl(210,'. $percent. ',70%);color:#ffffff"'. $abtn. '<div'. $attr. '>' : '><div'. (!$books ? $denial_attrs : ' contenteditable=true style="opacity:.6"'). '>'), $books, '</div></td>';
 				$a[] = is_dir($e = $bookings_dir. $time_dir) ? $e : '';
 			}
-			echo '</tr>', $n;
+			echo '</tr>';
 		}
 		echo
-		'</tbody>', $n,
-		'</table>', $n;
-		$javascript .= (isset($_SESSION['l']) ? 'd.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=d.createElement("form");f.style.display="none";f.method="post";let g=d.createElement("input"),h=d.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);d.body.appendChild(f);f.submit()}' : ''). 'const t=d.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}';
-
+		'</tbody>',
+		'</table></div>';
+		$javascript .= (isset($_SESSION['l']) ? 'document.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=document.createElement("form");f.style.display="none";f.method="post";let g=document.createElement("input"),h=document.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);document.body.appendChild(f);f.submit()}' : ''). 'const t=document.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}';
 		if ($g = glob($bookings_dir. '*', GLOB_ONLYDIR+GLOB_NOSORT))
 		{
 			if ($b = array_diff($g, $a)) foreach ($b as $c) if (is_dir($c)) `rm -rf $c`;
@@ -916,64 +969,157 @@ function get_thumbnail($src)
 }
 function html_assist()
 {
-	global $footer, $form_label, $html_assist, $javascript;
+	global $footer, $form_label, $html_assist, $javascript, $title_length;
 	$footer .=
 	'<div class="dropup flex-grow-1" id=h>'.
-	'<button class="btn btn-outline-primary dropdown-toggle" id=a data-toggle=dropdown tabindex=1 accesskey=h>'. $html_assist[0]. '</button>'.
-	'<div class="dropdown-menu p-3" style="max-height:200px;overflow-x:hidden">'.
+	'<button class="btn btn-outline-primary dropdown-toggle" id=a data-bs-toggle=dropdown data-bs-auto-close=inside tabindex=1 accesskey=h>'. $html_assist[0]. '</button>'.
+	'<div class="dropdown-menu p-3" style="max-height:200px;overflow-x:hidden;z-index:2000">'.
 	'<ul class=list-inline>'.
-	'<li class="list-inline-item"><a href="#" data-select=success class="dropdown-item mb-2 bg-success text-white">'. $html_assist[2]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=green class="dropdown-item mb-2 bg-success text-success">'. $html_assist[3]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=danger class="dropdown-item mb-2 bg-danger text-white">'. $html_assist[4]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=pink class="dropdown-item mb-2 bg-danger text-danger">'. $html_assist[5]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=primary class="dropdown-item mb-2 bg-primary text-white">'. $html_assist[6]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=info class="dropdown-item mb-2 bg-info text-info">'. $html_assist[7]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=warning class="dropdown-item mb-2 bg-warning text-white">'. $html_assist[8]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=yellow class="dropdown-item mb-2 bg-warning text-warning">'. $html_assist[9]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=dark class="dropdown-item mb-2 bg-dark text-white">'. $html_assist[10]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=secondary class="dropdown-item mb-2 bg-secondary text-white">'. $html_assist[11]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=light class="dropdown-item mb-2 bg-light text-body">'. $html_assist[12]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=white class="dropdown-item mb-2 bg-white text-body">'. $html_assist[13]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=hr class="dropdown-item">'. $html_assist[14]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=table class="dropdown-item">'. $html_assist[15]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=li class="dropdown-item">'. $html_assist[16]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=a class="dropdown-item">'. $html_assist[17]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=success class="dropdown-item mb-2 bg-success text-white">'. $html_assist[2]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=green class="dropdown-item mb-2 bg-success text-success">'. $html_assist[3]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=danger class="dropdown-item mb-2 bg-danger text-white">'. $html_assist[4]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=pink class="dropdown-item mb-2 bg-danger text-danger">'. $html_assist[5]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=primary class="dropdown-item mb-2 bg-primary text-white">'. $html_assist[6]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=info class="dropdown-item mb-2 bg-info text-info">'. $html_assist[7]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=warning class="dropdown-item mb-2 bg-warning text-white">'. $html_assist[8]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=yellow class="dropdown-item mb-2 bg-warning text-warning">'. $html_assist[9]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=dark class="dropdown-item mb-2 bg-dark text-white">'. $html_assist[10]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=secondary class="dropdown-item mb-2 bg-secondary text-white">'. $html_assist[11]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=light class="dropdown-item mb-2 bg-light text-body">'. $html_assist[12]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=white class="dropdown-item mb-2 bg-white text-body">'. $html_assist[13]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=hr class=dropdown-item>'. $html_assist[14]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=table class=dropdown-item>'. $html_assist[15]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=li class=dropdown-item>'. $html_assist[16]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=a class=dropdown-item>'. $html_assist[17]. '</a></li>'.
 	'</ul>'.
 	'<div class=dropdown-divider></div>'.
 	'<ul class=list-inline>'.
-	'<li class="list-inline-item"><a href="#" data-select=h1 class="dropdown-item">'. $html_assist[18]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=h2 class="dropdown-item">'. $html_assist[19]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=h3 class="dropdown-item">'. $html_assist[20]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=h4 class="dropdown-item">'. $html_assist[21]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=h5 class="dropdown-item">'. $html_assist[22]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=h6 class="dropdown-item">'. $html_assist[23]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=right class="dropdown-item">'. $html_assist[24]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=center class="dropdown-item">'. $html_assist[25]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=lead class="dropdown-item">'. $html_assist[26]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=small class="dropdown-item">'. $html_assist[27]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=b class="dropdown-item">'. $html_assist[28]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=em class="dropdown-item">'. $html_assist[29]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=strong class="dropdown-item">'. $html_assist[30]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=del class="dropdown-item">'. $html_assist[31]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=ins class="dropdown-item">'. $html_assist[32]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h1 class=dropdown-item>'. $html_assist[18]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h2 class=dropdown-item>'. $html_assist[19]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h3 class=dropdown-item>'. $html_assist[20]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h4 class=dropdown-item>'. $html_assist[21]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h5 class=dropdown-item>'. $html_assist[22]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=h6 class=dropdown-item>'. $html_assist[23]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=right class=dropdown-item>'. $html_assist[24]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=center class=dropdown-item>'. $html_assist[25]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=lead class=dropdown-item>'. $html_assist[26]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=small class=dropdown-item>'. $html_assist[27]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=b class=dropdown-item>'. $html_assist[28]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=em class=dropdown-item>'. $html_assist[29]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=strong class=dropdown-item>'. $html_assist[30]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=del class=dropdown-item>'. $html_assist[31]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=ins class=dropdown-item>'. $html_assist[32]. '</a></li>'.
 	'</ul>'.
 	'<div class=dropdown-divider></div>'.
 	'<ul class=list-inline>'.
-	'<li class="list-inline-item"><a href="#" data-select=ltgt class="dropdown-item">'. $html_assist[33]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=br class="dropdown-item">'. $html_assist[34]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=address class="dropdown-item">'. $html_assist[35]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=blockquote class="dropdown-item">'. $html_assist[36]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=cite class="dropdown-item">'. $html_assist[37]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=code class="dropdown-item">'. $html_assist[38]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=dl class="dropdown-item">'. $html_assist[39]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=kbd class="dropdown-item">'. $html_assist[40]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=mark class="dropdown-item">'. $html_assist[41]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=samp class="dropdown-item">'. $html_assist[42]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=sub class="dropdown-item">'. $html_assist[43]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=sup class="dropdown-item">'. $html_assist[44]. '</a></li>'.
-	'<li class="list-inline-item"><a href="#" data-select=dfn class="dropdown-item">'. $html_assist[45]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=ltgt class=dropdown-item>'. $html_assist[33]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=br class=dropdown-item>'. $html_assist[34]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=address class=dropdown-item>'. $html_assist[35]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=blockquote class=dropdown-item>'. $html_assist[36]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=cite class=dropdown-item>'. $html_assist[37]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=code class=dropdown-item>'. $html_assist[38]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=dl class=dropdown-item>'. $html_assist[39]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=kbd class=dropdown-item>'. $html_assist[40]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=mark class=dropdown-item>'. $html_assist[41]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=samp class=dropdown-item>'. $html_assist[42]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=sub class=dropdown-item>'. $html_assist[43]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=sup class=dropdown-item>'. $html_assist[44]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=dfn class=dropdown-item>'. $html_assist[45]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=comment class=dropdown-item>'. $html_assist[46]. '</a></li>'.
+	'</ul>'.
+	'<div class=dropdown-divider></div>'.
+	'<ul class=list-inline>'.
+	'<li class="list-inline-item my-1"><a href="#" data-select=border class="dropdown-item border">'. $html_assist[47]. '</a>'.
+	'<li class=list-inline-item><a href="#" data-select=border-top class="dropdown-item border-top">'. $html_assist[48]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-end class="dropdown-item border-end">'. $html_assist[49]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-bottom class="dropdown-item border-bottom">'. $html_assist[50]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-start class="dropdown-item border-start">'. $html_assist[51]. '</a></li>'.
+	'<li><ul style="all:revert">'.
+	'<li class=list-inline-item><a href="#" data-select=border-2 class="dropdown-item border border-2">'. $html_assist[52]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-3 class="dropdown-item border border-3">'. $html_assist[53]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-4 class="dropdown-item border border-4">'. $html_assist[54]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-5 class="dropdown-item border border-5 my-1">'. $html_assist[55]. '</a></li>'.
+	'</ul>'.
+	'<ul style="all:revert">'.
+	'<li class=list-inline-item><a href="#" data-select=border-primary class="dropdown-item border border-primary mb-1">'. $html_assist[56]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-secondary class="dropdown-item border border-secondary mb-1">'. $html_assist[57]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-success class="dropdown-item border border-success mb-1">'. $html_assist[58]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-danger class="dropdown-item border border-danger mb-1">'. $html_assist[59]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-warning class="dropdown-item border border-warning mb-1">'. $html_assist[60]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-info class="dropdown-item border border-info mb-1">'. $html_assist[61]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-light class="dropdown-item border border-light mb-1">'. $html_assist[62]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-dark class="dropdown-item border border-dark mb-1">'. $html_assist[63]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=border-white class="dropdown-item border border-white mb-1">'. $html_assist[64]. '</a></li>'.
+	'</ul>'.
+	'</li>'.
+	'<li class="list-inline-item my-1"><a href="#" data-select=rounded class="dropdown-item rounded bg-info text-info">'. $html_assist[65]. '</a>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-top class="dropdown-item rounded-top bg-info text-info">'. $html_assist[66]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-end class="dropdown-item rounded-end bg-info text-info">'. $html_assist[67]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-bottom class="dropdown-item rounded-bottom bg-info text-info">'. $html_assist[68]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-start class="dropdown-item rounded-start bg-info text-info">'. $html_assist[69]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-circle class="dropdown-item rounded-circle bg-info text-info">'. $html_assist[70]. '</a>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-pill class="dropdown-item rounded-pill bg-info text-info">'. $html_assist[71]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-1 class="dropdown-item rounded-1 bg-info text-info">'. $html_assist[72]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-2 class="dropdown-item rounded-2 bg-info text-info">'. $html_assist[73]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=rounded-3 class="dropdown-item rounded-3 bg-info text-info">'. $html_assist[74]. '</a></li>'.
 	'</ul>'.
 	'</div>'.
 	'</div>';
-	$javascript = '$(".creates").on("change keyup mouseup paste",function(){l=encodeURIComponent($(this).val()).replace(/%../g,"x").length,m=200;$(".max").text("'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>m){$(".creates").addClass("is-invalid");$(":submit").prop("disabled",true)}else{$(".creates").removeClass("is-invalid");$(":submit").prop("disabled",false)}});$(".dropdown-item").on("click",function(){add(this)});function h(select){return select.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function add(tag){let select=tag.dataset.select;if("hr"===select||"br"===select)single(select);else between(select)}function single(tag){let target=d.getElementById("textarea"),pos=getAreaRange(target),val=target.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode= val.slice(pos.end),insertNode;if(range||pos.start!==pos.end){insertNode=range+"<"+tag+">"}else if(pos.start===pos.end){insertNode="<"+tag+">"}target.value=beforeNode+insertNode+afterNode;localStorage.setItem("textarea",target.value);target.setSelectionRange(pos.end,pos.end);target.focus()}function between(tag){let target=d.getElementById("textarea"),pos=getAreaRange(target),val=target.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode=val.slice(pos.end),insertNode;target.focus();if("code"===tag)range=h(range);if("a"===tag){if(range||pos.start!==pos.end){insertNode="<a href=\"\">"+range+"<\/a>"}else if(pos.start===pos.end){insertNode="<a href=\"\"><\/a>"}}else if("right"===tag){if(range||pos.start!==pos.end){insertNode="<p class=text-right>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-right><\/p>"}}else if("lead"===tag){if(range||pos.start!==pos.end){insertNode="<span class=lead>"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=lead><\/span>"}}else if("center"===tag){if(range||pos.start!==pos.end){insertNode="<p class=text-center>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-center><\/p>"}}else if("primary"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-primary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-primary text-white px-1\"><\/span>"}}else if("success"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-white px-1\"><\/span>"}}else if("green"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-success px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-success px-1\"><\/span>"}}else if("info"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-info text-info px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-info text-info px-1\"><\/span>"}}else if("warning"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-white px-1\"><\/span>"}}else if("yellow"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-warning px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-warning px-1\"><\/span>"}}else if("danger"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-white px-1\"><\/span>"}}else if("pink"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-danger px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-danger px-1\"><\/span>"}}else if("secondary"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-secondary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-secondary text-white px-1\"><\/span>"}}else if("dark"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-dark text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-dark text-white px-1\"><\/span>"}}else if("light"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-light text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-light text-body px-1\"><\/span>"}}else if("white"===tag){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-white text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-white text-body px-1\"><\/span>"}}else if("dl"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<dl class=dl-horizontal>\u000D<dt>"+range+"<\/dt>\u000D<dd><\/dd>\u000D<\/dl>\u000D"}else if(pos.start===pos.end){insertNode="<dl class=dl-horizontal>\u000D<dt><\/dt>\u000D<dd><\/dd>\u000D<\/dl>\u000D"}}else if("li"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<ul class=list-group>\u000D<li class=\"list-group-item bg-transparent\">"+range+"<\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<\/ul>\u000D"}else if(pos.start===pos.end){insertNode="<ul class=list-group>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<li class=\"list-group-item bg-transparent\"><\/li>\u000D<\/ul>\u000D"}}else if("table"===tag){if(range||pos.start!==pos.end){insertNode="\u000D<table class=\"table table-striped table-dark\">\u000D<tr>\u000D<td>"+range+"<\/td>\u000D<\/tr>\u000D<\/table>\u000D"}else if(pos.start===pos.end){insertNode="\u000D<table class=\"table table-striped table-dark\">\u000D<tr>\u000D<td><\/td>\u000D<\/tr>\u000D<\/table>\u000D"}}else if("ltgt"===tag){if(range||pos.start!==pos.end){insertNode="&lt;"+range+"&gt;"}else if(pos.start===pos.end){insertNode="&lt;&gt;"}}else{if(range||pos.start!==pos.end){insertNode="<"+tag+">"+range+"<\/"+tag+">"}else if(pos.start===pos.end){insertNode="<"+tag+">"+"<\/"+tag+">"}}target.value=beforeNode+insertNode+afterNode;localStorage.setItem("textarea",target.value);target.setSelectionRange(pos.end,pos.end);target.focus()}function getAreaRange(obj){const pos=new Object();if(window.getSelection()){pos.start=obj.selectionStart;pos.end=obj.selectionEnd}return pos}$(".dropdown-menu").on({"click":function(e){e.stopPropagation();return false}});';
+	$javascript .= '[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.addEventListener("input",ev=>{l=encodeURIComponent(ev.target.value).replace(/%../g,"x").length,m='. $title_length. ';[].slice.call(document.querySelectorAll(".max")||[]).map(el=>el.innerText="'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>=m){[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.add("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.setAttribute("disabled",true))}else{[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.remove("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.removeAttribute("disabled"))}}));[].slice.call(document.querySelectorAll(".dropdown-item")||[]).map(el=>{el.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();add(e.target)})});function h(select){return select.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+function add(tag){
+let select=tag.dataset.select,textarea=document.getElementById("textarea"),pos=getAreaRange(textarea),val=textarea.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode=val.slice(pos.end),insertNode;
+
+if(-1!==select.indexOf("border"))
+{
+if(false!==/-(?!top|end|bottom|start)/.test(select))
+insertNode=range+" "+select;
+else insertNode=range+" class=\""+select+"\""
+}
+else if(-1!==select.indexOf("rounded"))insertNode=range+" class=\""+select+"\"";
+else if("hr"===select||"br"===select)
+{
+if(range||pos.start!==pos.end){insertNode=range+"<"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"}
+}
+
+else
+{
+if("code"===select)range=h(range);if("a"===select){if(range||pos.start!==pos.end){insertNode="<a href=\"\">"+range+"<\/a>"}else if(pos.start===pos.end){insertNode="<a href=\"\"><\/a>"}}else if("right"===select){if(range||pos.start!==pos.end){insertNode="<p class=\"text-end\">"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=\"text-end\"><\/p>"}}else if("lead"===select){if(range||pos.start!==pos.end){insertNode="<span class=lead>"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=lead><\/span>"}}else if("center"===select){if(range||pos.start!==pos.end){insertNode="<p class=text-center>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-center><\/p>"}}else if("primary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-primary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-primary text-white px-1\"><\/span>"}}else if("success"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-white px-1\"><\/span>"}}else if("green"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-success px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-success px-1\"><\/span>"}}else if("info"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-info text-info px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-info text-info px-1\"><\/span>"}}else if("warning"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-white px-1\"><\/span>"}}else if("yellow"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-warning px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-warning px-1\"><\/span>"}}else if("danger"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-white px-1\"><\/span>"}}else if("pink"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-danger px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-danger px-1\"><\/span>"}}else if("secondary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-secondary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-secondary text-white px-1\"><\/span>"}}else if("dark"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-dark text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-dark text-white px-1\"><\/span>"}}else if("light"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-light text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-light text-body px-1\"><\/span>"}}else if("white"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-white text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-white text-body px-1\"><\/span>"}}else if("dl"===select){if(range||pos.start!==pos.end){insertNode="\n<dl class=dl-horizontal>\n<dt>"+range+"<\/dt>\n<dd><\/dd>\n<\/dl>\n"}else if(pos.start===pos.end){insertNode="<dl class=dl-horizontal>\n<dt><\/dt>\n<dd><\/dd>\n<\/dl>\n"}}else if("li"===select){if(range||pos.start!==pos.end){insertNode="\n<ul class=list-group>\n<li class=\"list-group-item bg-transparent\">"+range+"<\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}else if(pos.start===pos.end){insertNode="<ul class=list-group>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}}else if("table"===select){if(range||pos.start!==pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td>"+range+"<\/td>\n<\/tr>\n<\/table>\n"}else if(pos.start===pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td><\/td>\n<\/tr>\n<\/table>\n"}}else if("ltgt"===select){if(range||pos.start!==pos.end){insertNode="&lt;"+range+"&gt;"}else if(pos.start===pos.end){insertNode="&lt;&gt;"}}else if("comment"===select){if(range||pos.start!==pos.end){insertNode="<!--\n"+range+"\n-->"}else if(pos.start===pos.end){insertNode="<!--\n-->"}}else{if(range||pos.start!==pos.end){insertNode="<"+select+">"+range+"<\/"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"+"<\/"+select+">"}}
+}
+textarea.value=beforeNode+insertNode+afterNode;textarea.setSelectionRange(pos.end,pos.end);textarea.focus()}
+
+function getAreaRange(obj){const pos=new Object();if(window.getSelection()){pos.start=obj.selectionStart;pos.end=obj.selectionEnd}return pos}';
+}
+
+function sanitize_mail($e)
+{
+	if (false !== strpos($e, '@'))
+	{
+		$ex = explode('@', $e);
+		return filter_var($ex[0]. '@'. idn_to_ascii($ex[1]), FILTER_SANITIZE_EMAIL);
+	}
+	elseif (filter_var(dec($e), FILTER_VALIDATE_EMAIL)) return $e;
+}
+
+function strip_tags_basename($str)
+{
+	return strip_tags(basename($str));
+}
+
+function trim_str_replace_basename($str)
+{
+	global $disallow_symbols, $replace_symbols;
+	return trim(str_replace($disallow_symbols, $replace_symbols, basename($str)));
+}
+
+function scriptentities($str)
+{
+	if (!is_admin())
+	{
+		if (false !== strpos($str, '<?'))
+			$str = str_replace(['<?', '?>'], ['&lt;?', '?&gt;'], $str);
+		if (false !== strpos($str, '<script'))
+			$str = preg_replace_callback('|(<script.*?/script[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
+	}
+	return $str;
 }

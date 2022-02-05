@@ -15,25 +15,26 @@ $form = 'includes/form.php';
 $title_name = d($get_title);
 $categ_name = d($get_categ);
 $page_name = d($get_page);
-$session_c = !filter_has_var(INPUT_POST, 'c') ? '' : filter_input(INPUT_POST, 'c', FILTER_SANITIZE_STRING);
-$session_e = !filter_has_var(INPUT_POST, 'e') ? '' : enc(filter_input(INPUT_POST, 'e', FILTER_SANITIZE_EMAIL));
-$session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f', FILTER_SANITIZE_STRING);
-$user = !filter_has_var(INPUT_GET, 'user') ? '' : basename(filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING));
-$session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_SANITIZE_STRING);
+$session_c = !filter_has_var(INPUT_POST, 'c') ? '' : filter_input(INPUT_POST, 'c', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+$session_e = !filter_has_var(INPUT_POST, 'e') ? '' : enc(filter_input(INPUT_POST, 'e', FILTER_CALLBACK, ['options' => 'sanitize_mail']));
+$session_f = !filter_has_var(INPUT_POST, 'f') ? '' : filter_input(INPUT_POST, 'f', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+$user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+$session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
 $request_query = explode('?', $request_uri);
-if (isset($request_query[1])) foreach (explode('&', $request_query[1]) as $rquery) if ($rquery) list (, $v[]) = explode('=', $rquery);
+$forum_thread = !filter_has_var(INPUT_GET, 'thread') ? '' : filter_input(INPUT_GET, 'thread', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+if (isset($request_query[1])) foreach (explode('&', $request_query[1]) as $rquery) if (false !== strpos($rquery, '=')) list (, $v[]) = explode('=', $rquery);
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;
 if (is_file($ticket = 'images/ticket.png')) if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757);
 if ($use_forum)
 {
 	$forum_url = $url. r($forum);
-	if ($forum_thread = !filter_has_var(INPUT_GET, 'thread') ? '' : basename(filter_input(INPUT_GET, 'thread', FILTER_SANITIZE_STRING)))
+	if ($forum_thread)
 	{
 		if ('@' === $forum_thread[0]) $allow_guest_creates = false;
 		$thread_title = '!' === $forum_thread[0] || '@' === $forum_thread[0] ? h(substr($forum_thread, 1)) : h($forum_thread);
 		$thread_url = $forum_url. '/'. r($forum_thread). '/';
 	}
-	if ($forum_topic = !filter_has_var(INPUT_GET, 'topic') ? '' : basename(filter_input(INPUT_GET, 'topic', FILTER_SANITIZE_STRING)))
+	if ($forum_topic = !filter_has_var(INPUT_GET, 'topic') ? '' : filter_input(INPUT_GET, 'topic', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
 	{
 		$topic_title = '!' === $forum_topic[0] || '@' === $forum_topic[0] ? h(substr($forum_topic, 1)) : h($forum_topic);
 		$topic_url = $thread_url. r($forum_topic);
@@ -46,7 +47,7 @@ $glob_dir = 'contents/'. (is_admin() || is_subadmin() ? '*/*' : '[!!]*/[!!]*'). 
 if ($contents = get_dirs('contents', false))
 {
 	foreach($contents as $categ)
-		$nav .= '<li'. ($categ_nav_class ?? ''). '><a'. ($categ_name === $categ ? ' class="nav-item nav-link active"' : ' class="nav-item nav-link"'). ' href="'. $url. r($categ). '/">'. h($categ). '</a></li>'. $n;
+		$nav .= '<li'. ($categ_nav_class ?? ''). '><a class="'. $categ_nav_a_class. ($categ_name === $categ ? $categ_nav_active_class : ''). '" href="'. $url. r($categ). '/">'. h($categ). '</a></li>';
 }
 if ($user)
 	include 'profile.php';
@@ -79,37 +80,37 @@ if ($use_search)
 	elseif ($get_categ) $num = 7;
 	else $num = 6;
 	$search .=
-	'<form method=get>'. $n.
-	'<input placeholder="'. $placeholder[$num]. '" type=search id=search name='. ($forum !== filter_input(INPUT_GET, 'page') ? '' : 'f'). 'query required class=form-control accesskey=f>'. $n.
-	'</form>'. $n;
+	'<form method=get>'.
+	'<input placeholder="'. $placeholder[$num]. '" type=search id=search name='. ($forum !== filter_input(INPUT_GET, 'page') ? '' : 'f'). 'query required class=form-control accesskey=f>'.
+	'</form>';
 }
 
 include 'sideboxes.php';
 
-if ($checklist === $title_name || $checklist === $page_name) $javascript .= 'let s=$("<section class=checklist>"),o=$("<ol class=\"list-group list-group-flush mb-5 mt-2\">");s.append(o);$.each($("article.article").html().split("\n"),function(i,v){if(v){if("H2"===$(v).prop("tagName"))l=$("<li class=\"list-group-item active\">").append($(v));else l=$("<li class=\"list-group-item list-group-item-action\">").append($("<label class=\"d-block mb-0 user-select-none\">").text(v).prepend($("<input class=mr-3 type=checkbox>")))}else l=$("<li class=list-group-item>");l.appendTo(o)});$("article.article").html(s);$(".checklist").each(function(){$("input[type=checkbox]",this).each(function(i,v){v.after(i+". ")})});let a=JSON.parse(localStorage.getItem("checked"))||[];a.forEach((c,i)=>$(".checklist input[type=checkbox]").eq(i).prop("checked",c));$(".checklist input[type=checkbox]").click(()=>{a=$(".checklist input[type=checkbox]").map((i,e)=>e.checked).get();localStorage.setItem("checked",JSON.stringify(a))});';
-
 $header .=
-'<meta name=application-name content=KinagaCMS>'. $n.
-'<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'. $n.
-(!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/favicon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">'). $n;
-
+'<meta name=application-name content=KinagaCMS>'.
+'<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'.
+(!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/favicon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">');
 if ($stylesheet) $header .= '<style>'. $stylesheet. '</style>';
-$footer .= '<script defer>const d=document;$("img").onerror=null;'. $javascript.
-(!$use_datasrc ? '' : 'const x=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const y=entry.target;if(y.dataset.src){y.src=y.dataset.src}}})}),z=d.querySelectorAll("img[data-src]");z.forEach(z=>x.observe(z));').
-(!$use_wikipedia_popover ? '' : '$("dfn").css("border-bottom","thin dotted");$("dfn").mouseover(function(e){$(this).css("cursor","progress");const l="https://"+($(this).attr("lang")||"'. $lang. '")+".wikipedia.org";if(navigator.onLine)$.getJSON(l+"/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&redirects=1&titles="+$(this).text(),function(w,s,x){if("success"===s&&200===x.status){$(e.currentTarget).css("cursor","pointer").css("border-bottom","thin solid");for(i in w.query.pages)$(e.currentTarget).popover({placement:"auto",title:w.query.pages[i].title||"",content:w.query.pages[i].extract||"",template:"<div class=popover><div class=arrow><\/div><div class=\"d-flex justify-content-between\"><h3 class=\"popover-header flex-grow-1\"><\/h3><a class=\"btn btn-dark lead btn-close\">&times;</a><\/div><div class=popover-body><\/div><small class=\"d-flex justify-content-between bg-info px-2 py-1\"><a href=\"http://www.gnu.org/licenses/fdl-1.3.html\" target=_blank title=\"GNU Free Documentation License\">GFDL<\/a><a href=\""+l+"/wiki/"+w.query.pages[i].title+"\" target=_blank>"+l+"/wiki/"+w.query.pages[i].title+"<\/a><\/small><\/div>"})}})}).mouseout(function(){$(this).css("border-bottom","thin dotted")});$(document).on("click",".btn-close",function(){$(this).parents(".popover").popover("hide")});').
+$article .= '<div class="clearfix my-5"></div>';
+$footer .= '<script>let pageTop=document.getElementById("page-top").firstChild;window.addEventListener("scroll",e=>{if(window.pageYOffset>=200){pageTop.setAttribute("height","36px");pageTop.setAttribute("width","36px")}else{pageTop.setAttribute("height","0px");pageTop.setAttribute("width","0px")}});pageTop.addEventListener("click",e=>{e.preventDefault();window.scroll({top:0,behavior:"smooth"})});[].slice.call(document.querySelectorAll("[data-bs-toggle=tooltip]")||[]).map(t=>{return new bootstrap.Tooltip(t)});[].slice.call(document.querySelectorAll("[data-bs-toggle=popover]")||[]).map(el=>{return new bootstrap.Popover(el)});[].slice.call(document.querySelectorAll("img")||[]).onerror=null;'.
+$javascript. (!$use_datasrc ? '' : 'const x=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const y=entry.target;if(y.dataset.src){y.src=y.dataset.src}}})}),z=document.querySelectorAll("img[data-src]");z.forEach(z=>x.observe(z));').
+(!$use_wikipedia_popover ? '' : '[].slice.call(document.querySelectorAll("dfn")||[]).forEach(e=>{const l="https://"+(e.getAttribute("lang")||"'. $lang. '")+".wikipedia.org",m="/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&redirects=1&titles="+e.textContent;document.querySelector("head").innerHTML+="<link href=\""+l+m+"\" rel=prefetch as=fetch crossorigin>";e.style.borderBottom="thin dotted";e.addEventListener("mouseover",ev=>{e.style.cursor="progress";if(navigator.onLine){fetch(l+m).then(response=>response.json()).then(data=>{let allow=bootstrap.Tooltip.Default.allowList;allow.button=["onclick"];for(i in data.query.pages){let wp=new bootstrap.Popover(ev.target,{placement:"auto",html:true,trigger:"manual",title:(data.query.pages[i].title||"")+"<button class=btn-close aria-label=Close onclick=this.closest(\".popover\").classList.remove(\"show\")><\/button>",content:data.query.pages[i].extract||"",template:"<div class=popover><div class=\"arrow popover-arrow\"><\/div><h3 class=\"popover-header d-flex justify-content-between align-items-center\"><\/h3><div class=popover-body><\/div><small class=\"d-flex justify-content-between bg-info rounded-bottom px-2 py-1\"><a href=\"http://www.gnu.org/licenses/fdl-1.3.html\" class=link-light target=_blank title=\"GNU Free Documentation License\">GFDL<\/a><a href=\""+l+"/wiki/"+data.query.pages[i].title+"\" class=link-light target=_blank>"+l+"/wiki/"+data.query.pages[i].title+"<\/a><\/small><\/div>"});wp.show()}e.style.cursor="pointer";e.style.borderBottom="thin solid"})}});e.addEventListener("mouseout",()=>{e.style.borderBottom="thin dotted"})});').
 '</script>'.
-'<div id=copyright class="d-flex justify-content-center align-items-center h-100">'.
-'<img alt=K data-toggle=modal data-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'.
-'<small class="ml-3 text-muted">&copy; '. date('Y'). ' '. $site_name. '. '. ($copyright ?? '').
+'<div id=copyright class="d-flex justify-content-center align-items-center">'.
+'<img alt=K data-bs-toggle=modal data-bs-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'.
+'<small class="ms-3 text-muted">&copy; '. date('Y'). ' '. $site_name. '. '. ($copyright ?? '').
 (!$use_benchmark ? '' : '<br>'. sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem))).
 '</small>'.
 '</div>'.
 '<div class="modal fade" id=powered-by-kinaga aria-hidden=true>'.
 '<div class="modal-dialog modal-dialog-centered modal-sm">'.
 '<div class=modal-content>'.
-'<button type=button class="close position-absolute" data-dismiss=modal style="right:5px;z-index:1100" accesskey=k tabindex=-1><span aria-hidden=true>&times;</span></button>'.
-'<div class="modal-body text-black-50 text-center"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'.
-'<div class=modal-footer><small class=text-black-50>Powered by</small> <a class="h5 border-0 modal-title text-dark" href="https://github.com/KinagaCMS/">KinagaCMS</a></div>'.
+'<button type=button class="btn bg-white position-absolute p-1 top-0 start-100 translate-middle text-primary rounded-circle" data-bs-dismiss=modal style="z-index:1100" accesskey=k tabindex=-1>'.
+'<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>'.
+'</button>'.
+'<div class="modal-body text-center"><img src="'. $url. 'images/icon.php" alt="Powered by KinagaCMS" width=266 height=213></div>'.
+'<div class=modal-footer><small>Powered by <a class="h5 border-0 text-black-50" href="https://github.com/KinagaCMS/">KinagaCMS</a></small></div>'.
 '</div>'.
 '</div>'.
 '</div>';

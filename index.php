@@ -1,18 +1,15 @@
 <?php
 #exit('Down for Maintenance...');
+
 $time_start = hrtime(true);
 $base_mem = memory_get_usage();
 
-error_reporting(0);
-/*
-use this for local development and testing.
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-*/
+#error_reporting(0);
+#error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 ob_implicit_flush(1);
 
 /*
-If change server and use same "users", specify the file name like this.
 $session_txt = './d5c0a6126819d5d63b9c6d3361eabba1ea7a5d9c.txt';
 */
 if (!isset($session_txt) && !is_file($session_txt = './'. sha1(__DIR__). '.txt'))

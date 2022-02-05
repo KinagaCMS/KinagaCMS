@@ -13,6 +13,7 @@ $site_name = 'KinagaCMS8';
 $color = '水';
 
 #メールアドレス：お問い合わせ、コメント、ログインを利用する場合は必須
+#マルチバイトドメインは Punycode 変換が必須
 $mail_address = '';
 
 #管理者接尾語
@@ -25,6 +26,7 @@ $address_title = '';
 #住所下の追加情報：配列を増やすことで複数行に表示
 $additional_address = ['', '', '', '', ];
 #ジオコーダ：住所を座標に変換するサイト
+#空欄の場合は地図非表示
 $geocoder = 'https://msearch.gsi.go.jp/address-search/AddressSearch?q=';
 
 #キャッチコピー：トップページのメタ情報とヘッダーに表示
@@ -67,7 +69,7 @@ $page_prefix = 'Page %d';
 $permalink = ['HTML', 'Wiki', $forum];
 
 #セパレーター兼ページトップ
-$top = '<a class="page-top text-right d-block p-0 small" href="#TOP"> </a>';
+$top = '<a class="page-top text-end d-block p-0 small" href="#TOP"> </a>';
 $pagetop = 'このページのトップへ';
 
 #記事
@@ -78,12 +80,13 @@ $article_prevnext = ['次の記事', '前の記事'];
 
 $not_found = [
 'エラーが発生しました',
-'ページが削除されているか、アドレスが間違っている可能性があります。'. $n. 'トップページに戻ってから、もう一度ご確認下さい。'
+'ページが削除されているか、アドレスが間違っている可能性があります。'. $n. 'トップページに戻ってから、もう一度ご確認下さい。',
+'該当する記事が見つかりませんでした'
 ];
 
 $ellipsis = '…';
 
-$views = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg> %s';
+$views = '閲覧 %s';
 
 $images_count_title = ' （画像 %d枚）';
 
@@ -94,14 +97,15 @@ $custom_file_label = '参照';
 
 $result = '%s の検索結果';
 
-$no_results_found = '該当する記事が見つかりませんでした';
-
 $comment = 'コメント';
 $comments_not_allow = '※現在'. $comment. 'は受け付けておりません';
 $comments_count_title = ' （'. $comment. '：%d件）';
 $comment_privacy_policy = $privacy_policy. 'また、'. $comment. 'が掲載される場合であってもメールアドレスが本サイト内に記載されることはありません。';
-$comment_counts = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-square-text-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2V2zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"/></svg> %d';
-$comment_note = '承認された'. $comment. 'のみ掲載されます';
+$comment_counts = $comment. ' %d';
+$comment_note = [
+	'承認された'. $comment. 'のみ掲載されます',
+	'end.txt をアップロードすると、コメントの受付を停止します'
+];
 
 $comment_subject = '「%s」の「%s」に'. $comment. ' - ';
 
@@ -127,7 +131,7 @@ $contact_message = [
 	$contact_label[2]. 'を記入して下さい',
 	'Cookie を有効にして下さい',
 	'送信しました',
-	'送信に失敗しました'
+	'送信に失敗しました',
 	];
 
 $contact_preview = '内容確認';
@@ -144,13 +148,12 @@ $intervals = ['y' => '年前', 'm' => 'ヶ月前', 'w' => '週間前', 'd' => '�
 
 #ログイン
 $login = 'ログイン';
-$login_message = ['ログインにはメールアドレスが必要となります。', 'メールアドレス宛に「ログイン・チケット」を送付します。'];
+$login_message = ['ログインにはメールアドレスが必要となります。', 'メールアドレス宛に「ログイン・チケット」を送付します。', 'ログイン成功', 'もう一度ログインする際は、ログイン・チケットを取得して下さい。'];
 $login_warning = ['不承認ファイル', '不正ファイル', 'ファイル失効', 'アップロードエラー'];
 $ticket_warning = ['送信エラー', 'セッションエラー', 'ファイル失効', '内部エラー'];
-$login_welcome = 'こんにちは。%sさん';
 $logout = 'ログアウト';
 
-$login_try_again = '<a class=text-danger href="'. $current_url. '&amp;'. $login. '">こちら</a>からもう一度メールアドレスを入力して下さい。';
+$login_try_again = '<a class=text-danger href="&'. r($login). '='. $now. '#login">こちら</a>からもう一度メールアドレスを入力して下さい。';
 
 $login_required = ['続きを読むにはログインが必要です。', $comment. 'を投稿するにはログインが必要です。', $comment. 'の閲覧および投稿にはログインが必要です。'];
 
@@ -188,7 +191,8 @@ $prof_note = [
 	'他のユーザーと重複することもあります',
 	'100KB以下のJPEGまたはPNGに限ります',
 	'HTMLタグは使用できません',
-	'ログインすると%sさんにアプローチすることもできます。'
+	'ログインすると%sさんにアプローチすることもできます。',
+	'ログインして'. $admin_suffix[0]. 'の%sさんにアプローチすると「'. $admin_suffix[1]. '」として共同執筆することもできるようになります。'
 	];
 
 $approach_subject = [
@@ -260,17 +264,17 @@ $user_not_found_title = ['ユーザーが見つからないかアカウントが
 $​ask_admin = '問題が解決しない場合は、<a class=text-danger href="'. $url. $contact_us. '">こちら</a>からお問い合わせ下さい。';
 
 $form_label = ['返信', 'トピック作成', 'トピック名', 'スレッド作成', 'スレッド名', '残り%s文字', '要ログイン'];
-$disallow_symbols = ['"','#','$','%','&','\'','(',')','*','+',',','.','/',':',';','>','<','=','?','[','\\',']','^','_','`','{','|','}','~'];
-$replace_symbols = ['”','＃','＄','％','＆','’','（','）','＊','＋','，','．','／','：','；','＞','＜','＝','？','［','￥','］','＾','＿','｀','｛','｜','｝','～'];
+$disallow_symbols = ['"','#','$','%','&','(',')','*','+',',','.','/',':',';','>','<','=','?','[','\\',']','^','_','`','{','|','}','~'];
+$replace_symbols = ['”','＃','＄','％','＆','（','）','＊','＋','，','．','／','：','；','＞','＜','＝','？','［','￥','］','＾','＿','｀','｛','｜','｝','～'];
 
-$forum_title = ['トピック', 'スレッド', 'レス'];
+$forum_title = ['トピック', 'スレッド', 'レス', '書き込み件数'];
 $forum_guests = [
 	$forum. 'からURLのお知らせ',
 	$time_limit. '分以内（%sまで）に、下記のURLにアクセスして'. $forum. 'のプロセスを完了して下さい。',
 	'メールを送信しました。メールを確認して'. $forum. 'のプロセスを完了して下さい。',
 	'先頭に記号を入力した場合、以下のようになります。',
 	'<b class=\"h3 p-3\">!<\/b>ゲストの閲覧および書き込みを禁止します。<br><b class=\"h3 p-1\">@<\/b>ゲストの書き込みを禁止します。<br>'.
-	(filter_has_var(INPUT_GET, 'thread') ? '' : '<strong class=\"text-danger d-block mt-2 text-center\">当該スレッド内の全トピックに継承されます。<\/strong>'),
+	(filter_has_var(INPUT_GET, 'thread') ? '' : '<strong class=\"text-danger d-block text-center\">当該スレッド内の全トピックに継承されます。<\/strong>'),
 	'ゲスト書き込みでは、ローカル部がユーザー名となります。<br>'. $forum. '内にメールアドレスが掲載されることはありません。<br>自動送信メールで書き込みプロセスを通知します。',
 	'スレッド／トピックを作成するにはログインが必要です。'
 	];
@@ -292,18 +296,22 @@ $remind_header = ['日時', '予約者', '内容', 'リマインド'];
 
 $admin_menus = [
 	$category. '作成', $category. '名', '記事作成', '記事名', 'カウンター', '閲覧回数を取得します', $comment, $comment. 'を受け付けます', '記事内容', 'サブタイトル', 'サイドページ作成', 'サイドページ名', 'サイドページ内容',
+	'記事編集', '移動先', '同名のフォルダまたはファイルが存在します'
 	];
 
 #プレースホルダー
 #0.検索 1.ログインメールアドレス 2.お問い合わせ名前 3.お問い合わせメール 4.お問い合わせ内容 5.アプローチメッセージ 6.サイト内 7.カテゴリ内 8.フォーラム内 9.スレッド内 10.アップロード画像 11.コメントアップロード
 $placeholder = ['Search...', 'example@yourmail.com', '', '', '', '一言メッセージ（必須ではありません）', 'サイト検索', $category. '検索', $forum. '検索', $forum_title[1]. '検索', '画像の説明', 'コメントファイルのアップロード'];
 
-$html_assist = ['HTMLタグ入力補助', '自動改行', '緑地白文字', '黄緑地緑文字', '赤地白文字', 'ピンク地赤文字', '青地白文字', '水色地青文字', '黄色地白色文字', '淡黄地黄文字', '黒地白文字', '灰地白文字', '銀地黒文字', '白地黒文字', '区切り線', 'テーブル', 'リスト', 'リンク', '見出し H1', '見出し H2', '見出し H3', '見出し H4', '見出し H5', '見出し H6', '右寄せ', '中央寄せ', '大きい文字', '小さい文字', '太字', '斜体', '強調', '削除（打ち消し線）', '追加（下線）', 
-		'&amp;lt;&amp;gt;', 'br', 'address', 'blockquote', 'cite', 'code', 'dl', 'kbd', 'mark', 'samp', 'sub', 'sup', 'dfn（Wikipedia）'];
+$html_assist = ['HTMLタグ入力補助', '自動改行', '緑地白文字', '黄緑地緑文字', '赤地白文字', 'ピンク地赤文字', '青地白文字', '水色地青文字', '黄色地白色文字', '淡黄地黄文字', '黒地白文字', '灰地白文字', '銀地黒文字', '白地黒文字', '区切り線', 'テーブル', 'リスト', 'リンク', '見出し H1', '見出し H2', '見出し H3', '見出し H4', '見出し H5', '見出し H6', '右寄せ', '中央寄せ', '大きい文字', '小さい文字', '太字', '斜体', '強調', '削除（打ち消し線）', '追加（下線）', '&amp;lt;&amp;gt;', 'br', 'address', 'blockquote', 'cite', 'code', 'dl', 'kbd', 'mark', 'samp', 'sub', 'sup', 'dfn（Wikipedia）', 'コメントアウト（アンケート）', 'border', 'border-top', 'border-end', 'border-bottom', 'border-start', 'border-2', 'border-3', 'border-4', 'border-5', 'border-primary', 'border-secondary', 'border-success', 'border-danger', 'border-warning', 'border-info', 'border-light', 'border-dark', 'border-white', 'rounded', 'rounded-top', 'rounded-end', 'rounded-bottom', 'rounded-start', 'rounded-circle', 'rounded-pill', 'rounded-1', 'rounded-2', 'rounded-3'];
 
 $benchmark_results = '<span class=text-nowrap>処理時間：%s秒</span> <span class=text-nowrap>消費メモリ：%s</span>';
-$checklist = 'チェックリスト';
 
+$checklist_message = [
+	'このページではアンケートを実施しています。<a href="#login" class=alert-link onclick="new bootstrap.Offcanvas(side).show()">ログインチケット</a>を取得して回答にご協力下さい。',
+	'ご協力ありがとうございました',
+	'回答者数：%d'
+];
 
 #/images/index.php
 
@@ -311,18 +319,10 @@ $checklist = 'チェックリスト';
 $imgs_per_page = 3;
 
 $images_title = '画像一覧';
-
-$images_heading = '画像一覧 <small class=ml-2>タグをコピーしてお使い下さい</small>';
-$images_aligner = '画像の位置指定 <small class="text-muted ml-2">回り込み解除には「&lt;div class=clearfix&gt;&lt;/div&gt;」を必要とする場合があります</small>';
-
-$noscript = '<strong>Javascript</strong> を有効にして下さい';
-
-$align = ['左寄せ', '右寄せ'];
+$images_heading = '画像一覧 <small class="ms-2">タグをコピーしてお使い下さい</small>';
 $size = ['Small', 'Large'];
-
 $first= '&laquo; 最初';
 $prev = '&lsaquo; 前';
-
 $next = '次 &rsaquo;';
 $last = '最後 &raquo;';
 

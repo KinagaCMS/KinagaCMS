@@ -272,11 +272,11 @@ function permalink($t, $u)
 function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 {
 	return
-	'<a href="'. $uri. '" target="'. $target. '"' .
-	($class ? ' class="'. $class. '"' : '') .
-	($title ? ' data-bs-toggle=tooltip title="'. $title. '" data-html=true' : '') .
-	($position ? ' data-placement="'. $position. '"' : '') .
-	('_blank' === $target ? ' rel="noopener noreferrer"' : ''). '>' .
+	'<a href="'. (false !== strpos($uri, '%') || false !== strpos($uri, '://') ? $uri : r($uri)). '" target="'. $target. '"' .
+	(!$class ? '' : ' class="'. $class. '"') .
+	(!$title ? '' : ' data-bs-toggle=tooltip title="'. $title. '" data-html=true') .
+	(!$position ? '' : ' data-placement="'. $position. '"') .
+	('_blank' !== $target ? '' : ' rel="noopener noreferrer"'). '>' .
 	(!$name ? h(urldecode($uri)) : h($name)) .
 	'</a>';
 }

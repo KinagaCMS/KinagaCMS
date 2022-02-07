@@ -129,7 +129,7 @@ if (is_admin() || is_subadmin())
 				if ($rep && is_file('contents/'. $rep. '.html') && rename('contents/'. $rep. '.html', 'contents/'. substr($rep, 1). '.html'))
 				{
 					$post_sidepage = substr($rep, 1);
-					if (!is_admin()) mail($mail_address, $btn[6]. ' - '. h($post_sidepage. ' - '. $site_name), a($url. r($post_sidepage), h($post_sidepage. ' - '. $site_name)));
+					if (!is_admin()) mail($mail_address, $btn[6]. ' - '. h($post_sidepage. ' - '. $site_name), a($url. r($post_sidepage), $post_sidepage. ' - '. $site_name));
 					exit (header('Location: '. $url. ('index' !== $post_sidepage ? '' : '?page='). r($post_sidepage)));
 				}
 			}

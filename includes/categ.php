@@ -255,7 +255,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 					if ($current_categ. '/'. $rep === $current_categ. '/'. $articles_name && is_dir($current_categ. '/'. $rep) && !is_dir($current_categ. '/'. substr($rep, 1)) && rename($current_categ. '/'. $rep, $current_categ. '/'. substr($rep, 1)))
 					{
 						$post_article = basename($current_categ). '/'. substr($rep, 1);
-						if (!is_admin()) mail($mail_address, $btn[6]. ' - '. h($post_article. ' - '. $site_name), a($url. r($post_article), h($post_article. ' - '. $site_name)));
+						if (!is_admin()) mail($mail_address, $btn[6]. ' - '. h($post_article. ' - '. $site_name), a($url. r($post_article), $post_article. ' - '. $site_name));
 						exit (header('Location: '. $url. r($post_article)));
 					}
 					else $post_article_check = false;

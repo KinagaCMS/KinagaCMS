@@ -38,7 +38,7 @@ $serif_fonts = '';
 if ('ja' === $lang)
 {
 	$bootstrap = str_replace('system-ui,', 'TakaoPGothic,"Noto Sans CJK JP",system-ui,', $bootstrap);
-	$bootstrap = str_replace('SFMono-Regular,', 'TakaoGothic,"Noto Sans Mono CJK JPNoto Sans CJK JP",SFMono-Regular,', $bootstrap);
+	$bootstrap = str_replace('SFMono-Regular,', 'TakaoGothic,"Noto Sans Mono CJK JP",SFMono-Regular,', $bootstrap);
 	$serif_fonts = 'TakaoPMincho,"Noto Serif CJK JP",';
 }
 $get_categ = !filter_has_var(INPUT_GET, 'categ') ? '' : filter_input(INPUT_GET, 'categ', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);

@@ -32,7 +32,7 @@ RewriteRule ^(.*)$ ?page=$1 [L]
 </IfModule>
 
 <ifModule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/html text/plain text/xml image/svg+xml application/xhtml+xml application/xml text/css text/javascript application/javascript application/x-javascript application/x-httpd-php application/x-httpd-fastphp
+AddOutputFilterByType DEFLATE text/html text/plain text/xml image/svg+xml application/xhtml+xml application/xml text/css text/javascript application/javascript application/x-javascript
 </ifModule>
 
 <ifModule mod_expires.c>

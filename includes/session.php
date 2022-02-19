@@ -137,8 +137,8 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		$aside .=
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'.
 		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[4]. '</div>'.
-		'<form class="'. $sidebox_content_class[3]. '" method=post>'.
-		'<input class="form-control mb-3" required name=e type=email accesskey=e placeholder="'. $placeholder[1]. '"'. (filter_has_var(INPUT_GET, $login) ? ' autofocus' : ''). '>'.
+		'<form class="'. $sidebox_content_class[3]. '" name=login method=post>'.
+		'<input class="form-control mb-3" required name=e id=e type=email accesskey=e placeholder="'. $placeholder[1]. '"'. (filter_has_var(INPUT_GET, $login) ? ' autofocus' : ''). '>'.
 		'<input type=hidden name=t value="'. $token. '">'.
 		'<p>'. $login_message[1]. '</p>'.
 		'</form>'.

@@ -168,8 +168,9 @@ $title_length = 200;
 
 #Top page: if $index_type = 1;
 $default_sections_per_page = 6;
-$index_class = 'card-columns index';
-$index_wrapper_class = 'card mb-3 shadow-sm';
+$index_class = 'row row-cols-1 row-cols-md-2 g-4 index';
+$index_column_class = 'col';
+$index_wrapper_class = 'col card mb-3 shadow-sm';
 $index_content_class = 'card-body';
 $index_title_class = 'h4 card-title mb-3';
 $index_categ_link_class = 'blockquote-footer text-end';
@@ -177,7 +178,8 @@ $index_footer_class = 'card-footer bg-transparent';
 
 #Category
 $categ_sections_per_page = 6;
-$categ_class = 'card-columns categ';
+$categ_class = 'row row-cols-1 row-cols-md-2 g-4 categ';
+$categ_column_class = 'col';
 $categ_wrapper_class = 'card mb-3 shadow-sm';
 $categ_content_class = 'card-body';
 $categ_title_class = 'h4 card-title mb-3';

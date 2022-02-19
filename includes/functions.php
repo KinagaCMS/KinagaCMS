@@ -19,7 +19,7 @@ function d($enc)
 function h($str)
 {
 	global $encoding;
-	if ($str) return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
+	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
 }
 
 function size_unit($num, $filesize=true)
@@ -299,7 +299,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 			if ($show_exif_comment)
 			{
 				if (isset($exif['COMMENT'][0])) $exif_comment = h($exif['COMMENT'][0]);
-				if ('.png' === $lower_ext) $exif_comment = h(get_png_tEXt($src));
+				if ('.png' === $lower_ext) $exif_comment = get_png_tEXt($src);
 			}
 			list ($width, $height, $type, $attr) = @getimagesize($src);
 			if ($exif_thumbnail) list ($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
@@ -321,10 +321,10 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'.
 					'</small>'.
 					'</figure>';
-				elseif ($exif_comment && !$exif_thumbnail)
+				elseif (!$exif_thumbnail)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
-					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1" data-caption="'. $exif_comment. '" href="'. $url. r($src). '">'.
+					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). ' href="'. $url. r($src). '">'.
 					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'.
 					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'.
@@ -332,7 +332,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				else
 					return
 					'<figure class="d-inline-block m-2">'.
-					'<a data-fancybox=gallery href="'. $url. r($src). '" data-caption="'. $exif_comment. '">'.
+					'<a data-fancybox=gallery href="'. $url. r($src). '"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). '>'.
 					($exif_thumbnail && $use_thumbnails ?
 					'<img class="'. $class. ' align-top img-thumbnail" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
 					$img).
@@ -501,12 +501,18 @@ function redirect($link)
 
 function get_logo($name=false, $class='', $width='', $height='')
 {
-	global $site_name, $url;
-	if (!is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/logo.png'))
+	global $site_name, $url, $logo_found;
+	if (!is_file($logo = 'images/icon.svg') && !is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/logo.png'))
+	{
+		$logo_found = false;
 		return $site_name;
+	}
 	else
+	{
+		$logo_found = true;
 		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '"'. (!$width ? '' : ' width="'. $width. '"'). (!$height ? '' : ' height="'. $height. '"'). '>'.
 		(!$name ? '' : '<span class="'. (!$class ? '' : $class). '">'. $site_name. '</span>');
+	}
 }
 
 
@@ -899,7 +905,7 @@ function booking(
 		echo
 		'</tbody>',
 		'</table></div>';
-		$javascript .= (isset($_SESSION['l']) ? 'document.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=document.createElement("form");f.style.display="none";f.method="post";let g=document.createElement("input"),h=document.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);document.body.appendChild(f);f.submit()}' : ''). 'const t=document.querySelectorAll("td,th"),b=function(e,f=""){for(j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}';
+		$javascript .= (isset($_SESSION['l']) ? 'document.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=document.createElement("form");f.style.display="none";f.method="post";let g=document.createElement("input"),h=document.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);document.body.appendChild(f);f.submit()}' : ''). 'const t=document.querySelectorAll("td,th"),b=function(e,f=""){for(let j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(let i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}';
 		if ($g = glob($bookings_dir. '*', GLOB_ONLYDIR+GLOB_NOSORT))
 		{
 			if ($b = array_diff($g, $a)) foreach ($b as $c) if (is_dir($c)) `rm -rf $c`;
@@ -940,7 +946,7 @@ function get_png_tEXt($png)
 		}
 	}
 	fclose($fp);
-	if (isset($key, $val) && $key === $pngtext) return $val;
+	if (isset($key, $val) && $key === $pngtext) return h($val);
 }
 
 function is_admin()

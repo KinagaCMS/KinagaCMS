@@ -267,6 +267,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			$total_images = (int)$count_images + (int)$count_background_images;
 			preg_match('/width="(\d+)"/', $default_image, $width);
 			$article .=
+			'<div class='. $index_column_class. '>'.
 			'<div class="'. $index_wrapper_class. '">'.
 			$default_image.
 			'<div class="'. $index_content_class. '">'.
@@ -297,7 +298,9 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 				$article .=
 				'<a class=card-link href="'. $url. $categ_link. '/'. $title_link. '#comment">'. sprintf($comment_counts, count(glob($comments_dir. '/*'. $delimiter. '*.txt', GLOB_NOSORT))). '</a>';
 			$article .=
-			'</div></div>';
+			'</div>'.
+			'</div>'.
+			'</div>';
 		}
 		$article .= '</div>';
 		if ($count_glob_files > $default_sections_per_page) pager($max_pages, $page_ceil);

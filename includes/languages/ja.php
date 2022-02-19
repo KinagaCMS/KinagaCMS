@@ -308,7 +308,7 @@ $html_assist = ['HTMLタグ入力補助', '自動改行', '緑地白文字', '�
 $benchmark_results = '<span class=text-nowrap>処理時間：%s秒</span> <span class=text-nowrap>消費メモリ：%s</span>';
 
 $checklist_message = [
-	'このページではアンケートを実施しています。<a href="#login" class=alert-link onclick="new bootstrap.Offcanvas(side).show()">ログインチケット</a>を取得して回答にご協力下さい。',
+	'このページではアンケートを実施しています。<a href="#login" class=alert-link onclick="focusLogin()">ログインチケット</a>を取得して回答にご協力下さい。',
 	'ご協力ありがとうございました',
 	'回答者数：%d'
 ];

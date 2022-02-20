@@ -313,7 +313,7 @@ elseif ($forum_thread && false === $fpos)
 					if (false !== strpos($thread_topic, '.')) continue;
 					$topic_name = '#' !== $thread_topic[0] ? $thread_topic : substr($thread_topic, 1);
 					$topic_name = ('!' !== $topic_name[0] && '@' !== $topic_name[0]) ? $topic_name : substr($topic_name, 1);
-					$article .= '<li class="list-group-item '. (!($key & 1) ? ' bg-light' : ''). ' d-flex align-items-center">';
+					$article .= '<li class="list-group-item '. (!($key & 1) ? ' bg-light' : ' bg-body'). ' d-flex align-items-center">';
 					if ('#' !== $thread_topic[0])
 						$article .=
 						(!is_admin() && !is_subadmin() ? '' : '<a class="btn btn-sm btn-danger" href="'. $thread_url. '&amp;topicdel='. r($thread_topic). '">'. $btn[4]. '</a>').
@@ -444,7 +444,7 @@ elseif (!isset($v[0]))
 					$threader_name = '<a href="mailto:'. $threader_email. '">'. $threader_name. '</a>';
 			}
 			$article .=
-			'<div class="d-flex mb-5 p-3'. (!($key & 1) ? '' : ' bg-body'). '">'.
+			'<div class="d-flex mb-5 p-3'. (!($key & 1) ? ' bg-light' : ' bg-body'). '">'.
 			'<div class="col-9">'.
 			'<small class="d-block mb-2">'. $threader_name. '</small>';
 			if ('#' !== $thread_name[0])

@@ -7,7 +7,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 	$categ_title = h($categ_name);
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $categ_title. '</li>';
 	$categ_contents = get_dirs($current_categ);
-	$categ_contents_number = $categ_contents ? count($categ_contents) : 0;
+	$categ_contents_number = !$categ_contents ? 0 : count($categ_contents);
 	$categ_content = '';
 	if (is_file($categ_file = $current_categ. '/index.html'))
 	{
@@ -17,6 +17,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		$header .= '<meta name=description content="'. get_description($categ_content). '">';
 		if (!is_file($current_categ. '/header.jpg') && !is_file($current_categ. '/header.png') && !is_file('images/header.jpg') && !is_file('images/header.png'))
 			$article .= '<header><h1 class="'. $h1_title[0]. '">'. $categ_title. (!$categ_content ? '' : ' <small class="'. $h1_title[1]. '">'. $categ_content. '</small>'). '</h1></header>';
+		else $meta_description = $categ_content;
 	}
 
 	if (is_admin() || is_subadmin())

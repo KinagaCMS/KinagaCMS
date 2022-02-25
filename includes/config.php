@@ -236,7 +236,7 @@ $delimiter = '-_-';
 
 ##########################
 
-if ($file = __FILE__ === implode(get_included_files())) exit;
+if (__FILE__ === implode(get_included_files())) exit;
 $n = PHP_EOL;
 $now = time();
 $server_port = getenv('SERVER_PORT');

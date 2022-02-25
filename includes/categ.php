@@ -15,7 +15,8 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		include $categ_file;
 		$categ_content = str_replace($line_breaks, '&#10;', ob_get_clean());
 		$header .= '<meta name=description content="'. get_description($categ_content). '">';
-		$article .= '<header><h1 class="'. $h1_title[0]. '">'. $categ_title. (!$categ_content ? '' : ' <small class="'. $h1_title[1]. '">'. $categ_content. '</small>'). '</h1></header>';
+		if (!is_file($current_categ. '/header.jpg') && !is_file($current_categ. '/header.png') && !is_file('images/header.jpg') && !is_file('images/header.png'))
+			$article .= '<header><h1 class="'. $h1_title[0]. '">'. $categ_title. (!$categ_content ? '' : ' <small class="'. $h1_title[1]. '">'. $categ_content. '</small>'). '</h1></header>';
 	}
 
 	if (is_admin() || is_subadmin())

@@ -502,7 +502,7 @@ function redirect($link)
 function get_logo($name=false, $class='', $width='', $height='')
 {
 	global $site_name, $url, $logo_found;
-	if (!is_file($logo = 'images/icon.svg') && !is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/logo.png'))
+	if (!is_file($logo = 'images/logo.png') && !is_file($logo = 'images/logo.svg') && !is_file($logo = 'images/icon.svg'))
 	{
 		$logo_found = false;
 		return $site_name;

@@ -56,10 +56,8 @@ if (is_file($header_img = '../../../contents/'. $get_categ. '/header.jpg')
 else echo '#nav,#breadcrumb{background-color:transparent}';
 if (is_file($bg_img = '../../../contents/'. $get_categ. '/background.jpg')
 || is_file($bg_img = '../../../contents/'. $get_categ. '/background.png')
-|| is_file($bg_img = '../../../images/background.jpg')
-|| is_file($bg_img = 'background.jpg')
-|| is_file($bg_img = '../../../images/background.png')
-|| is_file($bg_img = 'background.png'))
+|| is_file($bg_img = '../../../images/background.jpg') || is_file($bg_img = 'background.jpg')
+|| is_file($bg_img = '../../../images/background.png') || is_file($bg_img = 'background.png'))
 {
 	echo '#TOP{position:relative}#TOP::after{background:url("'. $bg_img. '") center/cover no-repeat fixed;content:"";position:absolute;top:0;right:0;bottom:0;left:0;opacity:.35;z-index:-2}main.bg-light{--bs-bg-opacity:.5}';
 }

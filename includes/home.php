@@ -3,8 +3,7 @@ if (__FILE__ === implode(get_included_files())) exit;
 $header .=
 '<title>'. $site_name. ($subtitle ? ' - '. $subtitle : ''). ($pages > 1 ? ' - '. sprintf($page_prefix, $pages) : ''). '</title>'.
 '<meta name=description content="'. $meta_description. '">';
-if ($subtitle)
-	$article .= '<header><h1 class="'. $h1_title[0]. '">'. $site_name. ' <small class="'. $h1_title[1]. '">'. $subtitle. '</small></h1></header>';
+if ($subtitle) $meta_description = $subtitle;
 if (is_admin() || is_subadmin())
 {
 	$article .= '<fieldset class=admin>';

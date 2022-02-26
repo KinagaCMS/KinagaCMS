@@ -9,9 +9,8 @@
 <body id=TOP class=text-break>
 <header id=header class="navbar sticky-md-top navbar-light bg-light shadow">
 <nav class="d-table w-100 p-3">
-<div class="d-table-cell align-middle text-left w-25">
-<a class="btn btn-primary btn-sm text-white" data-bs-toggle=offcanvas href="#side">&#9664;&#9654;</a></div>
-<div class="d-table-cell align-middle text-center w-50"><a class="h2 navbar-brand" href="<?=$url?>"><?=get_logo()?></a></div>
+<div class="d-table-cell align-middle text-left w-25"><a class="btn btn-primary btn-sm text-white" data-bs-toggle=offcanvas href="#side">&#9664;&#9654;</a></div>
+<div class="d-table-cell align-middle text-center w-50"><h1 class="m-0 h3"><a class=navbar-brand href="<?=$url?>"><?=get_logo()?></a></h1></div>
 <div class="d-table-cell align-middle w-25"><?=$search?></div>
 </nav>
 </header>

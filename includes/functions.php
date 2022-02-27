@@ -510,7 +510,7 @@ function get_logo($name=false, $class='', $width='', $height='')
 	else
 	{
 		$logo_found = true;
-		return '<img src="'. $url. $logo. '" class=img-fluid alt="'. $site_name. '"'. (!$width ? '' : ' width="'. $width. '"'). (!$height ? '' : ' height="'. $height. '"'). '>'.
+		return '<img src="'. $url. $logo. '" class="img-fluid'. ($name ? '' : ' '. $class). '" alt="'. $site_name. '"'. (!$width ? '' : ' width="'. $width. '"'). (!$height ? '' : ' height="'. $height. '"'). '>'.
 		(!$name ? '' : '<span class="'. (!$class ? '' : $class). '">'. $site_name. '</span>');
 	}
 }

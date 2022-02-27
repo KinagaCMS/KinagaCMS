@@ -291,8 +291,8 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 					'<div class="user list-group'. ($permitted ? '' : ' banned'). '" id="'. $base_current_userdir. '">'.
 					'<div class="list-group-item text-center">'.
 					$user_avatar.
-					'<h5><a href="?user='. $user_addr. '" title="'. $base_current_userdir. '">'. $user_handle. '</a></h5>'.
-					(!is_admin() ? '' : '<a href="mailto:'. $user_mail. '">'. $user_mail. '</a>').
+					'<h5><a class=text-dark href="?user='. $user_addr. '" title="'. $base_current_userdir. '">'. $user_handle. '</a></h5>'.
+					(!is_admin() ? '' : '<a class=text-dark href="mailto:'. $user_mail. '">'. $user_mail. '</a>').
 					'</div>'.
 					'<div class="list-group-item d-flex justify-content-between align-items-center">'.
 					'<h6>'. $users_info[1]. '</h6>'.

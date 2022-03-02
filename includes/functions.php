@@ -684,7 +684,13 @@ function counter($txt, $put=false)
 	{
 		$counter = (int)file_get_contents($txt);
 		++$counter;
-		file_put_contents($txt, $counter, LOCK_EX);
+		if ($fp = fopen($txt, 'c'))
+		{
+			flock($fp, LOCK_EX);
+			ftruncate($fp, 0);
+			fputs($fp, $counter);
+			fclose($fp);
+		}
 		return $counter;
 	}
 	elseif ($put)

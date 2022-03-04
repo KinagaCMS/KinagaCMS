@@ -7,7 +7,7 @@ $blacklist_alert =
 '<div class="modal-dialog modal-dialog-centered">'.
 '<div class=modal-content><div class="modal-header"><h5 class="border-0 text-black-50">'. $user_not_found_title[1]. '</h5>'.
 '<button type=button class=btn-close data-bs-dismiss=modal tabindex=-1></button></div>'.
-'<div class="modal-body text-center">'. $​ask_admin. '</div>'.
+'<div class="modal-body text-center">'. $ask_admin. '</div>'.
 '</div>'.
 '</div>'.
 '</div>';

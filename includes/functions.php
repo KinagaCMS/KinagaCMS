@@ -624,11 +624,11 @@ function dec($str)
 
 function sess_err($str)
 {
-	global $aside, $javascript, $login_try_again, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $ticket_warning, $​ask_admin;
+	global $aside, $javascript, $login_try_again, $sidebox_wrapper_class, $sidebox_title_class, $sidebox_content_class, $ticket_warning, $ask_admin;
 	$aside .=
 	'<div id=login class="'. $sidebox_wrapper_class[0]. '">'.
 	'<div class="'. $sidebox_title_class[3]. '">'. $str. '</div>'.
-	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $​ask_admin : $login_try_again). '</p>'.
+	'<p class="'. $sidebox_content_class[3]. '">'. ($str === $ticket_warning[3] ? $ask_admin : $login_try_again). '</p>'.
 	'</div>';
 	$javascript .= 'if(document.getElementById("side").classList.contains("offcanvas"))new bootstrap.Offcanvas(document.getElementById("side")).show();';
 }

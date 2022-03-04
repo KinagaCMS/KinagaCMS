@@ -285,6 +285,7 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 					$user_mail = dec($base_current_userdir = basename($current_userdir));
 					$user_addr = str_rot13($base_current_userdir);
 					$permitted = is_permitted($current_userdir);
+					$user_upload_count = (int)count(glob($current_userdir. '/upload/*', GLOB_NOSORT));
 
 					$article .=
 					'<div class="col mb-5">'.
@@ -310,22 +311,22 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 					'</div>'.
 					'</div>').
 					'<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[0]. '</h6>'. date($time_format, $users_lastlogin). '</div>'.
-					(is_file($logged_in = $current_userdir. '/logged-in.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[1]. '</h6>'. (int)file_get_contents($logged_in). '</div>' : '').
-					(is_file($approached = $current_userdir. '/approached.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[2]. '</h6>'. (int)file_get_contents($approached). '</div>' : '').
-					(is_file($disapproached = $current_userdir. '/disapproached.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[3]. '</h6>'. (int)file_get_contents($disapproached). '</div>' : '').
-					(is_file($message_success = $current_userdir. '/message-success.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[4]. '</h6>'. (int)file_get_contents($message_success). '</div>' : '').
-					(is_file($message_error = $current_userdir. '/message-error.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[5]. '</h6>'. (int)file_get_contents($message_error). '</div>' : '').
-					(is_file($created_categ = $current_userdir. '/create-categ.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[14]. '</h6>'. (int)file_get_contents($created_categ). '</div>' : '').
-					(is_file($created_article = $current_userdir. '/create-article.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[15]. '</h6>'. (int)file_get_contents($created_article). '</div>' : '').
-					(is_file($created_sidepage = $current_userdir. '/create-sidepage.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[16]. '</h6>'. (int)file_get_contents($created_sidepage). '</div>' : '').
-					(is_file($comment_success = $current_userdir. '/comment-success.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[6]. '</h6>'. (int)file_get_contents($comment_success). '</div>' : '').
-					(is_file($comment_error = $current_userdir. '/comment-error.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[7]. '</h6>'. (int)file_get_contents($comment_error). '</div>' : '').
-					(is_file($contact_success = $current_userdir. '/contact-success.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[8]. '</h6>'. (int)file_get_contents($contact_success). '</div>' : '').
-					(is_file($contact_error = $current_userdir. '/contact-error.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[9]. '</h6>'. (int)file_get_contents($contact_error). '</div>' : '').
-					(is_file($forum_thread_count = $current_userdir. '/forum-thread.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[10]. '</h6>'. (int)file_get_contents($forum_thread_count). '</div>' : '').
-					(is_file($forum_topic_count = $current_userdir. '/forum-topic.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[11]. '</h6>'. (int)file_get_contents($forum_topic_count). '</div>' : '').
-					(is_file($forum_ress_count = $current_userdir. '/forum-ress.txt') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[12]. '</h6>'. (int)file_get_contents($forum_ress_count). '</div>' : '').
-					(is_dir($forum_upload_dir = $current_userdir. '/upload/') ? '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[13]. '</h6>'. (int)count(glob($forum_upload_dir, GLOB_NOSORT)). '</div>' : '').
+					(!is_file($logged_in = $current_userdir. '/logged-in.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[1]. '</h6>'. (int)file_get_contents($logged_in). '</div>').
+					(!is_file($approached = $current_userdir. '/approached.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[2]. '</h6>'. (int)file_get_contents($approached). '</div>').
+					(!is_file($disapproached = $current_userdir. '/disapproached.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[3]. '</h6>'. (int)file_get_contents($disapproached). '</div>').
+					(!is_file($message_success = $current_userdir. '/message-success.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[4]. '</h6>'. (int)file_get_contents($message_success). '</div>').
+					(!is_file($message_error = $current_userdir. '/message-error.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[5]. '</h6>'. (int)file_get_contents($message_error). '</div>').
+					(!is_file($created_categ = $current_userdir. '/create-categ.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[14]. '</h6>'. (int)file_get_contents($created_categ). '</div>').
+					(!is_file($created_article = $current_userdir. '/create-article.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[15]. '</h6>'. (int)file_get_contents($created_article). '</div>').
+					(!is_file($created_sidepage = $current_userdir. '/create-sidepage.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[16]. '</h6>'. (int)file_get_contents($created_sidepage). '</div>').
+					(!is_file($comment_success = $current_userdir. '/comment-success.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[6]. '</h6>'. (int)file_get_contents($comment_success). '</div>').
+					(!is_file($comment_error = $current_userdir. '/comment-error.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[7]. '</h6>'. (int)file_get_contents($comment_error). '</div>').
+					(!is_file($contact_success = $current_userdir. '/contact-success.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[8]. '</h6>'. (int)file_get_contents($contact_success). '</div>').
+					(!is_file($contact_error = $current_userdir. '/contact-error.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[9]. '</h6>'. (int)file_get_contents($contact_error). '</div>').
+					(!is_file($forum_thread_count = $current_userdir. '/forum-thread.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[10]. '</h6>'. (int)file_get_contents($forum_thread_count). '</div>').
+					(!is_file($forum_topic_count = $current_userdir. '/forum-topic.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[11]. '</h6>'. (int)file_get_contents($forum_topic_count). '</div>').
+					(!is_file($forum_ress_count = $current_userdir. '/forum-ress.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[12]. '</h6>'. (int)file_get_contents($forum_ress_count). '</div>').
+					(0 >= $user_upload_count ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[13]. '</h6>'. $user_upload_count. '</div>').
 					'</div>'.
 					'</div>';
 				}
@@ -578,5 +579,5 @@ else
 	$header .= '<title>'. $user_not_found. ' - '. $site_name. '</title>';
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $user_not_found. '</li>';
 	$article .= '<h2 class=h4>'. $user_not_found_title[0]. '</h2>';
-	if ($use_contact) $article .= '<p>'. $​ask_admin. '</p>';
+	if ($use_contact) $article .= '<p>'. $ask_admin. '</p>';
 }

@@ -4,6 +4,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 {
 	$login_txt = $current_article_dir. '/login.txt';
 	$categ_login_txt = 'contents/'. $categ_name. '/login.txt';
+	$images_dir = $current_article_dir. '/images';
 	$breadcrumb .=
 	'<li class=breadcrumb-item><a href="'. $url. $get_categ. '">'. h($categ_name). '</a></li>'.
 	'<li class="breadcrumb-item active">'. h($title_name). '</li>';
@@ -99,10 +100,10 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				{
 					$extention = get_extension($v);
 					$slides_exif = @exif_read_data($v, '', '', true);
-					$bg_text = '.png' === strtolower($extention) ? get_png_tEXt($v) : '';
+					$bg_text = '.png' !== strtolower($extention) ? '' : get_png_tEXt($v);
 					$slides_exif_comment = (isset($slides_exif['COMMENT']) || $bg_text) ? '<div style="background:rgba(0,0,0,.2)" class="carousel-caption d-block wrap">'. h(strip_tags($slides_exif['COMMENT'][0] ?? $bg_text)). '</div>' : '';
-					$article .= '<li data-bs-target="#slide-images" data-bs-slide-to='. $k. (0 === $k ? ' class=active' : ''). ' data-bs-interval=10000><span class="sr-only visually-hidden">.</span></li>';
-					$carousel_item[] = '<div class="carousel-item'. (0 === $k ? ' active' : ''). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($v). '">'. $slides_exif_comment. '</div>';
+					$article .= '<li data-bs-target="#slide-images" data-bs-slide-to='. $k. (0 !== $k ? '' : ' class=active'). ' data-bs-interval=10000><span class="sr-only visually-hidden">.</span></li>';
+					$carousel_item[] = '<div class="carousel-item'. (0 !== $k ? '' : ' active'). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($v). '">'. $slides_exif_comment. '</div>';
 				}
 				$article .=
 				'</ol>'.
@@ -116,9 +117,9 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		{
 			$article .= '<article class="'. $article_wrapper_class. ' article clearfix">';
 			$separate_count = substr_count($current_article_content, $article_separator) + 1;
-			if (1 < $separate_count)
+			if (is_dir($images_dir) && 1 < $separate_count)
 			{
-				$separate_images_count = count(glob($current_article_dir. '/images'. $glob_imgs, GLOB_BRACE+GLOB_NOSORT));
+				$separate_images_count = count(glob($images_dir. $glob_imgs, GLOB_BRACE+GLOB_NOSORT));
 				$images_per_page = ceil($separate_images_count/$separate_count);
 				for ($i = 0, $c = count($e = explode($article_separator, $current_article_content)); $i <= $c; ++$i)
 				{
@@ -129,7 +130,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				$article .= $current_article_content;
 			$article .= '</article>';
 		}
-		if (1 <= $images_per_page && is_dir($images_dir = $current_article_dir. '/images') && $glob_image_files = glob($images_dir. $glob_imgs, GLOB_BRACE))
+		if (1 <= $images_per_page && is_dir($images_dir) && $glob_image_files = glob($images_dir. $glob_imgs, GLOB_BRACE))
 		{
 			$glob_images_number = count($glob_image_files);
 			$page_ceil = ceil($glob_images_number/$images_per_page);

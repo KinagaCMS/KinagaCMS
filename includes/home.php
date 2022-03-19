@@ -259,16 +259,20 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			}
 			else
 				$default_image = $count_images = '';
-			if (is_dir($default_background_dir = $article_dir. '/background-images'))
-				$count_background_images = count(glob($default_background_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE));
+			if (is_dir($default_background_dir = $article_dir. '/background-images') && $glob_default_background_imgs = glob($default_background_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
+			{
+				rsort($glob_default_background_imgs);
+				$default_background_image = img($glob_default_background_imgs[0]);
+				$count_background_images = count($glob_default_background_imgs);
+			}
 			else
-				$count_background_images = 0;
+				$default_background_image = $count_background_images = '';
 			$total_images = (int)$count_images + (int)$count_background_images;
 			preg_match('/width="(\d+)"/', $default_image, $width);
 			$article .=
 			'<div class='. $index_column_class. '>'.
 			'<div class="'. $index_wrapper_class. '">'.
-			$default_image.
+			($default_image ?: $default_background_image).
 			'<div class="'. $index_content_class. '">'.
 			'<h2 class="'. $index_title_class. '">'.
 			(is_admin() || is_author($article_dir) ? '!' !== $t[0] ?

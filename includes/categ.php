@@ -290,15 +290,19 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			}
 			else
 				$default_image = $count_images = '';
-			if (is_dir($default_background_dir = $article_dir. '/background-images'))
-				$count_background_images = count(glob($default_background_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE));
+			if (is_dir($default_background_dir = $article_dir. '/background-images') && $glob_default_background_imgs = glob($default_background_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
+			{
+				rsort($glob_default_background_imgs);
+				$default_background_image = img($glob_default_background_imgs[0]);
+				$count_background_images = count($glob_default_background_imgs);
+			}
 			else
-				$count_background_images = 0;
+				$default_background_image = $count_background_images = '';
 			$total_images = (int)$count_images + (int)$count_background_images;
 			$article .=
 			'<div class='. $categ_column_class. '>'.
 			'<div class="'. $categ_wrapper_class. '">'.
-			$default_image.
+			($default_image ?: $default_background_image).
 			'<div class="'. $categ_content_class. '">'.
 			'<h2 class="'. $categ_title_class. '">'.
 			(is_admin() || is_author($article_dir) ? '!' !== $articles_link[2][0] ?

@@ -45,7 +45,7 @@ if ($use_info && ($glob_info_files || $dl || $use_forum || ($use_contact && $mai
 
 if ($use_popular_articles && 0 < $number_of_popular_articles)
 {
-	if ($glob_all_counter_files = $get_categ ? glob('contents/'. $categ_name. '/[!!]*/counter.txt', GLOB_NOSORT) : glob($glob_dir. 'counter.txt', GLOB_NOSORT))
+	if ($glob_all_counter_files = glob($glob_dir. 'counter.txt', GLOB_NOSORT))
 	{
 		$aside .=
 		'<div id=popular-articles class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[6]. '">'.
@@ -73,7 +73,7 @@ if ($use_popular_articles && 0 < $number_of_popular_articles)
 }
 if ($use_comment && 0 < $number_of_new_comments)
 {
-	if ($all_comments = glob($glob_dir. 'comments/*'. $delimiter. '*.txt', GLOB_NOSORT))
+	if ($all_comments = glob($glob_dir. '/comments/*'. $delimiter. '*.txt', GLOB_NOSORT))
 	{
 		usort($all_comments, 'sort_time');
 		$all_comments = array_filter($all_comments, function($v) {

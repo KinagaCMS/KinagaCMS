@@ -43,7 +43,7 @@ if ($use_forum)
 	if (!is_file($blacklist = $forum_dir. '#blacklist.txt')) file_put_contents($blacklist, '');
 }
 include 'session.php';
-$glob_dir = 'contents/'. (is_admin() || is_subadmin() ? '*/*' : '[!!]*/[!!]*'). '/';
+$glob_dir = 'contents/'. (is_admin() || is_subadmin() ? ($get_categ ? $categ_name : '*'). '/' : ($get_categ ? $categ_name : '[!!]*'). '/[!!]'). '*/';
 if ($contents = get_dirs('contents', false))
 {
 	foreach($contents as $categ)

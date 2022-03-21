@@ -6,7 +6,9 @@ if (false !== $pos && $query)
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $result_title. '</li>';
 	$header .= '<title>'. $result_title. ' - '. ($pages > 1 ? sprintf($page_prefix, (int)$pages). ' - ' : ''). $site_name. '</title>';
 	$article .= '<header><h1 class="'. $h1_title[0]. '">'. $result_title. '</h1></header>';
-	$glob_search = filter_has_var(INPUT_GET, 'categ') ? glob('contents/'. ($site_name !== d($request_query[0]) && !$get_title ? d($request_query[0]) : $categ_name). '/'. (is_admin() || is_subadmin() ? '' : '[!!]'). '*/index.html', GLOB_NOSORT) : glob('{'. $glob_dir. 'index.html,contents/'. (is_admin() || is_subadmin() ? '' : '[!!]'). '*.html}', GLOB_BRACE + GLOB_NOSORT);
+	$glob_search = filter_has_var(INPUT_GET, 'categ') ?
+	glob('contents/'. ($site_name !== d($request_query[0]) && !$get_title ? d($request_query[0]) : $categ_name). '/'. (is_admin() || is_subadmin() ? '' : '[!!]'). '*/index.html', GLOB_NOSORT) :
+	glob('{'. $glob_dir. 'index.html,contents/'. (is_admin() || is_subadmin() ? '' : '[!!]'). '*.html}', GLOB_BRACE + GLOB_NOSORT);
 	if ($glob_search)
 	{
 		usort($glob_search, 'sort_time');

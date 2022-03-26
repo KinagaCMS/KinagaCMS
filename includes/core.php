@@ -92,6 +92,13 @@ $header .=
 '<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'.
 (!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/icon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">');
 if ($stylesheet) $header .= '<style>'. $stylesheet. '</style>';
+if (is_file($ads_txt = 'ads.txt'))
+{
+	$ads_str = fgetcsv(fopen($ads_txt, 'r'));
+	if ('google.com' === $ads_str[0])
+		if (preg_match('/\d+/', $ads_str[1], $ads_num))
+			$header .= '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-'. $ads_num[0]. '" crossorigin="anonymous"></script>';
+}
 $article .= '<div class="clearfix my-5"></div>';
 $footer .= (!$javascript ? '' : '<script>'. $javascript. '</script>').
 '<div id=copyright class="d-flex justify-content-center align-items-center">'.

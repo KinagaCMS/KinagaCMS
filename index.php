@@ -5,7 +5,7 @@ $time_start = hrtime(true);
 $base_mem = memory_get_usage();
 
 #error_reporting(0);
-#error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+#error_reporting(E_ALL);
 
 ob_implicit_flush(1);
 

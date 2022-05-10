@@ -4,12 +4,13 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 {
 	$login_txt = $current_article_dir. '/login.txt';
 	$categ_login_txt = 'contents/'. $categ_name. '/login.txt';
+	$login_txt_content = $subscribe_login = '';
 	$images_dir = $current_article_dir. '/images';
 	$breadcrumb .=
 	'<li class=breadcrumb-item><a href="'. $url. $get_categ. '">'. h($categ_name). '</a></li>'.
 	'<li class="breadcrumb-item active">'. h($title_name). '</li>';
-	$article_encode_title = h($title_name);
-	$header .= '<title>'. $article_encode_title. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>';
+	$basetitle = h($title_name);
+	$header .= '<title>'. $basetitle. ' - '. ($pages > 1 ? sprintf($page_prefix, $pages). ' - ' : ''). $site_name. '</title>';
 	$article_filemtime = filemtime($current_article);
 	$article .= '<header>';
 	if (is_file($author_txt = $current_article_dir. '/author.txt') && is_dir($author_prof = 'users/'. basename(file_get_contents($author_txt)). '/prof/'))
@@ -24,9 +25,9 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		'<a class="btn btn-sm btn-danger me-2" href="'. $url. $get_categ. '&amp;delete='. $get_title. '">'. $btn[4]. '</a>'
 	:
 		'<a class="btn btn-sm btn-success me-2" href="'. $url. $get_categ. '&amp;post='. $get_title. '">'. $btn[6]. '</a>'.
-		'<a class="btn btn-sm btn-info me-2" href="'. $url. $get_categ. '&amp;edit='. $get_title. '">'. $btn[7]. '</a>'
+		'<a class="btn btn-sm btn-info text-white me-2" href="'. $url. $get_categ. '&amp;edit='. $get_title. '">'. $btn[7]. '</a>'
 	: '').
-	$article_encode_title;
+	$basetitle;
 	if ($use_comment && is_dir($comment_dir = $current_article_dir. '/comments') && $glob_comment_files = glob($comment_dir. '/*'. $delimiter. '*.txt', GLOB_NOSORT))
 	{
 		$count_comments = count($glob_comment_files);
@@ -47,16 +48,32 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	include $current_article;
 	$current_article_content = str_replace($line_breaks, '&#10;', ob_get_clean());
 	$header .= '<meta name=description content="'. get_description($current_article_content). '">';
-	if (is_file($ticket) && (is_file($login_txt) || is_file($categ_login_txt)) && !isset($_SESSION['l']))
+
+	if (is_file($ticket) && ((is_file($login_txt) && filesize($login_txt)) || (is_file($categ_login_txt) && filesize($categ_login_txt))))
+	{
+		ob_start();
+		include is_file($categ_login_txt) && filesize($categ_login_txt) ? $categ_login_txt : $login_txt;
+		$login_txt_content = str_replace($line_breaks, '&#10;', ob_get_clean());
+		$subscribe_login = false !== strpos($login_txt_content, '/*&#10;') && false !== strpos($login_txt_content, '*/');
+	}
+	if (is_file($ticket) && !isset($_SESSION['l']) && !$subscribe_login && (is_file($login_txt) || is_file($categ_login_txt)))
 	{
 		$article .= '<article class="'. $article_wrapper_class. ' article clearfix">';
 		if ((is_file($login_txt) && !filesize($login_txt)) || (is_file($categ_login_txt) && !filesize($categ_login_txt)))
 			$article .= get_summary($current_article). '<p class="alert alert-warning my-4">'. $login_required[0]. '</p>';
-		elseif (is_file($login_txt) && filesize($login_txt))
-			$article .= '<p class="alert alert-warning my-4">'. str_replace($line_breaks, '&#10;', file_get_contents($login_txt)). '</p>';
-		elseif (is_file($categ_login_txt) && filesize($categ_login_txt))
-			$article .= '<p class="alert alert-warning my-4">'. str_replace($line_breaks, '&#10;', file_get_contents($categ_login_txt)). '</p>';
+		else
+			$article .= '<p class="alert alert-warning my-4">'. $login_txt_content. '</p>';
 		$article .= '</article>';
+	}
+	elseif (is_file($ticket) && $subscribe_login && @!is_file('users/'. $_SESSION['l']. '/'. md5($_SESSION['l'])))
+	{
+		$shipping = 0;
+		$delivery_times = null;
+		$price_format = $price_short_format;
+		$article .= '<p class="alert alert-warning my-4">';
+		$article .= preg_replace_callback('/\/\*&#10;(.*?)&#10;[^&#10;\*]*?\*\//s', 'paypal_form', $login_txt_content, -1, $i);
+		$article .= '</p>';
+		shopping_info();
 	}
 	else
 	{
@@ -142,6 +159,12 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				$article .= img($article_images, '', true);
 			$article .= '</div>';
 			if ($glob_images_number > $images_per_page) pager($max_pages, $page_ceil);
+		}
+		if (false !== strpos($article, '/*&#10;') && false !== strpos($article, '*/'))
+		{
+			if (!is_dir($purchased_dir = $current_article_dir. '/purchased')) mkdir($purchased_dir, 0757);
+			$article = preg_replace_callback('/\/\*&#10;(.*?)&#10;[^&#10;\*]*?\*\//s', 'paypal_form', $article, -1, $i);
+			shopping_info();
 		}
 		if (isset($_SESSION['l']) && false !== strpos($article, '<!--&#10;') && false !== strpos($article, '&#10;-->'))
 		{
@@ -375,7 +398,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	if ($use_social)
 		social(rawurlencode($title_name. ' - '. $site_name), rawurlencode($url. $categ_name. '/'. $title_name));
 	if ($use_permalink)
-		permalink($article_encode_title. ' - '. $site_name, $current_url);
+		permalink($basetitle. ' - '. $site_name, $current_url);
 }
 else
 	not_found();

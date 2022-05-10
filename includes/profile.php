@@ -327,6 +327,7 @@ if (is_dir($user_profdir = 'users/'. ($userstr = str_rot13($user)). '/prof/') &&
 					(!is_file($forum_topic_count = $current_userdir. '/forum-topic.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[11]. '</h6>'. (int)file_get_contents($forum_topic_count). '</div>').
 					(!is_file($forum_ress_count = $current_userdir. '/forum-ress.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[12]. '</h6>'. (int)file_get_contents($forum_ress_count). '</div>').
 					(0 >= $user_upload_count ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[13]. '</h6>'. $user_upload_count. '</div>').
+					(!is_file($payment_count = $current_userdir. '/payment-success.txt') ? '' : '<div class="list-group-item d-flex justify-content-between align-items-center"><h6>'. $status[17]. '</h6>'. (int)file_get_contents($payment_count). '</div>').
 					'</div>'.
 					'</div>';
 				}

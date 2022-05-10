@@ -4,6 +4,7 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 {
 	ob_start();
 	include $pages_file;
+	$pages_content = str_replace($line_breaks, '&#10;', ob_get_clean());
 	$basetitle = h($page_name);
 	$header .=
 	'<title>'. $basetitle. ' - '. $site_name. '</title>';
@@ -20,10 +21,9 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 		'<a class="btn btn-sm btn-danger me-2" href="'. $url. '?delete='. $page_name. '">'. $btn[4]. '</a>'
 	:
 		'<a class="btn btn-sm btn-success me-2" href="'. $url. '?post='. $page_name. '">'. $btn[6]. '</a>'.
-		'<a class="btn btn-sm btn-info me-2" href="'. $url. '?sedit='. $page_name. '">'. $btn[7]. '</a>'
+		'<a class="btn btn-sm btn-info text-white me-2" href="'. $url. '?sedit='. $page_name. '">'. $btn[7]. '</a>'
 	: '').
 	$basetitle. '</h1></header>';
-	$pages_content = str_replace($line_breaks, '&#10;', ob_get_clean());
 	$header .= '<meta name=description content="'. get_description($pages_content). '">';
 	$article .= '<article class="'. $article_wrapper_class. ' article clearfix">'. $pages_content. '</article>';
 

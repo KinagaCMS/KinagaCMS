@@ -22,6 +22,7 @@ $user = !filter_has_var(INPUT_GET, 'user') ? '' : filter_input(INPUT_GET, 'user'
 $session_t = !filter_has_var(INPUT_POST, 't') ? '' : filter_input(INPUT_POST, 't', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
 $request_query = explode('?', $request_uri);
 $forum_thread = !filter_has_var(INPUT_GET, 'thread') ? '' : filter_input(INPUT_GET, 'thread', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
+$create_with_kisou = '<button type=button class="btn btn-primary mb-3" data-bs-toggle=modal data-bs-target=#kisou><svg width=25 viewBox="0 0 50.184 40" xmlns="http://www.w3.org/2000/svg"><g transform="translate(-354.91 -692.36)" fill="#fff"><g transform="matrix(0 -1 -1 0 971.2 1023.7)" fill="#fff"><path d="m306.4 593.82-8.3151 6.2402 1.6537 1.248 13.447-10.115-13.447-10.115-1.6537 1.248 8.3151 6.2402zm24.961-26.221c0-0.80756-0.69175-1.4498-1.5601-1.4508l-36.88-0.0468c-0.86839-9e-4 -1.5601 0.64328-1.5601 1.4509v47.282c0 0.80762 0.69171 1.4518 1.5601 1.4509l36.88-0.0468c0.86835-9.9e-4 1.5601-0.64324 1.5601-1.4508-2.9e-4 -15.73-1.3e-4 -31.459 0-47.189zm-17.474 33.709 14.977 12.48h-12.48l-9.9844-7.4883-6.6615-4.9922-1.6537 1.248 8.3151 6.2402v4.9922h-9.9844v-9.9844l1.6693-1.248-1.6693-1.248 1.6693-1.248-1.6693-1.248v-15.235l1.6693-1.248-1.6693-1.248 1.6693-1.248-1.6693-1.248v-9.9844h9.9844v4.9922l-8.3151 6.2402 1.6537 1.248 16.646-12.48h12.48l-14.977 12.48 12.066 10.206z" fill="#fff"/></g></g></svg> '. $btn[14]. '</button>';
 if (isset($request_query[1])) foreach (explode('&', $request_query[1]) as $rquery) if (false !== strpos($rquery, '=')) list (, $v[]) = explode('=', $rquery);
 if (is_file($conf = $tpl_dir. 'config.php')) include $conf;
 if (is_file($ticket = 'images/ticket.png')) if (!is_dir($usersdir = './users/')) mkdir($usersdir, 0757);
@@ -51,6 +52,7 @@ if ($contents = get_dirs('contents', false))
 }
 if ($user)
 	include 'profile.php';
+elseif (filter_has_var(INPUT_GET, 'i') && is_dir('users/'. (!filter_has_var(INPUT_GET, 'i') ? ' ' : basename(str_rot13(filter_input(INPUT_GET, 'i')))))) include 'ipn.php';
 elseif ($use_search && (false !== $pos || false !== $fpos))
 {
 	if (isset($v[0]))
@@ -90,11 +92,13 @@ include 'sideboxes.php';
 $header .=
 '<meta name=application-name content=KinagaCMS>'.
 '<link rel=alternate type="application/atom+xml" href="'. $url. 'atom.php">'.
-(!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/icon.svg') ? '<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' : '<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">');
+(!is_file($favicon = 'favicon.ico') && !is_file($favicon = $favicon_svg = 'images/icon.svg') ?
+	'<link href="'. $url. 'images/icon.php" rel=icon type="image/svg+xml" sizes=any>' :
+	'<link rel=icon'. (!isset($favicon_svg) ? '' : ' type="image/svg+xml" sizes=any'). ' href="'. $url. $favicon. '">');
 if ($stylesheet) $header .= '<style>'. $stylesheet. '</style>';
 if (is_file($ads_txt = 'ads.txt'))
 {
-	$ads_str = fgetcsv(fopen($ads_txt, 'r'));
+	$ads_str = str_getcsv(file($ads_txt)[0]);
 	if ('google.com' === $ads_str[0])
 		if (preg_match('/\d+/', $ads_str[1], $ads_num))
 			$header .= '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-'. $ads_num[0]. '" crossorigin="anonymous"></script>';

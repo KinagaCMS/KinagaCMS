@@ -6,7 +6,8 @@ $header .=
 if ($subtitle) $meta_description = $subtitle;
 if (is_admin() || is_subadmin())
 {
-	$article .= '<fieldset class=admin>';
+	$assist_error = false;
+	$article .= $create_with_kisou. '<div class="modal fade" id=kisou tabindex=-1 aria-hidden=true><div class="modal-dialog modal-fullscreen"><div class=modal-content><div class=modal-header><h5 class=modal-title>'. $admin_menus[0]. ' / '. $admin_menus[10]. '</h5><button type=button class=btn-close data-bs-dismiss=modal></button></div><div class=modal-body><fieldset class=admin>';
 	if (filter_has_var(INPUT_POST, 'create-categ'))
 	{
 		$create_categ = filter_input(INPUT_POST, 'create-categ', FILTER_CALLBACK, ['options' => 'trim_str_replace_basename']);
@@ -15,6 +16,7 @@ if (is_admin() || is_subadmin())
 		$current_categ_dir = 'contents/'. $current_categ;
 		$current_categ_author = !is_file($current_categ_author_txt = $current_categ_dir. '/author.txt') ? '' : file_get_contents($current_categ_author_txt);
 		$create_categ_check = false;
+		$create_categ_login_txt = $create_categ_dir. '/login.txt';
 		if (!$current_categ && !is_dir($create_categ_dir) && !is_dir('contents/!'. $create_categ))
 		{
 			$create_categ_check = true;
@@ -32,6 +34,9 @@ if (is_admin() || is_subadmin())
 		 }
 		if ($create_categ_check)
 		{
+			if (filter_has_var(INPUT_POST, 'require-login') && filter_has_var(INPUT_POST, 'login-textarea'))
+				file_put_contents($create_categ_login_txt, filter_input(INPUT_POST, 'login-textarea', FILTER_CALLBACK, ['options' => 'scriptentities']));
+			elseif (!filter_has_var(INPUT_POST, 'require-login') && is_file($create_categ_login_txt)) unlink($create_categ_login_txt);
 			$categ_subtitle = '';
 			if (!filter_has_var(INPUT_POST, 'autowrap')) $categ_subtitle .= '<?php nowrap()?>';
 			if (filter_has_var(INPUT_POST, 'create-categ-subtitle'))
@@ -52,15 +57,22 @@ if (is_admin() || is_subadmin())
 			}
 			exit (header('Location: '. $url. r($create_categ ?? $current_categ). '/'));
 		}
-		else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+		else
+		{
+			$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+			$assist_error = true;
+		}
 	}
 	$edit_categ_name = !filter_has_var(INPUT_GET, 'edit') ? '' : filter_input(INPUT_GET, 'edit', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
 	$edit_categ_dir = 'contents/'. $edit_categ_name;
+	$edit_categ_html = $edit_categ_dir. '/index.html';
+	$edit_categ_login_txt = 'contents/'. $edit_categ_name. '/login.txt';
 	if ($edit_categ_name && is_dir($edit_categ_dir))
 	{
 		if (is_admin() || is_author($edit_categ_dir))
 		{
-			$edit_categ_content = is_file($edit_categ_html = $edit_categ_dir. '/index.html') ? file_get_contents($edit_categ_html) : '';
+			$edit_categ_content = !is_file($edit_categ_html) ? '' : file_get_contents($edit_categ_html);
+			$edit_categ_login_txt_content = !is_file($edit_categ_login_txt) ? '' : file_get_contents($edit_categ_login_txt);
 			if (false !== strpos($edit_categ_content, $nowrap_txt = '<?php nowrap()?>'))
 			{
 				$edit_categ_content = str_replace($nowrap_txt, '', $edit_categ_content);
@@ -95,7 +107,10 @@ if (is_admin() || is_subadmin())
 			if (isset($author))
 			{
 				if ($author !== $_SESSION['l'] && !is_admin())
+				{
 					$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+					$assist_error = true;
+				}
 				elseif ($current_sidepage_html === $create_sidepage_html)
 				{
 					file_put_contents($create_sidepage_html, $create_sidepage_content, LOCK_EX);
@@ -107,11 +122,23 @@ if (is_admin() || is_subadmin())
 					file_put_contents($create_sidepage_html, $create_sidepage_content, LOCK_EX);
 					exit (header('Location: '. $url. r($create_sidepage ?? $current_sidepage ?? '')));
 				}
-				else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+				else
+				{
+					$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+					$assist_error = true;
+				}
 			}
-			else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+			else
+			{
+				$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+				$assist_error = true;
+			}
 		}
-		else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+		else
+		{
+			$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+			$assist_error = true;
+		}
 	}
 	$del = !filter_has_var(INPUT_GET, 'delete') ? '' : filter_input(INPUT_GET, 'delete', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
 	$rep = !filter_has_var(INPUT_GET, 'post') ? '' : filter_input(INPUT_GET, 'post', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
@@ -166,9 +193,13 @@ if (is_admin() || is_subadmin())
 	'<input class="form-control creates" type=text name=create-categ id=create-categ maxlength='. $title_length. ' required placeholder="'. $admin_menus[1]. '"'. (isset($edit_categ_name) ? ' value="'. $edit_categ_name. '"' : ''). '>'.
 	(isset($edit_categ_name) ? '<input type=hidden name=current-categ-name value="'. $edit_categ_name. '">' : '').
 	'<div class="d-flex align-items-end justify-content-between my-2">'.
-	'<div class="form-check">'.
+	'<div class="form-check me-4 assist">'.
 	'<input class=form-check-input type=checkbox id=c-autowrap name=autowrap value=true'. (isset($edit_categ_nowrap) && $edit_categ_nowrap ? '' : ' checked'). '>'.
 	'<label class=form-check-label for=c-autowrap>'. $html_assist[1]. '</label>'.
+	'</div>'.
+	'<div class=form-check>'.
+	'<input class=form-check-input type=checkbox id=require-login name=require-login value=true'. (is_file($edit_categ_login_txt) ? ' checked' : ''). '>'.
+	'<label class=form-check-label for=require-login>'. $form_label[6]. '</label>'.
 	'</div>'.
 	'</div>'.
 	'<textarea class="form-control mb-4" name=create-categ-subtitle placeholder="'. $admin_menus[9]. '" rows=10>'. ($edit_categ_content ?? ''). '</textarea>'.
@@ -196,15 +227,15 @@ if (is_admin() || is_subadmin())
 		$article .= '</fieldset>';
 	 }
 	$article .=
-	'<input class="btn btn-primary d-block" type=submit value="'. $btn[8]. '">'.
+	'<textarea class="form-control mb-4" name=login-textarea id=login-textarea placeholder="'. $admin_menus[16]. '" rows=10>'. ($edit_categ_login_txt_content ?? ''). '</textarea>'.
+	'<div class=modal-footer><button type=button class="btn btn-secondary" data-bs-dismiss=modal>'. $btn[13]. '</button><input class="btn btn-primary d-block" type=submit value="'. $btn[8]. '"></div>'.
 	'</form>'.
-
 	'<form id=sidepage-form class="tab-pane'. ($edit_sidepage_name ? ' show active' : ''). '" aria-labelledby=sidepage-form-tab role=tabpanel method=post>'.
 	'<div class="d-block text-muted small max"></div>'.
 	'<input class="form-control creates" type=text name=create-sidepage id=create-sidepage maxlength='. $title_length. ' placeholder="'. $admin_menus[11]. '" '. (isset($edit_sidepage_name) ? ' value="'. substr($edit_sidepage_name, 1). '"' : ''). '>'.
 	(isset($edit_sidepage_name) ? '<input type=hidden name=current-sidepage value="'. $edit_sidepage_name. '">' : '').
 	'<div class="d-flex align-items-end justify-content-between my-2">'.
-	'<div class=form-check>'.
+	'<div class="form-check assist">'.
 	'<input class=form-check-input type=checkbox id=s-autowrap name=autowrap value=true'. (isset($edit_sidepage_nowrap) && $edit_sidepage_nowrap ? '' : ' checked'). '>'.
 	'<label class=form-check-label for=s-autowrap>'. $html_assist[1]. '</label>'.
 	'</div>'.
@@ -214,13 +245,14 @@ if (is_admin() || is_subadmin())
 	if (isset($author[1], $editor[1])) $article .= '<input type=hidden name=author value='. $author[1]. '><input type=hidden name=editor value='. $editor[1]. '>';
 	if ((isset($author[1]) && !isset($editor[1])) && ($_SESSION['l'] !== $author[1])) $article .= '<input type=hidden name=author value='. $author[1]. '><input type=hidden name=editor value='. $_SESSION['l']. '>';
 	$article .=
-	'<input class="btn btn-primary d-block" type=submit value="'. $btn[8]. '">'.
+	'<div class=modal-footer><button type=button class="btn btn-secondary" data-bs-dismiss=modal>'. $btn[13]. '</button><input class="btn btn-primary" type=submit value="'. $btn[8]. '"></div>'.
 	'</form>'.
 	'</div>'.
-	'</fieldset>';
+	'</fieldset></div></div></div></div>';
 	html_assist();
-	$javascript .= 'function setAssist(e){area=document.querySelector(e).getElementsByTagName("textarea")[0];area.id="textarea";area.previousElementSibling.lastChild.id="i";ctab=document.getElementById("categ-form-tab");ctarea=document.querySelector(ctab.getAttribute("data-bs-target")).getElementsByTagName("textarea")[0];document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"))}document.querySelector("#admin-menu.nav-tabs").addEventListener("hidden.bs.tab",e=>{ctarea.removeAttribute("id");ctarea.previousElementSibling.lastChild.removeAttribute("id");setAssist(e.relatedTarget.getAttribute("data-bs-target"))});'.
-	(filter_has_var(INPUT_GET, 'edit') || filter_has_var(INPUT_GET, 'sedit') ? 'editid="#"+document.querySelector(".tab-pane.show.active").getAttribute("aria-labelledby");document.querySelector(editid).classList.add("active");setAssist(".tab-pane.show.active");' : 'setAssist(document.getElementById("categ-form-tab").getAttribute("data-bs-target"));new bootstrap.Tab(document.getElementById("categ-form-tab")).show();');
+	$javascript .= 'function setAssist(e){document.querySelector(e).getElementsByTagName("textarea")[0].id="textarea";document.querySelector(e).querySelector(".assist").id="i";document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"))}document.querySelector("#admin-menu.nav-tabs").addEventListener("hidden.bs.tab",e=>{document.querySelector(e.target.getAttribute("data-bs-target")).querySelector("textarea").removeAttribute("id");document.querySelector(e.target.getAttribute("data-bs-target")).querySelector(".assist").removeAttribute("id");setAssist(e.relatedTarget.getAttribute("data-bs-target"))});rl=document.getElementById("require-login"),cl=document.getElementById("login-textarea");window.addEventListener("load",loginCheck);rl.addEventListener("change",loginCheck);clone=document.getElementById("h").cloneNode(true);clone.id="ch";clone.classList.add("mb-2");footer.appendChild(clone);cl.parentNode.insertBefore(document.getElementById("ch"),cl);function loginCheck(){if(true!==rl.checked){cl.style.display="none";ch.style.display="none"}else{cl.style.display="block";ch.style.display="block"}}'.
+	(filter_has_var(INPUT_GET, 'edit') || filter_has_var(INPUT_GET, 'sedit') ? 'editid="#"+document.querySelector(".tab-pane.show.active").getAttribute("aria-labelledby");document.querySelector(editid).classList.add("active");setAssist(".tab-pane.show.active");new bootstrap.Modal(document.getElementById("kisou")).show();' : 'setAssist(document.getElementById("categ-form-tab").getAttribute("data-bs-target"));new bootstrap.Tab(document.getElementById("categ-form-tab")).show();').
+	(!$assist_error ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();');
 }
 if (is_file($index_file = 'contents/index.html'))
 {

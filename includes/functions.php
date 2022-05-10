@@ -176,8 +176,11 @@ function get_dirs($dir, $nosort=true)
 function get_summary($file)
 {
 	global $summary_length, $encoding, $n, $ellipsis, $line_breaks;
+	$content = file_get_contents($file);
+	$content = preg_replace('/<script.*?\/script>/s', '', $content);
+	$content = preg_replace('/\/\*.*?\*\//s', '', $content);
 	ob_start();
-	echo preg_replace('/<script.*?\/script>/s', '', file_get_contents($file));
+	echo $content;
 	$text = strip_tags(ob_get_clean());
 	$text = str_replace("\t", '', $text);
 	$text = str_replace([$n. $n. $n, $n. $n], $n, $text);
@@ -190,6 +193,7 @@ function get_description($str)
 {
 	global $description_length, $encoding, $line_breaks, $ellipsis;
 	$text = strip_tags(preg_replace('/<script.*?\/script>/s', '', $str));
+	$text = preg_replace('/\/\*.*?\*\//s', '', $str);
 	$text = str_replace("\t", '', $text);
 	$text = str_replace($line_breaks, '', $text);
 	$text = mb_strimwidth($text, 0, $description_length, $ellipsis, $encoding);
@@ -301,8 +305,8 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				if (isset($exif['COMMENT'][0])) $exif_comment = h($exif['COMMENT'][0]);
 				if ('.png' === $lower_ext) $exif_comment = get_png_tEXt($src);
 			}
-			list ($width, $height, $type, $attr) = @getimagesize($src);
-			if ($exif_thumbnail) list ($width_sm, $height_sm, $type_sm, $attr_sm) = getimagesizefromstring($exif_thumbnail);
+			[$width, $height, $type, $attr] = @getimagesize($src);
+			if ($exif_thumbnail) [$width_sm, $height_sm, $type_sm, $attr_sm] = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
 			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
 			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
@@ -571,7 +575,7 @@ function session($session_name)
 			'domain' => $server,
 			'secure' => is_ssl(),
 			'httponly' => true,
-			'samesite' => 'Strict',
+			'samesite' => 'lax',
 		]);
 		session_start();
 		session_regenerate_id(true);
@@ -688,7 +692,7 @@ function counter($txt, $put=false)
 		{
 			flock($fp, LOCK_EX);
 			ftruncate($fp, 0);
-			fputs($fp, $counter);
+			fwrite($fp, $counter);
 			fclose($fp);
 		}
 		return $counter;
@@ -726,7 +730,7 @@ function hs($s)
 			else return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. $t[2]. '</a>';
 		}, $s);
 	}
-	if (false !== strpos($s, '/*')) $s = preg_replace_callback('|(/\*.*?\*/)|s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+	if (false !== strpos($s, '/*')) $s = preg_replace_callback('|(/\*)(.*?)(\*/)|s', function ($t){return '<span style="color:#FF7F2A">/&#042;' . strip_tags($t[2]) . '&#042;/</span>';}, $s);
 	if (false !== strpos($s, '&lt;!--')) $s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
 	if (false !== strpos($s, '//')) $s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
 	return $s;
@@ -984,7 +988,7 @@ function html_assist()
 	global $footer, $form_label, $html_assist, $javascript, $title_length;
 	$footer .=
 	'<div class="dropup flex-grow-1" id=h>'.
-	'<button class="btn btn-outline-primary dropdown-toggle" id=a data-bs-toggle=dropdown data-bs-auto-close=inside tabindex=1 accesskey=h>'. $html_assist[0]. '</button>'.
+	'<button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle=dropdown data-bs-auto-close=inside tabindex=1>'. $html_assist[0]. '</button>'.
 	'<div class="dropdown-menu p-3" style="max-height:200px;overflow-x:hidden;z-index:2000">'.
 	'<ul class=list-inline>'.
 	'<li class=list-inline-item><a href="#" data-select=success class="dropdown-item mb-2 bg-success text-white">'. $html_assist[2]. '</a></li>'.
@@ -1038,6 +1042,7 @@ function html_assist()
 	'<li class=list-inline-item><a href="#" data-select=sup class=dropdown-item>'. $html_assist[44]. '</a></li>'.
 	'<li class=list-inline-item><a href="#" data-select=dfn class=dropdown-item>'. $html_assist[45]. '</a></li>'.
 	'<li class=list-inline-item><a href="#" data-select=comment class=dropdown-item>'. $html_assist[46]. '</a></li>'.
+	'<li class=list-inline-item><a href="#" data-select=multi-line-comment class=dropdown-item>'. $html_assist[75]. '</a></li>'.
 	'</ul>'.
 	'<div class=dropdown-divider></div>'.
 	'<ul class=list-inline>'.
@@ -1077,30 +1082,7 @@ function html_assist()
 	'</ul>'.
 	'</div>'.
 	'</div>';
-	$javascript .= '[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.addEventListener("input",ev=>{l=encodeURIComponent(ev.target.value).replace(/%../g,"x").length,m='. $title_length. ';[].slice.call(document.querySelectorAll(".max")||[]).map(el=>el.innerText="'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>=m){[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.add("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.setAttribute("disabled",true))}else{[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.remove("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.removeAttribute("disabled"))}}));[].slice.call(document.querySelectorAll(".dropdown-item")||[]).map(el=>{el.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();add(e.target)})});function h(select){return select.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-
-function add(tag){
-let select=tag.dataset.select,textarea=document.getElementById("textarea"),pos=getAreaRange(textarea),val=textarea.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode=val.slice(pos.end),insertNode;
-
-if(-1!==select.indexOf("border"))
-{
-if(false!==/-(?!top|end|bottom|start)/.test(select))
-insertNode=range+" "+select;
-else insertNode=range+" class=\""+select+"\""
-}
-else if(-1!==select.indexOf("rounded"))insertNode=range+" class=\""+select+"\"";
-else if("hr"===select||"br"===select)
-{
-if(range||pos.start!==pos.end){insertNode=range+"<"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"}
-}
-
-else
-{
-if("code"===select)range=h(range);if("a"===select){if(range||pos.start!==pos.end){insertNode="<a href=\"\">"+range+"<\/a>"}else if(pos.start===pos.end){insertNode="<a href=\"\"><\/a>"}}else if("right"===select){if(range||pos.start!==pos.end){insertNode="<p class=\"text-end\">"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=\"text-end\"><\/p>"}}else if("lead"===select){if(range||pos.start!==pos.end){insertNode="<span class=lead>"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=lead><\/span>"}}else if("center"===select){if(range||pos.start!==pos.end){insertNode="<p class=text-center>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-center><\/p>"}}else if("primary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-primary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-primary text-white px-1\"><\/span>"}}else if("success"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-white px-1\"><\/span>"}}else if("green"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-success px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-success px-1\"><\/span>"}}else if("info"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-info text-info px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-info text-info px-1\"><\/span>"}}else if("warning"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-white px-1\"><\/span>"}}else if("yellow"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-warning px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-warning px-1\"><\/span>"}}else if("danger"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-white px-1\"><\/span>"}}else if("pink"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-danger px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-danger px-1\"><\/span>"}}else if("secondary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-secondary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-secondary text-white px-1\"><\/span>"}}else if("dark"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-dark text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-dark text-white px-1\"><\/span>"}}else if("light"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-light text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-light text-body px-1\"><\/span>"}}else if("white"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-white text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-white text-body px-1\"><\/span>"}}else if("dl"===select){if(range||pos.start!==pos.end){insertNode="\n<dl class=dl-horizontal>\n<dt>"+range+"<\/dt>\n<dd><\/dd>\n<\/dl>\n"}else if(pos.start===pos.end){insertNode="<dl class=dl-horizontal>\n<dt><\/dt>\n<dd><\/dd>\n<\/dl>\n"}}else if("li"===select){if(range||pos.start!==pos.end){insertNode="\n<ul class=list-group>\n<li class=\"list-group-item bg-transparent\">"+range+"<\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}else if(pos.start===pos.end){insertNode="<ul class=list-group>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}}else if("table"===select){if(range||pos.start!==pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td>"+range+"<\/td>\n<\/tr>\n<\/table>\n"}else if(pos.start===pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td><\/td>\n<\/tr>\n<\/table>\n"}}else if("ltgt"===select){if(range||pos.start!==pos.end){insertNode="&lt;"+range+"&gt;"}else if(pos.start===pos.end){insertNode="&lt;&gt;"}}else if("comment"===select){if(range||pos.start!==pos.end){insertNode="<!--\n"+range+"\n-->"}else if(pos.start===pos.end){insertNode="<!--\n-->"}}else{if(range||pos.start!==pos.end){insertNode="<"+select+">"+range+"<\/"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"+"<\/"+select+">"}}
-}
-textarea.value=beforeNode+insertNode+afterNode;textarea.setSelectionRange(pos.end,pos.end);textarea.focus()}
-
-function getAreaRange(obj){const pos=new Object();if(window.getSelection()){pos.start=obj.selectionStart;pos.end=obj.selectionEnd}return pos}';
+	$javascript .= 'window.addEventListener("load",()=>{[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.addEventListener("input",ev=>{l=encodeURIComponent(ev.target.value).replace(/%../g,"x").length,m='. $title_length. ';[].slice.call(document.querySelectorAll(".max")||[]).map(el=>el.innerText="'. sprintf($form_label[5], '"+(m-l)+"'). '");if(l>=m){[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.add("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.setAttribute("disabled",true))}else{[].slice.call(document.querySelectorAll(".creates")||[]).map(el=>el.classList.remove("is-invalid"));[].slice.call(document.querySelectorAll("input[type=submit]")||[]).map(el=>el.removeAttribute("disabled"))}}));[].slice.call(document.querySelectorAll(".dropdown-item")||[]).map(el=>{el.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();add(e.target,el.closest(\'div[id]\').id)})});function h(select){return select.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function add(tag,id){let select=tag.dataset.select,textarea=document.getElementById(("ch"!==id?"":"login-")+"textarea"),pos=getAreaRange(textarea),val=textarea.value,range=val.slice(pos.start,pos.end),beforeNode=val.slice(0,pos.start),afterNode=val.slice(pos.end),insertNode;if(-1!==select.indexOf("border")){if(false!==/-(?!top|end|bottom|start)/.test(select))insertNode=range+" "+select;else insertNode=range+" class=\""+select+"\""}else if(-1!==select.indexOf("rounded"))insertNode=range+" class=\""+select+"\"";else if("hr"===select||"br"===select){if(range||pos.start!==pos.end){insertNode=range+"<"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"}}else{if("code"===select)range=h(range);if("a"===select){if(range||pos.start!==pos.end){insertNode="<a href=\"\">"+range+"<\/a>"}else if(pos.start===pos.end){insertNode="<a href=\"\"><\/a>"}}else if("right"===select){if(range||pos.start!==pos.end){insertNode="<p class=\"text-end\">"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=\"text-end\"><\/p>"}}else if("lead"===select){if(range||pos.start!==pos.end){insertNode="<span class=lead>"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=lead><\/span>"}}else if("center"===select){if(range||pos.start!==pos.end){insertNode="<p class=text-center>"+range+"<\/p>"}else if(pos.start===pos.end){insertNode="<p class=text-center><\/p>"}}else if("primary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-primary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-primary text-white px-1\"><\/span>"}}else if("success"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-white px-1\"><\/span>"}}else if("green"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-success text-success px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-success text-success px-1\"><\/span>"}}else if("info"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-info text-info px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-info text-info px-1\"><\/span>"}}else if("warning"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-white px-1\"><\/span>"}}else if("yellow"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-warning text-warning px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-warning text-warning px-1\"><\/span>"}}else if("danger"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-white px-1\"><\/span>"}}else if("pink"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-danger text-danger px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-danger text-danger px-1\"><\/span>"}}else if("secondary"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-secondary text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-secondary text-white px-1\"><\/span>"}}else if("dark"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-dark text-white px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-dark text-white px-1\"><\/span>"}}else if("light"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-light text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-light text-body px-1\"><\/span>"}}else if("white"===select){if(range||pos.start!==pos.end){insertNode="<span class=\"bg-white text-body px-1\">"+range+"<\/span>"}else if(pos.start===pos.end){insertNode="<span class=\"bg-white text-body px-1\"><\/span>"}}else if("dl"===select){if(range||pos.start!==pos.end){insertNode="\n<dl class=dl-horizontal>\n<dt>"+range+"<\/dt>\n<dd><\/dd>\n<\/dl>\n"}else if(pos.start===pos.end){insertNode="<dl class=dl-horizontal>\n<dt><\/dt>\n<dd><\/dd>\n<\/dl>\n"}}else if("li"===select){if(range||pos.start!==pos.end){insertNode="\n<ul class=list-group>\n<li class=\"list-group-item bg-transparent\">"+range+"<\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}else if(pos.start===pos.end){insertNode="<ul class=list-group>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<li class=\"list-group-item bg-transparent\"><\/li>\n<\/ul>\n"}}else if("table"===select){if(range||pos.start!==pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td>"+range+"<\/td>\n<\/tr>\n<\/table>\n"}else if(pos.start===pos.end){insertNode="\n<table class=\"table table-striped table-dark\">\n<tr>\n<td><\/td>\n<\/tr>\n<\/table>\n"}}else if("ltgt"===select){if(range||pos.start!==pos.end){insertNode="&lt;"+range+"&gt;"}else if(pos.start===pos.end){insertNode="&lt;&gt;"}}else if("comment"===select){if(range||pos.start!==pos.end){insertNode="<!--\n"+range+"\n-->"}else if(pos.start===pos.end){insertNode="<!--\n-->"}}else if("multi-line-comment"===select){if(range||pos.start!==pos.end){insertNode="/*\n"+range+"\n*/"}else if(pos.start===pos.end){insertNode="/*\n*/"}}else{if(range||pos.start!==pos.end){insertNode="<"+select+">"+range+"<\/"+select+">"}else if(pos.start===pos.end){insertNode="<"+select+">"+"<\/"+select+">"}}}textarea.value=beforeNode+insertNode+afterNode;textarea.setSelectionRange(pos.end,pos.end);textarea.focus()}function getAreaRange(obj){const pos=new Object();if(window.getSelection()){pos.start=obj.selectionStart;pos.end=obj.selectionEnd}return pos}});';
 }
 
 function sanitize_mail($e)
@@ -1132,6 +1114,153 @@ function scriptentities($str)
 			$str = str_replace(['<?', '?>'], ['&lt;?', '?&gt;'], $str);
 		if (false !== strpos($str, '<script'))
 			$str = preg_replace_callback('|(<script.*?/script[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
+		if (false !== strpos($str, '<form'))
+			$str = preg_replace_callback('|(<form.*?/form[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
+		if (false !== strpos($str, 'frame>'))
+			$str = preg_replace_callback('|(<i?frame.*?/i?frame[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
+		if (false !== strpos($str, '/*'))
+			$str = str_replace(['/*', '*/'], ['/&#042;', '&#042;/'], $str);
 	}
 	return $str;
+}
+
+function price($price, $shipping)
+{
+	global $tax;
+	$cost = (int)$price + (int)$shipping;
+	return !isset($tax) ? $cost : round($cost + $cost * $tax / 100);
+}
+
+function expiry(int $time, int $til=0)
+{
+	global $days_left, $valid_for, $now;
+	return sprintf($til ? $days_left : $valid_for, round(($time - $now) / 86400));
+}
+
+function paypal_form($m)
+{
+	global $sandbox_mail_address, $business_mail_address, $current_article_dir,
+	$mail_address, $basetitle, $currency_code, $current_url, $delivery_times, $btn,
+	$url, $purchased_dir, $login, $now, $price_format, $shipping, $item_total, $locale_code;
+	static $i; ++$i;
+	$m = array_filter(array_map('trim', $m));
+	$ppf = '<form'. (!isset($_SESSION['l']) ? '' : ' action="https://www.'. (!isset($sandbox_mail_address) ? '' : 'sandbox.'). 'paypal.com/cgi-bin/webscr"'). ' method=post name="form'. $i. '" class=paypal-form>';
+	if (is_file($item_img = $current_article_dir. '/item-images/'. $i. '.jpg')) $ppf .= img($item_img, '', true);
+	if (false === strpos($m[1], '&#10;'))
+	{
+		if (false === strpos($m[1], '|'))
+		{
+			$price = price($m[1], $shipping);
+			$formated_price = sprintf($price_format, $price, $shipping);
+			$ppf .= '<input type=hidden name=item_name value="'. enc($basetitle. $i). '">';
+			$ppf .= '<input type=hidden name=amount value="'. $price. '">';
+			$ppf .= '<div class="item-price mb-3">'. $formated_price. '</div>';
+		}
+		else
+		{
+			$pn = array_map('trim', explode('|', $m[1], 4));
+			$name = !isset($pn[1]) ? ' ' : strip_tags($pn[1]);
+			if (false !== ($timestamp = strtotime($name))) $name = $timestamp;
+			$price = price($pn[0] ?? 0, $pn[3] ?? $shipping);
+			$formated_price = sprintf($price_format, $price, $pn[3] ?? $shipping);
+			$ppf .= '<input type=hidden name=item_name value="'. enc(!isset($pn[1]) ? $basetitle. $i : $name). '">';
+			$ppf .= '<input type=hidden name=amount value="'. $price. '">';
+			$ppf .= '<div class="item-name-'. $i. ' paypal-form-title mb-3">'. (is_numeric($name) && 10 === strlen($name) ? expiry($name) : $name). '</div>';
+			$sold_count = !is_dir($sold_dir = $purchased_dir. '/'. $name) ? 0 : count(glob($sold_dir. '/*', GLOB_NOSORT));
+			if (isset($pn[2]))
+			{
+				$sold = (int)$pn[2] - (int)$sold_count;
+				$stock = (0 >= $sold) ? 0 : $pn[2];
+				$ppf .= '<div class="item-total-'. $i. ' mb-3">'. sprintf($item_total, $sold). '</div>';
+			}
+			$ppf .= '<div class="item-price-'. $i. ' paypal-form-price mb-3">'. $formated_price. '</div>';
+		}
+	}
+	else
+	{
+		$ppf .= '<input type=hidden name=item_name id="item_name_'. $i. '">';
+		$exn = array_values(array_filter(array_map('trim', explode('&#10;', $m[1]))));
+
+		$radio = true;
+		foreach ($exn as $k => $p)
+		{
+			$ppf .= '<div class="form-check mb-3">';
+			if (false === strpos($p, '|'))
+			{
+				$price = price($p, $shipping);
+				$formated_price = sprintf($price_format, $price, $shipping);
+				$ppf .= '<input required class=form-check-input type=radio id="f'. $i. 'r'. $k. '" name=amount title="'. $formated_price. '" value="'. $price. '"'.
+				(0 !== $k ? '' : ' checked'). ' data-value="'. enc($basetitle. $i. '-'. $k). '">';
+				$ppf .= '<label class=form-check-label for="f'. $i. 'r'. $k. '">'. $formated_price. '</label>';
+			}
+			else
+			{
+				$pn = array_map('trim', explode('|', $p, 4));
+				$name = !isset($pn[1]) ? ' ' : strip_tags($pn[1]);
+				if (false !== ($timestamp = strtotime($name))) $name = $timestamp;
+				$price = price($pn[0] ?? 0, $pn[3] ?? $shipping);
+				$formated_price = sprintf($price_format, $price, $pn[3] ?? $shipping);
+				$sold_count = !is_dir($sold_dir = $purchased_dir. '/'. $name) ? 0 : count(glob($sold_dir. '/*', GLOB_NOSORT));
+				$ppf .= '<input required class=form-check-input type=radio id="f'. $i. 'r'. $k. '" name=amount title="'. $formated_price. '" value="'. $price. '"'.
+				(isset($pn[2]) && (0 >= ((int)$pn[2] - (int)$sold_count)) ? ' disabled' : (0 !== $k ? '' : ' checked')). ' data-value="'. enc(!isset($pn[1]) ? $basetitle. $i. '-'. $k : $name). '">';
+				$ppf .=
+				'<label class=form-check-label for="f'. $i. 'r'. $k. '">'.
+				(!isset($pn[1]) ? '' : (is_numeric($name) && 10 === strlen($name) ? expiry($name) : $name). '<br>').
+				(!isset($pn[2]) ? '' : sprintf($item_total, ((int)$pn[2] - (int)$sold_count)). '<br>').
+				$formated_price.
+				'</label>';
+			}
+			$ppf .= '</div>';
+		}
+	}
+	if (isset($delivery_times))
+	{
+		$ppf .= '<select name=item_number class="form-select mb-4">';
+		foreach ($delivery_times as $j => $v) $ppf .= '<option value='. $j. (0 === $j ? ' selected' : ''). '>'. $v. '</option>';
+		$ppf .= '</select>';
+	}
+	if (isset($_SESSION['l']))
+	{
+		if (is_file($shop_logo = 'images/shop-logo.png'))
+		{
+			[$w, $h] = getimagesize($shop_logo);
+			if (150 >= $w && 50 >= $h) $ppf .= '<input type=hidden name=image_url value="'. $url. $shop_logo. '">';
+		}
+		if (!$shipping) $ppf .= '<input type=hidden name=no_shipping value=1>';
+		$ppf .= '<input type=hidden name=lc value="'. $locale_code. '">';
+		$ppf .= '<input type=hidden name=charset value=utf-8>';
+		$ppf .= '<input type=hidden name=cmd value="_xclick">';
+		$ppf .= '<input type=hidden name=business value="'. ($sandbox_mail_address ?? $business_mail_address ?? $mail_address). '">';
+		$ppf .= '<input type=hidden name=currency_code value="'. $currency_code. '">';
+		$ppf .= '<input type=hidden name=return value="'. $current_url. '&success=1">';
+		$ppf .= '<input type=hidden name=cancel_return value="'. $current_url. '&cancel=1">';
+		$ppf .= '<input type=hidden name=notify_url value="'. $url. '?i='. str_rot13($_SESSION['l']). '&c='. r(filter_input(INPUT_GET, 'categ', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])). '&t='. r(filter_input(INPUT_GET, 'title', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])). '">';
+		$ppf .= '<input type=hidden name=custom value="'. enc((int)$price. ','. $_SESSION['l']). '">';
+		$ppf .= (isset($stock) && 0 === $stock) ?
+			'<button disabled class="btn btn-outline-danger"><svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-bag-dash" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.5 10a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"/><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/></svg> '. $btn[11]. '</button>'
+		:
+			'<button class="btn btn-outline-primary" type=submit id="submit'. $i. '"><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" fill="currentColor" class="bi bi-paypal" viewBox="0 0 16 16"><path d="M14.06 3.713c.12-1.071-.093-1.832-.702-2.526C12.628.356 11.312 0 9.626 0H4.734a.7.7 0 0 0-.691.59L2.005 13.509a.42.42 0 0 0 .415.486h2.756l-.202 1.28a.628.628 0 0 0 .62.726H8.14c.429 0 .793-.31.862-.731l.025-.13.48-3.043.03-.164.001-.007a.351.351 0 0 1 .348-.297h.38c1.266 0 2.425-.256 3.345-.91.379-.27.712-.603.993-1.005a4.942 4.942 0 0 0 .88-2.195c.242-1.246.13-2.356-.57-3.154a2.687 2.687 0 0 0-.76-.59l-.094-.061ZM6.543 8.82a.695.695 0 0 1 .321-.079H8.3c2.82 0 5.027-1.144 5.672-4.456l.003-.016c.217.124.4.27.548.438.546.623.679 1.535.45 2.71-.272 1.397-.866 2.307-1.663 2.874-.802.57-1.842.815-3.043.815h-.38a.873.873 0 0 0-.863.734l-.03.164-.48 3.043-.024.13-.001.004a.352.352 0 0 1-.348.296H5.595a.106.106 0 0 1-.105-.123l.208-1.32.845-5.214Z"/></svg> '. $btn[10]. '</button>';
+	}
+	else
+	{
+		$ppf .= '<a class="btn btn-primary" href="'. $current_url. '&amp;'. r($login). '='. $now. '#login" id="submit'. $i. '">'. $btn[12]. '</a>';
+	}
+	if (isset($radio)) $ppf .= '<script>if(document.form'. $i. '.amount.length===document.form'. $i. '.querySelectorAll("input[type=radio]:disabled").length)document.getElementById("submit'. $i. '").disabled=true;
+	document.form'. $i. '.querySelectorAll("input[type=radio][name=amount]").forEach(r=>{if(r.checked)document.form'. $i. '.item_name_'. $i. '.value=r.dataset.value;r.addEventListener("change",e=>document.form'. $i. '.item_name_'. $i. '.value=e.target.dataset.value)})</script>';
+	$ppf .= '</form>';
+	return $ppf;
+}
+
+function shopping_info()
+{
+	global $aside, $contact_us, $footer, $javascript, $url, $shopping_info, $lang, $paypal_logo, $use_datasrc;
+	if (filter_has_var(INPUT_GET, 'success'))
+	{
+		$footer .= '<div class="modal fade" id=success aria-hidden=true aria-labelledby=successModal tabindex=-1><div class="modal-dialog modal-dialog-centered"><div class=modal-content><div class="modal-header bg-success text-white"><h5 class=modal-title id=successModal>'. $shopping_info[2]. '</h5><button type=button class="btn-close btn-close-white" data-bs-dismiss=modal></button></div><div class=modal-body>'. $shopping_info[3]. '</div><div class=modal-footer><a class="btn btn-primary" href="'. $url. $contact_us. '">'. $contact_us. '</a></div></div></div></div>';
+		$javascript .= 'new bootstrap.Modal(document.getElementById("success")).show();';
+	}
+	$aside .= '<div id=paypal-logo class="card p-3"><div class="h5 mb-3">'. $shopping_info[0]. '</div><p class=mb-3>'. $shopping_info[1]. '</p>';
+	if (isset($paypal_logo))
+		$aside .= '<a href="https://www.paypal.com/'. $lang. '/webapps/mpp/logo/about" target="_blank"><img class=img-fluid '. (!$use_datasrc ? '' : 'data-'). 'src="'. $paypal_logo. '"></a>';
+	$aside .= '</div>';
 }

@@ -2,7 +2,7 @@
 if (!filter_has_var(INPUT_GET, 'categ') || (!is_admin() && !is_subadmin() && '!' === $categ_name[0])) exit;
 if (is_dir($current_categ = 'contents/'. $categ_name))
 {
-	$create_article_check = false;
+	$create_article_check = $assist_error = false;
 	$categ_login_txt = $current_categ. '/login.txt';
 	$categ_title = h($categ_name);
 	$breadcrumb .= '<li class="breadcrumb-item active">'. $categ_title. '</li>';
@@ -18,28 +18,37 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		$meta_description = $categ_content;
 	}
 	else $meta_description = $categ_title;
-
 	if (is_admin() || is_subadmin())
 	{
-		$article .= '<fieldset class=admin>';
+		$article .= $create_with_kisou;
 		if (is_admin() || is_author($current_categ))
 		{
 			if ($categ_del = !filter_has_var(INPUT_GET, 'categ-delete') ? '' : filter_input(INPUT_GET, 'categ-delete', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
+			{
 				if ($categ_del === $categ_name && is_dir('contents/'. $categ_del) && !is_dir('contents/!'. $categ_del) && rename('contents/'. $categ_del, 'contents/!'. $categ_del))
 					exit (header('Location: '. $url. r('!'. $categ_del. '/')));
-				else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+				else
+				{
+					$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+					$assist_error = true;
+				}
+			}
 			if ($categ_rep = !filter_has_var(INPUT_GET, 'categ-post') ? '' : filter_input(INPUT_GET, 'categ-post', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
+			{
 				if ($categ_rep === $categ_name && is_dir('contents/'. $categ_rep) && !is_dir('contents/'. substr($categ_rep, 1)) && rename('contents/'. $categ_rep, 'contents/'. substr($categ_rep, 1)))
 					exit (header('Location: '. $url. r(substr($categ_rep, 1). '/')));
-				else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+				else
+				{
+					$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+					$assist_error = true;
+				}
+			}
 			$article .=
-			'<div class="text-center mb-3">'.
 			('!' === $categ_name[0] ?
-				'<a class="btn btn-success" href="'. $url. r($categ_name). '/&amp;categ-post='. r($categ_name). '">'. $category. $btn[6]. '</a>'
+				'<a class="btn btn-success mb-3 ms-2" href="'. $url. r($categ_name). '/&amp;categ-post='. r($categ_name). '">'. $category. $btn[6]. '</a>'
 			:
-				'<a class="btn btn-danger" href="'. $url. r($categ_name). '/&amp;categ-delete='. r($categ_name). '">'. $category. $btn[4]. '</a>').
-			'<a class="btn btn-info ms-2" href="'. $url. '&amp;edit='. r($categ_name). '#admin">'. $category. $btn[7]. '</a>'.
-			'</div>';
+				'<a class="btn btn-danger mb-3 ms-2" href="'. $url. r($categ_name). '/&amp;categ-delete='. r($categ_name). '">'. $category. $btn[4]. '</a>').
+			'<a class="btn btn-info text-white mb-3 ms-2" href="'. $url. '&amp;edit='. r($categ_name). '#admin">'. $category. $btn[7]. '</a>';
 		}
 		if ($create_article = !filter_has_var(INPUT_POST, 'create-article') ? '' : '!'. filter_input(INPUT_POST, 'create-article', FILTER_CALLBACK, ['options' => 'trim_str_replace_basename']))
 		{
@@ -49,7 +58,6 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			$current_article = !filter_has_var(INPUT_POST, 'current-article-name') ? '' : filter_input(INPUT_POST, 'current-article-name', FILTER_CALLBACK, ['options' => 'trim_str_replace_basename']);
 			$current_article_dir = $current_categ. '/'. $current_article;
 			$current_images_dir = !filter_has_var(INPUT_POST, 'current-images-dir') ? '' : $create_article_dir. '/'. filter_input(INPUT_POST, 'current-images-dir', FILTER_CALLBACK, ['options' => 'strip_tags_basename']);
-
 			if ($current_article && is_dir($current_article_dir) && $create_article === $current_article && is_dir($create_article_dir))
 				$create_article_check = true;
 			elseif ($current_article && is_dir($current_article_dir) && $create_article !== $current_article && !is_dir($create_article_dir))
@@ -65,7 +73,8 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			}
 			if ($create_article_check)
 			{
-				if (filter_has_var(INPUT_POST, 'require-login') && !is_file($create_article_login_txt)) touch($create_article_login_txt);
+				if (filter_has_var(INPUT_POST, 'require-login') && filter_has_var(INPUT_POST, 'login-textarea'))
+					file_put_contents($create_article_login_txt, filter_input(INPUT_POST, 'login-textarea', FILTER_CALLBACK, ['options' => 'scriptentities']));
 				elseif (!filter_has_var(INPUT_POST, 'require-login') && is_file($create_article_login_txt)) unlink($create_article_login_txt);
 				if (filter_has_var(INPUT_POST, 'create-article-content'))
 				{
@@ -74,9 +83,10 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 					file_put_contents($create_article_dir. '/index.html', $create_article_content, LOCK_EX);
 				}
 				else
+				{
 					$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
-
-
+					$assist_error = true;
+				}
 				if (!is_file($author_txt = $create_article_dir. '/author.txt')) file_put_contents($author_txt, $_SESSION['l'], LOCK_EX);
 				elseif (is_admin() && is_admin() !== file_get_contents($author_txt)) file_put_contents($create_article_dir. '/editor.txt', $_SESSION['l'], LOCK_EX);
 				if (filter_has_var(INPUT_POST, 'create-counter')) counter($create_article_dir. '/counter.txt', 1);
@@ -102,8 +112,9 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 							array_push($disallow_symbols, ' ', '@');
 							$create_article_files_name = basename($_FILES['create-article-files']['name'][$key]);
 							$create_article_file_names = substr($create_article_files_name, 0, strripos($create_article_files_name, '.'));
+							$create_article_file_names = ('item-images' === basename($create_images_dir) || !is_numeric($create_article_file_names) ? '' : 'img-'). $create_article_file_names;
 							$create_article_file_names = str_replace($disallow_symbols, '-', $create_article_file_names). '.'. pathinfo($create_article_files_name, PATHINFO_EXTENSION);
-							move_uploaded_file($_FILES['create-article-files']['tmp_name'][$key], $uploaded_images = $create_images_dir. '/img-'. $create_article_file_names);
+							move_uploaded_file($_FILES['create-article-files']['tmp_name'][$key], $uploaded_images = $create_images_dir. '/'. $create_article_file_names);
 							if (is_file($uploaded_images))
 							{
 								$extention = get_extension($uploaded_images);
@@ -115,6 +126,7 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 										$im->stripImage();
 										$im->setImageProperty('comment', $img_comment);
 										$im->writeImage($uploaded_images);
+										$im->clear();
 									}
 									else put_png_tEXt($uploaded_images, $pngtext, $img_comment, false);
 								}
@@ -131,10 +143,13 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 							rename($current_categ. '/'. $create_article, $move_article. '/'. $create_article);
 							exit (header('Location: '. $url. r(basename($move_article). '/'. $create_article)));
 						}
-						else $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+						else
+						{
+							$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+							$assist_error = true;
+						}
 					}
 				}
-
 				exit (header('Location: '. $url. r(basename($current_categ). '/'. $create_article)));
 			}
 		}
@@ -147,7 +162,9 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 				$edit_article_counter = is_file($edit_article_dir. '/counter.txt') ? 1 : 0;
 				$edit_article_comment = is_dir($edit_article_dir. '/comments') ? 1 : 0;
 				$edit_article_content = is_file($edit_article_html = $edit_article_dir. '/index.html') ? file_get_contents($edit_article_html) : '';
-				$edit_article_login_txt = is_file($edit_article_dir. '/login.txt') ? 1 : 0;
+				$edit_article_login_txt = $edit_article_dir. '/login.txt';
+				$edit_article_login_txt_content = !is_file($edit_article_login_txt) ? '' : file_get_contents($edit_article_login_txt);
+
 				if (false !== strpos($edit_article_content, $nowrap_txt = '<?php nowrap()?>'))
 				{
 					$edit_article_content = str_replace($nowrap_txt, '', $edit_article_content);
@@ -159,8 +176,8 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			}
 		}
 		$article .=
-		'<form class="bg-light p-4 mb-5" id=create-article-form method=post enctype="multipart/form-data">'.
-		'<h2 class="h4 mb-3">'. ($edit_article_name ? $admin_menus[13] : $admin_menus[2]). '</h2>';
+		'<div class="modal fade" id=kisou tabindex=-1 aria-hidden=true><div class="modal-dialog modal-fullscreen"><div class=modal-content><div class=modal-header><h5 class=modal-title>'.
+		(filter_has_var(INPUT_GET, 'edit') ? $admin_menus[13] : $admin_menus[2]). '</h5><button type=button class=btn-close data-bs-dismiss=modal></button></div><div class=modal-body><form class="" id=create-article-form method=post enctype="multipart/form-data">';
 		if (isset($edit_article_content))
 		{
 			$article .=
@@ -197,14 +214,14 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 		'<label class=form-check-label for=autowrap>'. $html_assist[1]. '</label>'.
 		'</div>'.
 		'<div class=form-check>'.
-		'<input class=form-check-input type=checkbox id=require-login name=require-login value=true'. (isset($edit_article_login_txt) && $edit_article_login_txt ? ' checked' : ''). '>'.
+		'<input class=form-check-input type=checkbox id=require-login name=require-login value=true'. (isset($edit_article_login_txt) && is_file($edit_article_login_txt) ? ' checked' : ''). '>'.
 		'<label class=form-check-label for=require-login>'. $form_label[6]. '</label>'.
 		'</div>'.
 		'</div>'.
 		'<textarea class="form-control mb-4" id=textarea name=create-article-content placeholder="'. $admin_menus[8]. '" rows=10>'. ($edit_article_content ?? ''). '</textarea>'.
 		'<div class="input-group my-4" id=uploads>'.
 		'<select class=form-select name=create-images-dir id=create-images-dir>';
-		foreach (['images', 'background-images', 'tooltip-images', 'slide-images', 'delete-images'] as $img_dir)
+		foreach (['images', 'background-images', 'tooltip-images', 'slide-images', 'delete-images', 'item-images'] as $img_dir)
 			$article .= '<option value="'. $img_dir. '"'. (isset($updir) && basename($updir) === $img_dir ? ' selected' : ''). '>'. $img_dir. '</option>';
 		$article .=
 		'</select>'.
@@ -231,11 +248,12 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			 else rmdir($updir);
 		 }
 		$article .=
-		'<input class="btn btn-primary" type=submit value="'. $btn[8]. '">'.
-		'</form>'.
-		'</fieldset>';
+		'<textarea class="form-control mb-4" name=login-textarea id=login-textarea placeholder="'. $admin_menus[16]. '" rows=10>'. ($edit_article_login_txt_content ?? ''). '</textarea>'.
+		'<div class=modal-footer><button type=button class="btn btn-secondary" data-bs-dismiss=modal>'. $btn[13]. '</button><input class="btn btn-primary" type=submit value="'. $btn[8]. '"></div>'.
+		'</form></div></div></div></div>';
 		html_assist();
-		$javascript .= 'function replaceChar(str,char="-"){return str.substr(0,str.lastIndexOf(".")).replace(/[@\"#$%&\'()*+.,\/:;><=?\\\[\\\\\]^_`{|}~ ]/g,char)}document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"));previewDiv=document.createElement("div");previewDiv.id="preview";document.getElementById("uploads").parentNode.insertBefore(previewDiv,document.getElementById("uploads").nextElementSibling);document.getElementById("create-images-dir").addEventListener("change",e=>{files=document.getElementById("create-article-files").files;if("background-images"===e.target.value){let a="";for(let v of files)a+="<div class=\"img-"+replaceChar(v.name)+"\"><\/div>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+a}if("tooltip-images"===e.target.value){let b="";for(w of files)b+="<span id=\"img-"+replaceChar(w.name)+"\"><\/span>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+b}});document.getElementById("create-article-files").addEventListener("change",e=>{let preview=document.getElementById("preview"),files=e.target.files;document.getElementById("create-images-dir").dispatchEvent(new Event("change"));function preView(file){const reader=new FileReader();reader.onload=e=>{const image=new Image(),figure=document.createElement("figure");figure.className="figure img-thumbnail mb-3";if(/image/.test(file.type)){image.alt=replaceChar(file.name);image.classList.add("img-fluid");image.src=e.target.result}if(/\.('. (!extension_loaded('imagick') ? '' : 'jpe?g|'). 'png)$/i.test(file.name)){textarea=document.createElement("textarea");textarea.className="form-control";textarea.name="img-"+replaceChar(file.name);textarea.placeholder="'. $placeholder[10]. '";figure.appendChild(image);figure.appendChild(textarea);preview.appendChild(figure)}else if(/video/.test(file.type)||/vtt/.test(file.type)){video=document.createElement("video");video.id="video-"+replaceChar(file.name);video.controls=true;if(/vtt/.test(file.type)){track=document.createElement("track");track.id="track-"+replaceChar(file.name);track.kind="subtitles";track.src=e.target.resultpreview.appendChild(track)}else{source=document.createElement("source");source.src=e.target.result;source.id="#track-"+replaceChar(file.name);video.appendChild(source);figure.appendChild(video);preview.appendChild(figure)}}else{figure.appendChild(image);preview.appendChild(figure)}};reader.readAsDataURL(file)}if(files)[].slice.call(files).forEach(v=>preView(v))});';
+		$javascript .= 'function replaceChar(str,char="-"){return str.substr(0,str.lastIndexOf(".")).replace(/[@\"#$%&\'()*+.,\/:;><=?\\\[\\\\\]^_`{|}~ ]/g,char)}document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"));previewDiv=document.createElement("div");previewDiv.id="preview";document.getElementById("uploads").parentNode.insertBefore(previewDiv,document.getElementById("uploads").nextElementSibling);document.getElementById("create-images-dir").addEventListener("change",e=>{files=document.getElementById("create-article-files").files;if("background-images"===e.target.value){let a="";for(let v of files)a+="<div class=\"img-"+replaceChar(v.name)+"\"><\/div>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+a}if("tooltip-images"===e.target.value){let b="";for(w of files)b+="<span id=\"img-"+replaceChar(w.name)+"\"><\/span>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+b}});document.getElementById("create-article-files").addEventListener("change",e=>{let preview=document.getElementById("preview"),files=e.target.files;document.getElementById("create-images-dir").dispatchEvent(new Event("change"));function preView(file){const reader=new FileReader();reader.onload=e=>{const image=new Image(),figure=document.createElement("figure");figure.className="figure img-thumbnail mb-3";if(/image/.test(file.type)){image.alt=replaceChar(file.name);image.classList.add("img-fluid");image.src=e.target.result}if(/\.('. (!extension_loaded('imagick') ? '' : 'jpe?g|'). 'png)$/i.test(file.name)){textarea=document.createElement("textarea");textarea.className="form-control";textarea.name="img-"+replaceChar(file.name);textarea.placeholder="'. $placeholder[10]. '";figure.appendChild(image);figure.appendChild(textarea);preview.appendChild(figure)}else if(/video/.test(file.type)||/vtt/.test(file.type)){video=document.createElement("video");video.id="video-"+replaceChar(file.name);video.controls=true;if(/vtt/.test(file.type)){track=document.createElement("track");track.id="track-"+replaceChar(file.name);track.kind="subtitles";track.src=e.target.resultpreview.appendChild(track)}else{source=document.createElement("source");source.src=e.target.result;source.id="#track-"+replaceChar(file.name);video.appendChild(source);figure.appendChild(video);preview.appendChild(figure)}}else{figure.appendChild(image);preview.appendChild(figure)}};reader.readAsDataURL(file)}if(files)[].slice.call(files).sort().forEach(v=>preView(v))});rl=document.getElementById("require-login"),cl=document.getElementById("login-textarea");window.addEventListener("load",loginCheck);rl.addEventListener("change",loginCheck);clone=document.getElementById("h").cloneNode(true);clone.id="ch";clone.classList.add("mb-2");footer.appendChild(clone);cl.parentNode.insertBefore(document.getElementById("ch"),cl);function loginCheck(){if(true!==rl.checked){cl.style.display="none";ch.style.display="none"}else{cl.style.display="block";ch.style.display="block"}}'. (!$edit_article_name ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();').
+		(!$assist_error ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();');
 	}
 	if (0 < $categ_contents_number)
 	{
@@ -264,7 +282,8 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			}
 			$articles_sort[] = is_file($article_files = $current_categ. '/'. $articles_name. '/index.html') ? filemtime($article_files). $delimiter. $article_files : '';
 		}
-		if (false === $post_article_check) $article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
+		if (false === $post_article_check)
+			$article .= '<div class="alert alert-danger">'. $admin_menus[15]. '</div>';
 		$articles_sort = array_filter($articles_sort);
 		rsort($articles_sort);
 		$page_ceil = ceil($categ_contents_number / $categ_sections_per_page);

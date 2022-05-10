@@ -35,7 +35,6 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 						unlink($session_tmpfile);
 						$_SESSION['l'] = strip_tags($session_rotcom);
 						$_SESSION['n'] = (int)$_SESSION['m'];
-
 						if (!is_dir($userdir = 'users/'. $_SESSION['l']))
 							mkdir($userdir, 0757, true);
 						elseif (!is_permitted($userdir))
@@ -66,9 +65,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 	elseif (filter_has_var(INPUT_POST, 't') && $session_e)
 	{
 		$session_tmp = $tmpdir. $session_e;
-
 		file_put_contents($session_tmp, $_SESSION['m'], LOCK_EX);
-
 		if (is_file($session_tmp) && filemtime($session_tmp)+$time_limit*60 >= $_SESSION['m'])
 		{
 			if (isset($_SESSION['t'], $_SESSION['m']) && $_SESSION['m']+$time_limit*60 >= $_SESSION['m'] && $_SESSION['t'] === $session_t)
@@ -88,7 +85,6 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 				'Content-Disposition: attachment; filename="'. $session_filename. '"'. $n.
 				'Content-Transfer-Encoding: base64'. $n. $n;
 				$session_body .= chunk_split(put_png_tEXt($ticket, $pngtext, $session_precom. '@'. str_rot13($session_e))). '--'. $token. '--'. $n;
-
 				if (mail(dec($session_e), $userubject, $session_body, $session_headers))
 				{
 					$article .=
@@ -150,7 +146,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 		'<div id=login class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'.
 		'<div class="'. $sidebox_title_class[0]. '">'. $sidebox_title[4]. '</div>'.
 		'<div class="'. $sidebox_content_class[3]. '">'.
-		'<a class="btn btn-info btn-lg d-block my-3" href="'. $current_url. '&amp;'. r($login). '='. $now. '#login">'. $login. '</a>'.
+		'<a class="btn btn-info btn-lg d-block my-3 text-white" href="'. $current_url. '&amp;'. r($login). '='. $now. '#login">'. $login. '</a>'.
 		'<p>'. $login_message[0]. '</p>'.
 		'</div>'.
 		'</div>';
@@ -163,27 +159,35 @@ if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === 
 		$useraddr = str_rot13(basename($userdir));
 		if ($session_usermail = filter_var(dec($_SESSION['l']), FILTER_VALIDATE_EMAIL))
 		{
+			$userid = md5($_SESSION['l']);
 			if (!is_dir($profdir = $userdir. '/prof/')) mkdir($profdir);
 			if (!is_file($handle = $profdir. '/handle')) file_put_contents($handle, '');
-
 			if (!is_dir($userdir))
 				mkdir($userdir, 0757, true);
 			else
 				$_SESSION['h'] = $handlename = handle($profdir);
-
 			if (!is_file($bgcolor = $profdir. 'bgcolor'))
 				file_put_contents($bgcolor, 'hsl('. random_int(1, 360). ',80%,40%)', LOCK_EX);
-
 			if (!is_dir($logdir = $userdir. '/log/'))
 			{
 				mkdir($logdir);
 				file_put_contents($logdir. $_SESSION['n'], $remote_addr. $delimiter. $user_agent, LOCK_EX);
 			}
+			if (is_file($subscribe = $userdir. '/'. $userid))
+			{
+				$subscribe_expiry = (int)file_get_contents($subscribe);
+				if ($now >= $subscribe_expiry)
+				{
+					unlink($subscribe);
+					$subscribe_expired = true;
+				}
+			}
 			$aside .=
 			'<div id=logout class="'. $sidebox_wrapper_class[0]. ' order-'. $sidebox_order[0]. '">'.
 			'<div class="'. $sidebox_title_class[2]. '">'. sprintf($sidebox_title[5], $handlename). '</div>'.
+			(!isset($subscribe_expiry) ? '' : '<div class="alert alert-info mx-3 mb-0">'. sprintf($sidebox_title[12], expiry($subscribe_expiry, 1)). '</div>').
 			'<div class="'. $sidebox_content_class[3]. '">'.
-			'<a class="btn btn-info btn-lg d-block my-3" href="'. $url. '?user='. $useraddr. '">'. $prof_title[0]. '</a>'.
+			'<a class="btn btn-info btn-lg d-block my-3 text-white" href="'. $url. '?user='. $useraddr. '">'. $prof_title[0]. '</a>'.
 			'<a class="btn btn-danger btn-lg d-block my-3" href="'. $url. '?'. r($logout). '=1">'. $logout. '</a>'.
 			'</div>'.
 			'</div>';
@@ -196,7 +200,7 @@ if (isset($_SESSION['l'], $_SESSION['m'], $_SESSION['n']) && $_SESSION['n'] === 
 				'<strong class=me-auto>'. $login_message[2].'</strong>'.
 				'<button type=button class=btn-close data-bs-dismiss=toast aria-label=Close></button>'.
 				'</div>'.
-				'<div class="toast-body text-white">'. sprintf($sidebox_title[5], $handlename). '</div>'.
+				'<div class="toast-body text-white">'. sprintf($sidebox_title[5], $handlename). (!isset($subscribe_expired) ? '' : $login_message[4]). '</div>'.
 				'</div>';
 				$javascript .= 'window.addEventListener("load",()=>new bootstrap.Toast(document.getElementById("login-toast")).show());';
 			}

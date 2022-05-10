@@ -22,21 +22,21 @@
 <button type=button class="btn-close btn-close-white" data-bs-dismiss=offcanvas tabindex=-1 accesskey=x></button></div>
 <div class=offcanvas-body><div class="d-flex flex-column"><?=$aside?></div></div>
 </aside>
-<footer id=footer class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
-<nav class="nav nav-pills justify-content-center flex-row">
+<footer id=footer class="d-flex flex-wrap justify-content-center align-items-center px-5 pb-5">
+<nav class="nav nav-pills row row-cols-1 flex-grow-1  row-cols-md-3 g-2 m-5">
 <?php
 usort($glob_info_files, 'sort_time');
 foreach ($glob_info_files as $info_files)
 {
 	$info_uri = basename($info_files, '.html');
-	echo '<a class="text-sm-center nav-link', ($page_name !== $info_uri ? '' : ' active'), '" href="', $url, ('index' !== $info_uri ? '' : '?page=') , r($info_uri), '">', h($info_uri), '</a>';
+	echo '<a class="col nav-link', ($page_name !== $info_uri ? '' : ' active'), '" href="', $url, ('index' !== $info_uri ? '' : '?page=') , r($info_uri), '">', h($info_uri), '</a>';
 }
 if ($use_forum)
-	echo '<a class="text-sm-center nav-link', ($page_name !== $forum ? '' : ' active'), '" href="', $url, r($forum), '">', $forum, '</a>';
+	echo '<a class="col nav-link', ($page_name !== $forum ? '' : ' active'), '" href="', $url, r($forum), '">', $forum, '</a>';
 if ($dl)
-	echo '<a class="text-sm-center nav-link', ($page_name !== $download_contents ? '' : ' active'), '" href="', $url, r($download_contents), '">', $download_contents, '</a>';
+	echo '<a class="col nav-link', ($page_name !== $download_contents ? '' : ' active'), '" href="', $url, r($download_contents), '">', $download_contents, '</a>';
 if ($use_contact && $mail_address)
-	echo '<a class="text-sm-center nav-link', ($page_name !== $contact_us ? '' : ' active'), '" href="', $url, r($contact_us), '">', $contact_us, '</a>';
+	echo '<a class="col nav-link', ($page_name !== $contact_us ? '' : ' active'), '" href="', $url, r($contact_us), '">', $contact_us, '</a>';
 ?>
 </nav>
 <a href="#TOP" id=page-top><svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16"><path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/></svg></a>

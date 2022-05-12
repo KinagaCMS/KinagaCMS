@@ -25,7 +25,7 @@ if (is_file($pages_file = 'contents/'. $page_name. '.html'))
 	: '').
 	$basetitle. '</h1></header>';
 	$header .= '<meta name=description content="'. get_description($pages_content). '">';
-	$article .= '<article class="'. $article_wrapper_class. ' article clearfix">'. $pages_content. '</article>';
+	$article .= '<article class="'. $article_wrapper_class. ' article clearfix" id=article>'. $pages_content. '</article>';
 
 	if ($use_social) social(rawurlencode($basetitle. ' - '. $site_name), rawurlencode($url. $page_name));
 	if ($use_permalink) permalink($basetitle. ' - '. $site_name, $current_url);

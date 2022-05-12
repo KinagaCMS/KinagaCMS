@@ -480,10 +480,10 @@ function sideless($hide=false, $force=false)
 	}
 }
 
-function widemain()
+function widemain($padding=0)
 {
 	global $stylesheet;
-	$stylesheet .= '#main,#main>article,#main>div{margin:0!important;padding:0!important;max-width:100%!important;flex:0 0 100%}fieldset.admin{max-width:1320px;padding-right:var(--bs-gutter-x,.75rem);padding-left:var(--bs-gutter-x,.75rem);margin-right:auto;margin-left:auto;padding-top:1rem;padding-bottom:1rem}';
+	$stylesheet .= '#main,#article,#clearfix{margin:0!important;padding:'. $padding. 'px!important;max-width:100%!important;flex:0 0 100%}';
 }
 
 function nowrap()

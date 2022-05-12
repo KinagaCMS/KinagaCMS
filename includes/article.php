@@ -58,7 +58,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	}
 	if (is_file($ticket) && !isset($_SESSION['l']) && !$subscribe_login && (is_file($login_txt) || is_file($categ_login_txt)))
 	{
-		$article .= '<article class="'. $article_wrapper_class. ' article clearfix">';
+		$article .= '<article class="'. $article_wrapper_class. ' article clearfix" id=article>';
 		if ((is_file($login_txt) && !filesize($login_txt)) || (is_file($categ_login_txt) && !filesize($categ_login_txt)))
 			$article .= get_summary($current_article). '<p class="alert alert-warning my-4">'. $login_required[0]. '</p>';
 		else
@@ -132,7 +132,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		}
 		if ($current_article_content)
 		{
-			$article .= '<article class="'. $article_wrapper_class. ' article clearfix">';
+			$article .= '<article class="'. $article_wrapper_class. ' article clearfix" id=article>';
 			$separate_count = substr_count($current_article_content, $article_separator) + 1;
 			if (is_dir($images_dir) && 1 < $separate_count)
 			{

@@ -256,7 +256,7 @@ if (is_admin() || is_subadmin())
 }
 if (is_file($index_file = 'contents/index.html'))
 {
-	$article .= '<article class="'. $article_wrapper_class. ' article clearfix">';
+	$article .= '<article class="'. $article_wrapper_class. ' article clearfix" id=article>';
 	ob_start();
 	include $index_file;
 	$article .= str_replace($line_breaks, '&#10;', ob_get_clean());

@@ -103,7 +103,7 @@ if (is_file($ads_txt = 'ads.txt'))
 		if (preg_match('/\d+/', $ads_str[1], $ads_num))
 			$header .= '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-'. $ads_num[0]. '" crossorigin="anonymous"></script>';
 }
-$article .= '<div class="clearfix my-5"></div>';
+$article .= '<div class="clearfix my-5" id=clearfix></div>';
 $footer .= (!$javascript ? '' : '<script>'. $javascript. '</script>').
 '<div id=copyright class="d-flex justify-content-center align-items-center">'.
 '<img alt=K data-bs-toggle=modal data-bs-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'.

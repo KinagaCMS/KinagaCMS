@@ -23,7 +23,7 @@
 <div class=offcanvas-body><div class="d-flex flex-column"><?=$aside?></div></div>
 </aside>
 <footer id=footer class="d-flex flex-wrap justify-content-center align-items-center px-5 pb-5">
-<nav class="nav nav-pills row row-cols-1 flex-grow-1  row-cols-md-3 g-2 m-5">
+<nav class="nav nav-pills row row-cols-2 flex-grow-1 row-cols-md-3 g-2 m-5">
 <?php
 usort($glob_info_files, 'sort_time');
 foreach ($glob_info_files as $info_files)

@@ -162,7 +162,8 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		}
 		if (false !== strpos($article, '/*&#10;') && false !== strpos($article, '*/'))
 		{
-			if (!is_dir($purchased_dir = $current_article_dir. '/purchased')) mkdir($purchased_dir, 0757);
+			if (!is_dir($purchased_dir = $current_article_dir. '/purchased'))
+				mkdir($purchased_dir, 0757);
 			$article = preg_replace_callback('/\/\*&#10;(.*?)&#10;[^&#10;\*]*?\*\//s', 'paypal_form', $article, -1, $i);
 			shopping_info();
 		}

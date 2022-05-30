@@ -824,7 +824,7 @@ function booking(
 				}
 			}
 			echo '</table>';
-			$javascript .= 'function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:f}).then(()=>{document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"').'<\/p>")});setTimeout(()=>{document.getElementById(b).remove()},5000)}function d(g){const fd=new FormData();fd.append("del",g);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>{location.reload()})}';
+			$javascript .= 'function a(b,c,d,e){const f=new FormData();f.append("remind-addr",b);f.append("remind-date",c);f.append("remind-title",d);f.append("remind-contents",e);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:f}).then(()=>{document.querySelector("table").insertAdjacentHTML("beforebegin","<p style=\"background:#3ddb80;color:#ffffff;margin:0;padding:1em 2em\" id="+b+">'. sprintf($reminder[4], '"+b+"'). '<\/p>")});setTimeout(()=>{document.getElementById(b).remove()},5000)}function d(g){const fd=new FormData();fd.append("del",g);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>{location.reload()})}';
 		}
 		else
 		{
@@ -1097,7 +1097,7 @@ function sanitize_mail($e)
 
 function strip_tags_basename($str)
 {
-	return strip_tags(basename($str));
+	return trim(strip_tags(basename($str)));
 }
 
 function trim_str_replace_basename($str)
@@ -1139,9 +1139,9 @@ function expiry(int $time, int $til=0)
 
 function paypal_form($m)
 {
-	global $sandbox_mail_address, $business_mail_address, $current_article_dir,
-	$mail_address, $basetitle, $currency_code, $current_url, $delivery_times, $btn,
-	$url, $purchased_dir, $login, $now, $price_format, $shipping, $item_total, $locale_code;
+	global $sandbox_mail_address, $business_mail_address, $current_article_dir, $time_format, $naming_rights_message,
+	$mail_address, $basetitle, $currency_code, $current_url, $delivery_times, $btn, $url, $javascript, $separator, $n,
+	$purchased_dir, $login, $now, $price_format, $price_short_format, $shipping, $item_total, $locale_code, $placeholder;
 	static $i; ++$i;
 	$m = array_filter(array_map('trim', $m));
 	$ppf = '<form'. (!isset($_SESSION['l']) ? '' : ' action="https://www.'. (!isset($sandbox_mail_address) ? '' : 'sandbox.'). 'paypal.com/cgi-bin/webscr"'). ' method=post name="form'. $i. '" class=paypal-form>';
@@ -1158,20 +1158,53 @@ function paypal_form($m)
 		}
 		else
 		{
-			$pn = array_map('trim', explode('|', $m[1], 4));
-			$name = !isset($pn[1]) ? ' ' : strip_tags($pn[1]);
+			$pn = array_map('strip_tags_basename', explode('|', $m[1], 4));
+			$name = $pn[1] ?? ' ';
+			$item_count = $pn[2] ?? 0;
 			if (false !== ($timestamp = strtotime($name))) $name = $timestamp;
+			$sold_dir = $purchased_dir. '/'. $name;
+			$glob_sold = !is_dir($sold_dir) ? '' : glob($sold_dir. '/*', GLOB_NOSORT);
+			$sold_count = !is_dir($sold_dir) ? 0 : count($glob_sold);
+			if (isset($pn[2], $pn[3]) && !is_numeric($pn[3]))
+			{
+				$shipping = $delivery_times = null;
+				$intangible_products = !is_numeric($pn[2]) ? ($item_count = 1) : 2;
+				if ($glob_sold)
+				{
+					foreach ($glob_sold as $sold_files)
+					{
+						$sold_file = !is_file($sold_files) ? [] : file($sold_files, FILE_IGNORE_NEW_LINES + FILE_SKIP_EMPTY_LINES);
+						$sold_title = get_title($sold_files);
+						if (isset($sold_file[0], $sold_file[1], $_SESSION['l']) && $separator === trim($sold_file[1]) && !isset($sold_file[2]) && $_SESSION['l'] === trim($sold_file[0]))
+							naming_form($sold_title, $sold_files);
+						if (isset($sold_file[2]))
+						{
+							$buyer = 'users/'. trim($sold_file[0]). '/prof/';
+							$ppf .=
+							'<div class="w-100 h-100 position-absolute top-0 start-0 bg-dark" style="--bs-bg-opacity:.3;z-index:5">'.
+							'<div class="card position-absolute top-50 start-50 translate-middle text-start shadow w-100">'.
+							'<div class="card-header d-flex flex-wrap bg-white small">'.
+							'<a class="text-secondary me-auto" href="'. $url. '?user='. str_rot13(trim($sold_file[0])). '">'. avatar($buyer, 20). ' '. handle($buyer). '</a>'.
+							'<small>'. date($time_format, basename($sold_files)). '</small>'.
+							'</div>'.
+							'<div class="card-body bg-info text-info">'. sprintf($naming_rights_message[3], get_title($sold_files), ($naming = h($sold_file[2]))). '</div>'.
+							'</div>'.
+							'</div>';
+							$javascript .= '(document.form'. $i. '.closest(".card")||document.form'. $i. ').classList.add("position-relative");';
+						}
+					}
+				}
+			}
 			$price = price($pn[0] ?? 0, $pn[3] ?? $shipping);
-			$formated_price = sprintf($price_format, $price, $pn[3] ?? $shipping);
+			$formated_price = sprintf((!$shipping && !$delivery_times ? $price_short_format : $price_format), $price, $pn[3] ?? $shipping);
 			$ppf .= '<input type=hidden name=item_name value="'. enc(!isset($pn[1]) ? $basetitle. $i : $name). '">';
 			$ppf .= '<input type=hidden name=amount value="'. $price. '">';
 			$ppf .= '<div class="item-name-'. $i. ' paypal-form-title mb-3">'. (is_numeric($name) && 10 === strlen($name) ? expiry($name) : $name). '</div>';
-			$sold_count = !is_dir($sold_dir = $purchased_dir. '/'. $name) ? 0 : count(glob($sold_dir. '/*', GLOB_NOSORT));
 			if (isset($pn[2]))
 			{
-				$sold = (int)$pn[2] - (int)$sold_count;
-				$stock = (0 >= $sold) ? 0 : $pn[2];
-				$ppf .= '<div class="item-total-'. $i. ' mb-3">'. sprintf($item_total, $sold). '</div>';
+				$sold = (int)$item_count - (int)$sold_count;
+				$stock = (0 >= $sold) ? 0 : $item_count;
+				if (is_numeric($pn[2])) $ppf .= '<div class="item-total-'. $i. ' mb-3">'. sprintf($item_total, $sold). '</div>';
 			}
 			$ppf .= '<div class="item-price-'. $i. ' paypal-form-price mb-3">'. $formated_price. '</div>';
 		}
@@ -1180,11 +1213,10 @@ function paypal_form($m)
 	{
 		$ppf .= '<input type=hidden name=item_name id="item_name_'. $i. '">';
 		$exn = array_values(array_filter(array_map('trim', explode('&#10;', $m[1]))));
-
 		$radio = true;
 		foreach ($exn as $k => $p)
 		{
-			$ppf .= '<div class="form-check mb-3">';
+			$ppf .= '<div class="form-check mb-3" id="f'. $i. 'c'. $k. '">';
 			if (false === strpos($p, '|'))
 			{
 				$price = price($p, $shipping);
@@ -1195,18 +1227,51 @@ function paypal_form($m)
 			}
 			else
 			{
-				$pn = array_map('trim', explode('|', $p, 4));
-				$name = !isset($pn[1]) ? ' ' : strip_tags($pn[1]);
+				$pn = array_map('strip_tags_basename', explode('|', $p, 4));
+				$name = $pn[1] ?? ' ';
+				$item_count = $pn[2] ?? 0;
 				if (false !== ($timestamp = strtotime($name))) $name = $timestamp;
+				$sold_dir = $purchased_dir. '/'. $name;
+				$glob_sold = !is_dir($sold_dir) ? '' : glob($sold_dir. '*/*', GLOB_NOSORT);
+				$sold_count = !is_dir($sold_dir) ? 0 : count($glob_sold);
+				if (isset($pn[2], $pn[3]) && !is_numeric($pn[3]))
+				{
+					$shipping = $delivery_times = null;
+					$intangible_products = !is_numeric($pn[2]) ? ($item_count = 1) : 2;
+					if ($glob_sold)
+					{
+						foreach ($glob_sold as $sold_files)
+						{
+							$sold_file = !is_file($sold_files) ? [] : file($sold_files, FILE_IGNORE_NEW_LINES + FILE_SKIP_EMPTY_LINES);
+							$sold_title = get_title($sold_files);
+							if (isset($sold_file[2]))
+							{
+								$buyer = 'users/'. trim($sold_file[0]). '/prof/';
+								$ppf .=
+								'<div class="w-100 h-100 position-absolute top-0 start-0" style="z-index:5">'.
+								'<div class="card position-absolute top-50 start-50 translate-middle text-start shadow w-100">'.
+								'<div class="card-header d-flex flex-wrap bg-white small">'.
+								'<a class="text-secondary me-auto" href="'. $url. '?user='. str_rot13(trim($sold_file[0])). '">'. avatar($buyer, 20). ' '. handle($buyer). '</a>'.
+								'<small>'. date($time_format, basename($sold_files)). '</small>'.
+								'</div>'.
+								'<div class="card-body bg-info text-info">'. sprintf($naming_rights_message[3], get_title($sold_files), ($naming = h($sold_file[2]))). '</div>'.
+								'</div>'.
+								'</div>';
+								$javascript .= '(document.getElementById("f'. $i. 'c'. $k. '")||document.form'. $i. ').classList.add("position-relative","py-4");';
+							}
+							if (isset($sold_file[0], $sold_file[1], $_SESSION['l']) && $separator === trim($sold_file[1]) && !isset($sold_file[2]) && $_SESSION['l'] === trim($sold_file[0]))
+								naming_form($sold_title, $sold_files);
+						}
+					}
+				}
 				$price = price($pn[0] ?? 0, $pn[3] ?? $shipping);
-				$formated_price = sprintf($price_format, $price, $pn[3] ?? $shipping);
-				$sold_count = !is_dir($sold_dir = $purchased_dir. '/'. $name) ? 0 : count(glob($sold_dir. '/*', GLOB_NOSORT));
+				$formated_price = sprintf((!$shipping && !$delivery_times ? $price_short_format : $price_format), $price, $pn[3] ?? $shipping);
 				$ppf .= '<input required class=form-check-input type=radio id="f'. $i. 'r'. $k. '" name=amount title="'. $formated_price. '" value="'. $price. '"'.
-				(isset($pn[2]) && (0 >= ((int)$pn[2] - (int)$sold_count)) ? ' disabled' : (0 !== $k ? '' : ' checked')). ' data-value="'. enc(!isset($pn[1]) ? $basetitle. $i. '-'. $k : $name). '">';
+				(isset($pn[2]) && (0 >= ((int)$item_count - (int)$sold_count)) ? ' disabled' : (0 !== $k ? '' : ' checked')). ' data-value="'. enc(!isset($pn[1]) ? $basetitle. $i. '-'. $k : $name). '">';
 				$ppf .=
 				'<label class=form-check-label for="f'. $i. 'r'. $k. '">'.
 				(!isset($pn[1]) ? '' : (is_numeric($name) && 10 === strlen($name) ? expiry($name) : $name). '<br>').
-				(!isset($pn[2]) ? '' : sprintf($item_total, ((int)$pn[2] - (int)$sold_count)). '<br>').
+				(!isset($pn[2]) || !is_numeric($pn[2]) ? '' : sprintf($item_total, ((int)$item_count - (int)$sold_count)). '<br>').
 				$formated_price.
 				'</label>';
 			}
@@ -1232,31 +1297,71 @@ function paypal_form($m)
 		$ppf .= '<input type=hidden name=cmd value="_xclick">';
 		$ppf .= '<input type=hidden name=business value="'. ($sandbox_mail_address ?? $business_mail_address ?? $mail_address). '">';
 		$ppf .= '<input type=hidden name=currency_code value="'. $currency_code. '">';
-		$ppf .= '<input type=hidden name=return value="'. $current_url. '&success=1">';
-		$ppf .= '<input type=hidden name=cancel_return value="'. $current_url. '&cancel=1">';
-		$ppf .= '<input type=hidden name=notify_url value="'. $url. '?i='. str_rot13($_SESSION['l']). '&c='. r(filter_input(INPUT_GET, 'categ', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])). '&t='. r(filter_input(INPUT_GET, 'title', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])). '">';
+		$ppf .= '<input type=hidden name=return value="'. $current_url. '&amp;success=1">';
+		$ppf .= '<input type=hidden name=cancel_return value="'. $current_url. '&amp;cancel=1">';
+		$ppf .= '<input type=hidden name=notify_url value="'. $url. '?i='. str_rot13($_SESSION['l']). '&amp;c='.
+		r(filter_input(INPUT_GET, 'categ', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])). '&amp;t='.
+		r(filter_input(INPUT_GET, 'title', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])).
+		(isset($delivery_times) ? '' : (isset($intangible_products) && 1 === $intangible_products ? '&amp;n=1' : '&amp;n=2')). '">';
 		$ppf .= '<input type=hidden name=custom value="'. enc((int)$price. ','. $_SESSION['l']). '">';
 		$ppf .= (isset($stock) && 0 === $stock) ?
-			'<button disabled class="btn btn-outline-danger"><svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-bag-dash" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.5 10a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"/><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/></svg> '. $btn[11]. '</button>'
+			'<button disabled class="btn btn-outline-danger"><svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-bag-dash" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.5 10a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"/><path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/></svg> '. $btn[isset($intangible_products) && 1 === $intangible_products ? 16: 11]. '</button>'
 		:
 			'<button class="btn btn-outline-primary" type=submit id="submit'. $i. '"><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" fill="currentColor" class="bi bi-paypal" viewBox="0 0 16 16"><path d="M14.06 3.713c.12-1.071-.093-1.832-.702-2.526C12.628.356 11.312 0 9.626 0H4.734a.7.7 0 0 0-.691.59L2.005 13.509a.42.42 0 0 0 .415.486h2.756l-.202 1.28a.628.628 0 0 0 .62.726H8.14c.429 0 .793-.31.862-.731l.025-.13.48-3.043.03-.164.001-.007a.351.351 0 0 1 .348-.297h.38c1.266 0 2.425-.256 3.345-.91.379-.27.712-.603.993-1.005a4.942 4.942 0 0 0 .88-2.195c.242-1.246.13-2.356-.57-3.154a2.687 2.687 0 0 0-.76-.59l-.094-.061ZM6.543 8.82a.695.695 0 0 1 .321-.079H8.3c2.82 0 5.027-1.144 5.672-4.456l.003-.016c.217.124.4.27.548.438.546.623.679 1.535.45 2.71-.272 1.397-.866 2.307-1.663 2.874-.802.57-1.842.815-3.043.815h-.38a.873.873 0 0 0-.863.734l-.03.164-.48 3.043-.024.13-.001.004a.352.352 0 0 1-.348.296H5.595a.106.106 0 0 1-.105-.123l.208-1.32.845-5.214Z"/></svg> '. $btn[10]. '</button>';
 	}
 	else
-	{
 		$ppf .= '<a class="btn btn-primary" href="'. $current_url. '&amp;'. r($login). '='. $now. '#login" id="submit'. $i. '">'. $btn[12]. '</a>';
-	}
-	if (isset($radio)) $ppf .= '<script>if(document.form'. $i. '.amount.length===document.form'. $i. '.querySelectorAll("input[type=radio]:disabled").length)document.getElementById("submit'. $i. '").disabled=true;
-	document.form'. $i. '.querySelectorAll("input[type=radio][name=amount]").forEach(r=>{if(r.checked)document.form'. $i. '.item_name_'. $i. '.value=r.dataset.value;r.addEventListener("change",e=>document.form'. $i. '.item_name_'. $i. '.value=e.target.dataset.value)})</script>';
+	if (isset($radio)) $javascript .= 'if(document.form'. $i. '.amount.length===document.form'. $i. '.querySelectorAll("input[type=radio]:disabled").length)document.getElementById("submit'. $i. '").disabled=true;document.form'. $i. '.querySelectorAll("input[type=radio][name=amount]").forEach(r=>{if(r.checked)document.form'. $i. '.item_name_'. $i. '.value=r.dataset.value;r.addEventListener("change",e=>document.form'. $i. '.item_name_'. $i. '.value=e.target.dataset.value)});';
 	$ppf .= '</form>';
 	return $ppf;
 }
 
+function naming_form($sold_title, $sold_files)
+{
+	global $btn, $current_url, $javascript, $n, $naming_rights_message, $placeholder;
+	echo
+	'<div id=naming-rights-section class="modal fade">'.
+	'<div class="modal-dialog modal-dialog-centered modal-xl">'.
+	'<div class=modal-content>'.
+	'<div class=modal-header>'.
+	'<h2 class="modal-title h4">'. sprintf($naming_rights_message[0], $_SESSION['h'], $sold_title). '</h2>'.
+	'<button type=button class=btn-close data-bs-dismiss=modal></button>'.
+	'</div>'.
+	'<div id=naming-rights-body class=modal-body>'.
+	'<div class="input-group input-group-lg mb-3">'.
+	'<input id=naming-rights-input class=form-control type=text placeholder="'. sprintf($placeholder[12], $sold_title). '">'.
+	'<button id=naming-rights-submit class="btn btn-outline-primary">'. $btn[15]. '</button>'.
+	'</div>'.
+	'</div>'.
+	'</div>'.
+	'</div>'.
+	'</div>';
+	$javascript .= 'new bootstrap.Modal(document.getElementById("naming-rights-section")).show();document.getElementById("naming-rights-submit").onclick=()=>{let fd=new FormData(),fdv=strip_tags(document.getElementById("naming-rights-input").value);if(!fdv){document.getElementById("naming-rights-input").classList.add("is-invalid");return false}fd.append("naming-rights",fdv);if(!confirm("'. sprintf($naming_rights_message[1], '"+fdv+"'). '"))return false;fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>document.getElementById("naming-rights-body").innerHTML="<div class=\"alert alert-success\">'. sprintf($naming_rights_message[2], '"+fdv+"'). '<\/div>")};function strip_tags(str){let tmp=document.createElement("div");tmp.innerHTML=str;return tmp.textContent}';
+	if ($naming_rights = !filter_has_var(INPUT_POST, 'naming-rights') ? '' : filter_input(INPUT_POST, 'naming-rights', FILTER_CALLBACK, ['options' => 'strip_tags_basename']))
+		file_put_contents($sold_files, $n. $naming_rights, FILE_APPEND);
+}
+
 function shopping_info()
 {
-	global $aside, $contact_us, $footer, $javascript, $url, $shopping_info, $lang, $paypal_logo, $use_datasrc;
+	global $aside, $btn, $contact_us, $footer, $javascript, $url, $shopping_info, $lang, $paypal_logo, $use_datasrc;
 	if (filter_has_var(INPUT_GET, 'success'))
 	{
-		$footer .= '<div class="modal fade" id=success aria-hidden=true aria-labelledby=successModal tabindex=-1><div class="modal-dialog modal-dialog-centered"><div class=modal-content><div class="modal-header bg-success text-white"><h5 class=modal-title id=successModal>'. $shopping_info[2]. '</h5><button type=button class="btn-close btn-close-white" data-bs-dismiss=modal></button></div><div class=modal-body>'. $shopping_info[3]. '</div><div class=modal-footer><a class="btn btn-primary" href="'. $url. $contact_us. '">'. $contact_us. '</a></div></div></div></div>';
+		$footer .=
+		'<div class="modal fade" id=success aria-hidden=true aria-labelledby=successModal tabindex=-1>'.
+		'<div class="modal-dialog modal-dialog-centered">'.
+		'<div class=modal-content>'.
+		'<div class=modal-header>'.
+		'<h5 class=modal-title id=successModal>'. $shopping_info[2]. '</h5>'.
+		'<button type=button class=btn-close data-bs-dismiss=modal></button>'.
+		'</div>'.
+		'<div class=modal-body>'. $shopping_info[3]. '</div>'.
+		'<div class=modal-footer>'.
+		'<button type=button class="btn btn-secondary" data-bs-dismiss=modal>'. $btn[13]. '</button>'.
+		'<a class="btn btn-danger" href="'. $url. $contact_us. '">'. $contact_us. '</a>'.
+		'</div>'.
+		'</div>'.
+		'</div>'.
+		'</div>';
 		$javascript .= 'new bootstrap.Modal(document.getElementById("success")).show();';
 	}
 	$aside .= '<div id=paypal-logo class="card p-3"><div class="h5 mb-3">'. $shopping_info[0]. '</div><p class=mb-3>'. $shopping_info[1]. '</p>';

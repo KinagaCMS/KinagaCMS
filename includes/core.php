@@ -107,7 +107,7 @@ $article .= '<div class="clearfix my-5" id=clearfix></div>';
 $footer .= (!$javascript ? '' : '<script>'. $javascript. '</script>').
 '<div id=copyright class="d-flex justify-content-center align-items-center">'.
 '<img alt=K data-bs-toggle=modal data-bs-target="#powered-by-kinaga" src='. $url. 'images/icon.php width=53 height=43>'.
-'<small class="ms-3 text-muted">&copy; '. date('Y'). ' '. $site_name. '. '. ($copyright ?? '').
+'<small class="ms-3 link-secondary">&copy; '. date('Y'). ' '. $site_name. '. '. ($copyright ?? '').
 (!$use_benchmark ? '' : '<br>'. sprintf($benchmark_results, round((hrtime(true) - $time_start)/1e+9, 4), size_unit(memory_get_usage() - $base_mem))).
 '</small>'.
 '</div>'.

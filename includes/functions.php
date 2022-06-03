@@ -654,8 +654,8 @@ function avatar($dir, $size=100)
 {
 	if (is_file($img = $dir. 'avatar') && filesize($img) && false !== strpos($base64_img = file_get_contents($img), 'base64'))
 		$avatar = '<img'. (!$size ? '' : ' style="object-fit:cover;width:'. $size. 'px;height:'. $size. 'px"'). ' src="'. strip_tags($base64_img). '" class="align-text-bottom d-inline-block rounded-circle mx-auto" alt="">';
-	elseif (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor))
-		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold fw-bold rounded-circle mx-auto text-center text-white">'. mb_substr(handle($dir), 0, 1). '</span>';
+	elseif (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) && $handle = handle($dir))
+		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold fw-bold rounded-circle mx-auto text-center text-white">'. mb_substr($handle, 0, 1). '</span>';
 	else
 	{
 		global $color;

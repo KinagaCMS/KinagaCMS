@@ -8,7 +8,7 @@ if (1 > $page) $page = 1;
 foreach ($files as $images)
 {
 	if (!$images->isFile()) continue;
-	$sort[] = false === strpos($images, '.php') && false === strpos($images, '.vtt') && false === strpos($images, '.md') ? $images->getMTime(). $delimiter. trim($images, './') : '';
+	$sort[] = !str_contains($images, '.php') && !str_contains($images, '.vtt') && !str_contains($images, '.md') ? $images->getMTime(). $delimiter. trim($images, './') : '';
 }
 $sort = array_filter($sort);
 rsort($sort);

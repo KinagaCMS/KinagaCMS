@@ -165,12 +165,12 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 				$edit_article_login_txt = $edit_article_dir. '/login.txt';
 				$edit_article_login_txt_content = !is_file($edit_article_login_txt) ? '' : file_get_contents($edit_article_login_txt);
 
-				if (false !== strpos($edit_article_content, $nowrap_txt = '<?php nowrap()?>'))
+				if (str_contains($edit_article_content, $nowrap_txt = '<?php nowrap()?>'))
 				{
 					$edit_article_content = str_replace($nowrap_txt, '', $edit_article_content);
 					$edit_article_nowrap = 1;
 				}
-				if (false !== strpos($edit_article_content, '&lt;') && false !== strpos($edit_article_content, '&gt;'))
+				if (str_contains($edit_article_content, '&lt;') && str_contains($edit_article_content, '&gt;'))
 					$edit_article_content = str_replace(['&lt', '&gt'], ['&amp;lt', '&amp;gt'], $edit_article_content);
 				foreach (glob($edit_article_dir. '/*images', GLOB_NOSORT+GLOB_ONLYDIR) as $updir);
 			}

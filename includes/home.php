@@ -73,12 +73,12 @@ if (is_admin() || is_subadmin())
 		{
 			$edit_categ_content = !is_file($edit_categ_html) ? '' : file_get_contents($edit_categ_html);
 			$edit_categ_login_txt_content = !is_file($edit_categ_login_txt) ? '' : file_get_contents($edit_categ_login_txt);
-			if (false !== strpos($edit_categ_content, $nowrap_txt = '<?php nowrap()?>'))
+			if (str_contains($edit_categ_content, $nowrap_txt = '<?php nowrap()?>'))
 			{
 				$edit_categ_content = str_replace($nowrap_txt, '', $edit_categ_content);
 				$edit_categ_nowrap = 1;
 			}
-			if (false !== strpos($edit_categ_content, '&lt;') && false !== strpos($edit_categ_content, '&gt;'))
+			if (str_contains($edit_categ_content, '&lt;') && str_contains($edit_categ_content, '&gt;'))
 				$edit_categ_content = str_replace(['&lt', '&gt'], ['&amp;lt', '&amp;gt'], $edit_categ_content);
 		}
 	}
@@ -166,12 +166,12 @@ if (is_admin() || is_subadmin())
 	if ($edit_sidepage_name && is_file($edit_sidepage_html = 'contents/'. $edit_sidepage_name. '.html') && isset($edit_sidepage_name[0]) && '!' === $edit_sidepage_name[0])
 	{
 		$edit_sidepage_content = file_get_contents($edit_sidepage_html);
-		if (false !== strpos($edit_sidepage_content, $nowrap_txt = '<?php nowrap()?>'))
+		if (str_contains($edit_sidepage_content, $nowrap_txt = '<?php nowrap()?>'))
 		{
 			$edit_sidepage_content = str_replace($nowrap_txt, '', $edit_sidepage_content);
 			$edit_sidepage_nowrap = 1;
 		}
-		if (false !== strpos($edit_sidepage_content, '&lt;') && false !== strpos($edit_sidepage_content, '&gt;'))
+		if (str_contains($edit_sidepage_content, '&lt;') && str_contains($edit_sidepage_content, '&gt;'))
 			$edit_sidepage_content = str_replace(['&lt', '&gt'], ['&amp;lt', '&amp;gt'], $edit_sidepage_content);
 		if (preg_match('/<\?php \$author="(.*?)"\?>/', $edit_sidepage_content, $author))
 			$edit_sidepage_content = preg_replace('/<\?php \$author.*?\?>/', '', $edit_sidepage_content);

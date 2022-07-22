@@ -144,7 +144,7 @@ if ($forum_topic && false === $fpos)
 					'</div>';
 				$article .= '</div>';
 			}
-			if (false !== strpos($request_uri, '?user=') && false !== strpos($request_uri, '&t=') && false !== strpos($request_uri, '&f='))
+			if (str_contains($request_uri, '?user=') && str_contains($request_uri, '&t=') && str_contains($request_uri, '&f='))
 			{
 				if (is_file($userimg = 'users/'. str_rot13($upuser = basename($v[0])). '/upload/'. $filename = basename($v[1])) && isset($v[2]) && !in_array($filename, $delete_lines, true))
 				{
@@ -310,7 +310,7 @@ elseif ($forum_thread && false === $fpos)
 				foreach ($sliced_topics as $key => $thread_topics)
 				{
 					$thread_topic = basename($thread_topics);
-					if (false !== strpos($thread_topic, '.')) continue;
+					if (str_contains($thread_topic, '.')) continue;
 					$topic_name = '#' !== $thread_topic[0] ? $thread_topic : substr($thread_topic, 1);
 					$topic_name = ('!' !== $topic_name[0] && '@' !== $topic_name[0]) ? $topic_name : substr($topic_name, 1);
 					$article .= '<li class="list-group-item '. (!($key & 1) ? ' bg-light' : ' bg-body'). ' d-flex align-items-center">';

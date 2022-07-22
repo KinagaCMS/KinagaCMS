@@ -54,7 +54,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 		ob_start();
 		include is_file($categ_login_txt) && filesize($categ_login_txt) ? $categ_login_txt : $login_txt;
 		$login_txt_content = str_replace($line_breaks, '&#10;', ob_get_clean());
-		$subscribe_login = false !== strpos($login_txt_content, '/*&#10;') && false !== strpos($login_txt_content, '*/');
+		$subscribe_login = str_contains($login_txt_content, '/*&#10;') && str_contains($login_txt_content, '*/');
 	}
 	if (is_file($ticket) && !isset($_SESSION['l']) && !$subscribe_login && (is_file($login_txt) || is_file($categ_login_txt)))
 	{
@@ -160,14 +160,14 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 			$article .= '</div>';
 			if ($glob_images_number > $images_per_page) pager($max_pages, $page_ceil);
 		}
-		if (false !== strpos($article, '/*&#10;') && false !== strpos($article, '*/'))
+		if (str_contains($article, '/*&#10;') && str_contains($article, '*/'))
 		{
 			if (!is_dir($purchased_dir = $current_article_dir. '/purchased'))
 				mkdir($purchased_dir, 0757);
 			$article = preg_replace_callback('/\/\*&#10;(.*?)&#10;[^&#10;\*]*?\*\//s', 'paypal_form', $article, -1, $i);
 			shopping_info();
 		}
-		if (isset($_SESSION['l']) && false !== strpos($article, '<!--&#10;') && false !== strpos($article, '&#10;-->'))
+		if (isset($_SESSION['l']) && str_contains($article, '<!--&#10;') && str_contains($article, '&#10;-->'))
 		{
 			if (!is_dir($checklist_dir = $current_article_dir. '/checklist/')) mkdir($checklist_dir, 0757);
 			if (is_file($checked = $checklist_dir. $_SESSION['l']))
@@ -193,7 +193,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					$javascript .= 'document.getElementById("btn").onclick=()=>{let fd=new FormData(),obj=[];chx=document.querySelectorAll("#checklist input[type=checkbox]");chx.forEach((c,i)=>obj[i]=c.checked?1:0);fd.append("checklist",obj);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>checklistSection.innerHTML="<div class=\"alert alert-success\">'. $checklist_message[1]. '<\/div>")};';
 			}
 		}
-		elseif (!isset($_SESSION['l']) && false !== strpos($article, '<!--&#10;') && false !== strpos($article, '&#10;-->'))
+		elseif (!isset($_SESSION['l']) && str_contains($article, '<!--&#10;') && str_contains($article, '&#10;-->'))
 			$article .= '<div class="alert alert-info">'. $checklist_message[0]. '</div>';
 		if ($use_comment && is_dir($comment_dir))
 		{
@@ -218,7 +218,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					foreach ($_FILES['b']['error'] as $key => $error)
 					{
 						echo $_FILES['b']['name'][$key];
-						if (UPLOAD_ERR_OK === $error && 'text/plain' === $_FILES['b']['type'][$key] && (false !== strpos($_FILES['b']['name'][$key], $delimiter) || 'end.txt' === $_FILES['b']['name'][$key]))
+						if (UPLOAD_ERR_OK === $error && 'text/plain' === $_FILES['b']['type'][$key] && (str_contains($_FILES['b']['name'][$key], $delimiter) || 'end.txt' === $_FILES['b']['name'][$key]))
 						{
 							move_uploaded_file($_FILES['b']['tmp_name'][$key], $comment_dir. '/'. basename($_FILES['b']['name'][$key]));
 						}

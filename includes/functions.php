@@ -2,7 +2,7 @@
 if (__FILE__ === implode(get_included_files())) exit;
 function r($path)
 {
-	if (false !== strpos($path, '%'))
+	if (str_contains($path, '%'))
 		return $path;
 	else
 		return str_replace(['%2F', '%3A'], ['/', ':'], rawurlencode($path));
@@ -11,8 +11,8 @@ function r($path)
 function d($enc)
 {
 	global $get_page;
-	if (false !== strpos($enc ,'/&pages')) $enc = dirname($enc);
-	if (false !== strpos($enc , $get_page. '&pages')) $enc = explode('&', $enc)[0];
+	if (str_contains($enc ,'/&pages')) $enc = dirname($enc);
+	if (str_contains($enc , $get_page. '&pages')) $enc = explode('&', $enc)[0];
 	return rawurldecode(html_entity_decode(basename($enc)));
 }
 
@@ -276,7 +276,7 @@ function permalink($t, $u)
 function a($uri, $name='', $target='_blank', $class='', $title='', $position='')
 {
 	return
-	'<a href="'. (false !== strpos($uri, '%') || false !== strpos($uri, '://') ? $uri : r($uri)). '" target="'. $target. '"' .
+	'<a href="'. (str_contains($uri, '%') || str_contains($uri, '://') ? $uri : r($uri)). '" target="'. $target. '"' .
 	(!$class ? '' : ' class="'. $class. '"') .
 	(!$title ? '' : ' data-bs-toggle=tooltip title="'. $title. '" data-html=true') .
 	(!$position ? '' : ' data-placement="'. $position. '"') .
@@ -292,7 +292,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 	{
 		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
 		$video_extensions = ['.mp4', '.ogg', '.webm'];
-		if ($src_scheme = strpos($src, '://')) $addr = parse_url($src);
+		if ($src_scheme = str_contains($src, '://')) $addr = parse_url($src);
 		$data = !$use_datasrc ? '' : 'data-';
 		if (false !== array_search($lower_ext = strtolower($extension), $image_extensions))
 		{
@@ -584,7 +584,7 @@ function session($session_name)
 
 function get_uri($uri, $get)
 {
-	if (false !== strpos($uri, '%23') || false !== strpos($uri, '%26'))
+	if (str_contains($uri, '%23') || str_contains($uri, '%26'))
 		return $uri;
 	else
 		return basename(filter_input(INPUT_GET, $get, FILTER_SANITIZE_ENCODED));
@@ -652,7 +652,7 @@ function handle($dir)
 
 function avatar($dir, $size=100)
 {
-	if (is_file($img = $dir. 'avatar') && filesize($img) && false !== strpos($base64_img = file_get_contents($img), 'base64'))
+	if (is_file($img = $dir. 'avatar') && filesize($img) && str_contains($base64_img = file_get_contents($img), 'base64'))
 		$avatar = '<img'. (!$size ? '' : ' style="object-fit:cover;width:'. $size. 'px;height:'. $size. 'px"'). ' src="'. strip_tags($base64_img). '" class="align-text-bottom d-inline-block rounded-circle mx-auto" alt="">';
 	elseif (is_file($bgcolor = $dir. '/bgcolor') && filesize($bgcolor) && $handle = handle($dir))
 		$avatar = '<span style="'. (!$size ? '' : 'font-size:'. ($size * 70 / 100). 'px;width:'. $size. 'px;height:'. $size. 'px;'). 'background-color:'. h(file_get_contents($bgcolor)). '" class="d-inline-flex justify-content-center font-weight-bold fw-bold rounded-circle mx-auto text-center text-white">'. mb_substr($handle, 0, 1). '</span>';
@@ -710,19 +710,19 @@ function hs($s)
 {
 	$s = str_replace("\t", '    ', h($s));
 	foreach (['autofocus', 'disabled', 'multiple', 'required', 'selected'] as $o)
-		if (false !== strpos($s, $o)) $s = str_replace($o, '<span style="color:#44AA00">'. $o. '</span>', $s);
-	if (false !== strpos($s, '&amp;nbsp;')) $s = str_replace('&amp;nbsp;', '<span style="color:#888A85">&amp;nbsp;</span>', $s);
-	if (false !== strpos($s, '=')) $s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:#44AA00">\\1</span>=\\2', $s);
-	if (false !== strpos($s, '&lt;') && false !== strpos($s, '&gt;')) $s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:#5F8DD3">&lt;\\1&gt;</span>', $s);
-	if (false !== strpos($s, '&#039;')) $s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
-	if (false !== strpos($s, '&quot;')) $s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
-	if (false !== strpos($s, '&lt;script')) $s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
-	if (false !== strpos($s, '&lt;style')) $s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
-	if (false !== strpos($s, '「')) $s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-	if (false !== strpos($s, '『')) $s = preg_replace_callback('/(『)(.*?)(』)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-	if (false !== strpos($s, '【')) $s = preg_replace_callback('/(【)(.*?)(】)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
-	if (false !== strpos($s, '&lt;?')) $s = preg_replace_callback('/(&lt;\?.*?\?&gt;)/is', function ($t){return highlight_string(html_entity_decode(strip_tags($t[1]), ENT_QUOTES), true);}, $s);
-	if (false !== strpos($s, '['))
+		if (str_contains($s, $o)) $s = str_replace($o, '<span style="color:#44AA00">'. $o. '</span>', $s);
+	if (str_contains($s, '&amp;nbsp;')) $s = str_replace('&amp;nbsp;', '<span style="color:#888A85">&amp;nbsp;</span>', $s);
+	if (str_contains($s, '=')) $s = preg_replace('/(?!!|=)([\w-]+) ?= ?(&quot;|&#039;)/is', '<span style="color:#44AA00">\\1</span>=\\2', $s);
+	if (str_contains($s, '&lt;') && str_contains($s, '&gt;')) $s = preg_replace('/&lt;(?!!--)(.*?)&gt;/s', '<span style="color:#5F8DD3">&lt;\\1&gt;</span>', $s);
+	if (str_contains($s, '&#039;')) $s = preg_replace_callback('/&#039;(.*?)&#039;/s', function ($t){return '&#039;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&#039;';}, $s);
+	if (str_contains($s, '&quot;')) $s = preg_replace_callback('/&quot;(.*?)&quot;/s', function ($t){return '&quot;<span style="color:#FD3301">' . strip_tags($t[1]) . '</span>&quot;';}, $s);
+	if (str_contains($s, '&lt;script')) $s = preg_replace_callback('/(&lt;script.*?&gt;)(.*?)(&lt;\/script&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+	if (str_contains($s, '&lt;style')) $s = preg_replace_callback('/(&lt;style.*?&gt;)(.*?)(&lt;\/style&gt;)/is', function ($t){return $t[1] . '<span style="color:#888A85">' . strip_tags($t[2]) . '</span>' . $t[3];}, $s);
+	if (str_contains($s, '「')) $s = preg_replace_callback('/(「)(.*?)(」)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (str_contains($s, '『')) $s = preg_replace_callback('/(『)(.*?)(』)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (str_contains($s, '【')) $s = preg_replace_callback('/(【)(.*?)(】)/is', function ($t){return $t[1] . '<strong>' . strip_tags($t[2]) . '</strong>' . $t[3];}, $s);
+	if (str_contains($s, '&lt;?')) $s = preg_replace_callback('/(&lt;\?.*?\?&gt;)/is', function ($t){return highlight_string(html_entity_decode(strip_tags($t[1]), ENT_QUOTES), true);}, $s);
+	if (str_contains($s, '['))
 	{
 		$s = preg_replace_callback('/\[url=?(http.*?)?\](.*?)\[\/url\]/i', function ($t)
 		{
@@ -730,9 +730,9 @@ function hs($s)
 			else return '<a href="'. $t[1]. '" target="_blank" rel="noopener noreferrer">'. $t[2]. '</a>';
 		}, $s);
 	}
-	if (false !== strpos($s, '/*')) $s = preg_replace_callback('|(/\*)(.*?)(\*/)|s', function ($t){return '<span style="color:#FF7F2A">/&#042;' . strip_tags($t[2]) . '&#042;/</span>';}, $s);
-	if (false !== strpos($s, '&lt;!--')) $s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
-	if (false !== strpos($s, '//')) $s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+	if (str_contains($s, '/*')) $s = preg_replace_callback('|(/\*)(.*?)(\*/)|s', function ($t){return '<span style="color:#FF7F2A">/&#042;' . strip_tags($t[2]) . '&#042;/</span>';}, $s);
+	if (str_contains($s, '&lt;!--')) $s = preg_replace_callback('/(&lt;!--.*?--&gt;)/s', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
+	if (str_contains($s, '//')) $s = preg_replace_callback('|(?<![:(>&quot;&#039;])(//.*?&#10;)|is', function ($t){return '<span style="color:#FF7F2A">' . strip_tags($t[1]) . '</span>';}, $s);
 	return $s;
 }
 
@@ -1087,7 +1087,7 @@ function html_assist()
 
 function sanitize_mail($e)
 {
-	if (false !== strpos($e, '@'))
+	if (str_contains($e, '@'))
 	{
 		$ex = explode('@', $e);
 		return filter_var($ex[0]. '@'. idn_to_ascii($ex[1]), FILTER_SANITIZE_EMAIL);
@@ -1110,15 +1110,15 @@ function scriptentities($str)
 {
 	if (!is_admin())
 	{
-		if (false !== strpos($str, '<?'))
+		if (str_contains($str, '<?'))
 			$str = str_replace(['<?', '?>'], ['&lt;?', '?&gt;'], $str);
-		if (false !== strpos($str, '<script'))
+		if (str_contains($str, '<script'))
 			$str = preg_replace_callback('|(<script.*?/script[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
-		if (false !== strpos($str, '<form'))
+		if (str_contains($str, '<form'))
 			$str = preg_replace_callback('|(<form.*?/form[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
-		if (false !== strpos($str, 'frame>'))
+		if (str_contains($str, 'frame>'))
 			$str = preg_replace_callback('|(<i?frame.*?/i?frame[^>]*>)|is', function ($m) {return hs($m[1]);}, $str);
-		if (false !== strpos($str, '/*'))
+		if (str_contains($str, '/*'))
 			$str = str_replace(['/*', '*/'], ['/&#042;', '&#042;/'], $str);
 	}
 	return $str;
@@ -1146,9 +1146,9 @@ function paypal_form($m)
 	$m = array_filter(array_map('trim', $m));
 	$ppf = '<form'. (!isset($_SESSION['l']) ? '' : ' action="https://www.'. (!isset($sandbox_mail_address) ? '' : 'sandbox.'). 'paypal.com/cgi-bin/webscr"'). ' method=post name="form'. $i. '" class=paypal-form>';
 	if (is_file($item_img = $current_article_dir. '/item-images/'. $i. '.jpg')) $ppf .= img($item_img, '', true);
-	if (false === strpos($m[1], '&#10;'))
+	if (!str_contains($m[1], '&#10;'))
 	{
-		if (false === strpos($m[1], '|'))
+		if (!str_contains($m[1], '|'))
 		{
 			$price = price($m[1], $shipping);
 			$formated_price = sprintf($price_format, $price, $shipping);
@@ -1217,7 +1217,7 @@ function paypal_form($m)
 		foreach ($exn as $k => $p)
 		{
 			$ppf .= '<div class="form-check mb-3" id="f'. $i. 'c'. $k. '">';
-			if (false === strpos($p, '|'))
+			if (!str_contains($p, '|'))
 			{
 				$price = price($p, $shipping);
 				$formated_price = sprintf($price_format, $price, $shipping);

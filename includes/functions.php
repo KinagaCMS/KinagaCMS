@@ -401,13 +401,13 @@ function timeformat($time, array $intervals)
 {
 	$now = new DateTime;
 	$ago = new DateTime('@'. $time);
-	$diff = $now->diff($ago);
-	$diff->w = floor($diff->d/7);
-	$diff->d -= $diff->w*7;
+	$diff = (array)$now->diff($ago);
+	$diff['w'] = floor($diff['d']/7);
+	$diff['d'] -= $diff['w']*7;
 	foreach ($intervals as $k => &$v)
 	{
-		if ($diff->$k)
-			$v = $diff->$k. $v;
+		if ($diff[$k])
+			$v = $diff[$k]. $v;
 		else
 			unset($intervals[$k]);
 	}

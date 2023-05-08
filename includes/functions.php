@@ -59,7 +59,7 @@ function timestamp()
 
 function is_ssl()
 {
-	return isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']) ? true : false;
+	return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']) ? true : false;
 }
 
 function complementary($hsla)

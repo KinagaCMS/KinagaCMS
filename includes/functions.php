@@ -5,7 +5,7 @@ function r($path)
 	if (str_contains($path, '%'))
 		return $path;
 	else
-		return str_replace(['%2F', '%3A'], ['/', ':'], rawurlencode($path));
+		return str_replace(['%2F', '%3A', '%20'], ['/', ':', '+'], rawurlencode($path));
 }
 
 function d($enc)

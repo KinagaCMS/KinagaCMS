@@ -13,6 +13,7 @@ function d($enc)
 	global $get_page;
 	if (str_contains($enc ,'/&pages')) $enc = dirname($enc);
 	if (str_contains($enc , $get_page. '&pages')) $enc = explode('&', $enc)[0];
+	if (str_contains($enc ,'+')) $enc = str_replace('+', '%20', $enc);
 	return rawurldecode(html_entity_decode(basename($enc)));
 }
 

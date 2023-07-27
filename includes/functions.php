@@ -60,7 +60,7 @@ function timestamp()
 
 function is_ssl()
 {
-	return isset($_SERVER['HTTPS']) || isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']) ? true : false;
+	return isset($_SERVER['HTTPS']) && isset($_SERVER['SSL']) || isset($_SERVER['HTTP_X_SAKURA_FORWARDED_FOR']) ? true : false;
 }
 
 function complementary($hsla)
@@ -310,17 +310,17 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 			if ($exif_thumbnail) [$width_sm, $height_sm, $type_sm, $attr_sm] = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
 			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
-			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
+			'<img class="img-fluid '. $class. '" '. $data. 'src="'. $url. $src. '" alt="'. $alt. '" '. $attr. '>'.
 			'<p class="text-center wrap my-2">'. $exif_comment. '</p>'.
 			'</figure>' :
-			'<img class="align-top img-fluid img-thumbnail '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>';
+			'<img class="align-top img-fluid img-thumbnail '. $class. '" '. $data. 'src="'. $url. $src. '" alt="'. $alt. '" '. $attr. '>';
 			if ($get_title || $get_page)
 			{
 				if (false !== $src_scheme)
 					return
 					'<figure class="img-thumbnail text-center d-inline-block '. $class. '" style="max-width:'. $width. 'px">'.
 					'<a data-fancybox=gallery href="'. $src. '">'.
-					'<img class=img-fluid '. $data. 'src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '" alt="'. $alt. '" '. $attr. '>'.
+					'<img class=img-fluid '. $data. 'src="'. $addr['scheme']. '://'. $addr['host']. $addr['path']. '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'.
 					'<small class="blockquote-footer my-2 text-end">'.
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'.
@@ -330,7 +330,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
 					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). ' href="'. $url. r($src). '">'.
-					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" '. $attr. '>'.
+					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. $src. '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'.
 					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'.
 					'</figure>';
@@ -362,7 +362,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				else
 					$img =
 					'<span'. ($classname ? ' class="d-block '. $classname. ' position-relative" style="max-width:'. $width. 'px"' : ''). '>'.
-					'<img class="img-fluid '. (1 === $index_type ? 'card-img-top ' : ''). $class. '" '. $data. 'src="'. $url. r($src). '" alt="'. $alt. '" width="'. ($width * $per). '" height="'. ($height * $per). '">'.
+					'<img class="img-fluid '. (1 === $index_type ? 'card-img-top ' : ''). $class. '" '. $data. 'src="'. $url. $src. '" alt="'. $alt. '" width="'. ($width * $per). '" height="'. ($height * $per). '">'.
 					'</span>';
 
 				return '<a href="'. $url. r(basename(dirname($dirname = dirname(dirname($src)))). '/'. basename($dirname)). '">'. $img. '</a>';
@@ -377,8 +377,8 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block '. $class. '">'.
 					'<video controls preload=none>'.
-					'<source src="'. $addr['scheme']. '://'. $addr['host']. r($addr['path']). '">'.
-					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. r($addr['path'])). '" default=default>'.
+					'<source src="'. $addr['scheme']. '://'. $addr['host']. $addr['path']. '">'.
+					'<track src="'. str_replace($extension, '.vtt', $addr['scheme']. '://'. $addr['host']. $addr['path']). '" default=default>'.
 					'</video>'.
 					'<small class="blockquote-footer my-2 text-end">'.
 					'<a href="'. $addr['scheme']. '://'. $addr['host']. '/" target="_blank" rel="noopener noreferrer">'. sprintf($source, h($addr['host'])). '</a>'.
@@ -388,12 +388,12 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 					return
 					'<a href="'. $url. r($src). '" class="sr-only mfp-iframe visually-hidden">video-iframe</a>'.
 					'<video class="align-top img-thumbnail '. $class. '" controls preload=none>'.
-					'<source src="'. $url. r($src). '">'.
-					'<track src="'. $url. r($vtt). '" default=default>'.
+					'<source src="'. $url. $src. '">'.
+					'<track src="'. $url. $vtt. '" default=default>'.
 					'</video>';
 			}
 			else
-				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. r($src). '"><track src="'. $url. r($vtt). '" default=default></video>';
+				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. $src. '"><track src="'. $url. $vtt. '" default=default></video>';
 		}
 	}
 }
@@ -588,7 +588,7 @@ function get_uri($uri, $get)
 	if (str_contains($uri, '%23') || str_contains($uri, '%26'))
 		return $uri;
 	else
-		return basename(filter_input(INPUT_GET, $get, FILTER_SANITIZE_ENCODED));
+		return basename(filter_input(INPUT_GET, $get, FILTER_CALLBACK, ['options' => 'r']));
 }
 
 function sort_time($a, $b)

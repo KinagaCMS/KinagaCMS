@@ -33,22 +33,22 @@ function size_unit(int $num, $filesize=true)
 	elseif (9e5 > $num)
 	{
 		$num_format = number_format($num/1e3, 1);
-		$unit = $filesize ? ' kB' : 'K';
+		$unit = $filesize ? ' kB' : ' K';
 	}
 	elseif (9e8 > $num)
 	{
 		$num_format = number_format($num/1e6, 1);
-		$unit = $filesize ? ' MB' : 'M';
+		$unit = $filesize ? ' MB' : ' M';
 	}
 	elseif (9e11 > $num)
 	{
 		$num_format = number_format($num/1e9, 1);
-		$unit = $filesize ? ' GB' : 'B';
+		$unit = $filesize ? ' GB' : ' G';
 	}
 	else
 	{
 		$num_format = number_format($num/1e12, 1);
-		$unit = $filesize ? ' TB' : 'T';
+		$unit = $filesize ? ' TB' : ' T';
 	}
 	return str_replace('.'. str_repeat(0, 1), '', str_replace('.'. str_repeat(0, 1), '', $num_format)). $unit;
 }

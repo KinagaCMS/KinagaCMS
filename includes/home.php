@@ -281,8 +281,6 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 			$categ_dir = dirname(dirname($sections));
 			$article_dir = dirname($sections);
 			$filemtime = filemtime($sections);
-			$counter = is_file($counter_txt = $article_dir. '/counter.txt') ?
-			'<span class=card-link>'. sprintf($views, (int)file_get_contents($counter_txt)). '</span>' : '';
 			if (is_dir($default_imgs_dir = $article_dir. '/images') && $glob_default_imgs = glob($default_imgs_dir. $glob_imgs, GLOB_NOSORT+GLOB_BRACE))
 			{
 				sort($glob_default_imgs);
@@ -328,7 +326,7 @@ else	if ($glob_files = glob($glob_dir. 'index.html', GLOB_NOSORT))
 				$article .= '<a class=card-link href="'. $url. '?user='. str_rot13(basename(dirname($author_prof))). '">'. avatar($author_prof, 20). ' '. handle($author_prof). '</a>';
 			$article .= '<time class=card-link datetime="'. date('c', $filemtime). '">'. timeformat($filemtime, $intervals). '</time>';
 			if (is_file($counter_txt = $article_dir. '/counter.txt'))
-				$article .= '<span class=card-link>'. sprintf($views, (int)file_get_contents($counter_txt)). '</span>';
+				$article .= '<span class=card-link>'. sprintf($views, size_unit((int)file_get_contents($counter_txt), false)). '</span>';
 			if ($use_comment && is_dir($comments_dir = $article_dir. '/comments'))
 				$article .=
 				'<a class=card-link href="'. $url. $categ_link. '/'. $title_link. '#comment">'. sprintf($comment_counts, count(glob($comments_dir. '/*'. $delimiter. '*.txt', GLOB_NOSORT))). '</a>';

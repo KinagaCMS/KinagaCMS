@@ -23,32 +23,32 @@ function h($str)
 	return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, $encoding, false);
 }
 
-function size_unit($num, $filesize=true)
+function size_unit(int $num, $filesize=true)
 {
-	if (900 > $num)
+	if (9e2 > $num)
 	{
 		$num_format = number_format($num, 1);
-		$unit = $filesize ? 'B' : '';
+		$unit = $filesize ? ' B' : '';
 	}
-	elseif (900000 > $num)
+	elseif (9e5 > $num)
 	{
-		$num_format = number_format($num/1000, 1);
-		$unit = $filesize ? 'kB' : 'K';
+		$num_format = number_format($num/1e3, 1);
+		$unit = $filesize ? ' kB' : 'K';
 	}
-	elseif (900000000 > $num)
+	elseif (9e8 > $num)
 	{
-		$num_format = number_format($num/1000000, 1);
-		$unit = $filesize ? 'MB' : 'M';
+		$num_format = number_format($num/1e6, 1);
+		$unit = $filesize ? ' MB' : 'M';
 	}
-	elseif (900000000000 > $num)
+	elseif (9e11 > $num)
 	{
-		$num_format = number_format($num/1000000000, 1);
-		$unit = $filesize ? 'GB' : 'B';
+		$num_format = number_format($num/1e9, 1);
+		$unit = $filesize ? ' GB' : 'B';
 	}
 	else
 	{
-		$num_format = number_format($num/1000000000000, 1);
-		$unit = $filesize ? 'TB' : 'T';
+		$num_format = number_format($num/1e12, 1);
+		$unit = $filesize ? ' TB' : 'T';
 	}
 	return str_replace('.'. str_repeat(0, 1), '', str_replace('.'. str_repeat(0, 1), '', $num_format)). $unit;
 }

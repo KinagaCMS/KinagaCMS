@@ -20,7 +20,7 @@ if (__FILE__ !== implode(get_included_files())) return
 	'reddit' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#ff4500" href="https://reddit.com/submit?url='. $u. '&amp;title='. $t. '">Reddit</a>',
 	'surfingbird' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:#596e7e;background:#f2f3f5" href="https://surfingbird.ru/share?url='. $u. '&amp;title='. $t. '">Surfingbird</a>',
 	'tumblr' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#35465c" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl='. $u. '&amp;title='. $t. '">Tumblr</a>',
-	'twitter' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#1da1f2" href="https://twitter.com/intent/tweet?url='. $u. '&amp;text='. $t. '">Twitter</a>',
+	'twitter' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#000" href="https://twitter.com/intent/tweet?url='. $u. '&amp;text='. $t. '">X</a>',
 	'vk' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#45668e" href="https://vk.com/share.php?url='. $u. '&amp;title='. $t. '">VK</a>',
 	'weibo' => '<a target="_blank" rel="noopener noreferrer" class="m-1 social btn btn-lg" style="color:white;background:#ec4039" href="https://service.weibo.com/share/share.php?url='. $u. '&amp;appkey=&amp;title='. $t. '&amp;pic=&amp;ralateUid=">Weibo</a>',
 ];

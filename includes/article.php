@@ -102,7 +102,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				{
 					$extention = get_extension($tooltip_images);
 					$id = basename($tooltip_images, $extention);
-					$javascript .= 'document.getElementById("'. $id. '").style="border-bottom:thin dotted;cursor:pointer";new bootstrap.Tooltip(document.getElementById("'. $id. '"),{html:true,placement:"auto",title:"<img src=\"'. $url. r($tooltip_images). '\" class=\"img-fluid rounded\">"});';
+					$javascript .= 'document.getElementById("'. $id. '").style="border-bottom:thin dotted;cursor:pointer";new bootstrap.Tooltip(document.getElementById("'. $id. '"),{html:true,placement:"auto",title:"<img src=\"'. $url. $tooltip_images. '\" class=\"img-fluid rounded\">"});';
 				}
 			}
 		}
@@ -120,7 +120,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					$bg_text = '.png' !== strtolower($extention) ? '' : get_png_tEXt($v);
 					$slides_exif_comment = (isset($slides_exif['COMMENT']) || $bg_text) ? '<div style="background:rgba(0,0,0,.2)" class="carousel-caption d-block wrap">'. h(strip_tags($slides_exif['COMMENT'][0] ?? $bg_text)). '</div>' : '';
 					$article .= '<li data-bs-target="#slide-images" data-bs-slide-to='. $k. (0 !== $k ? '' : ' class=active'). ' data-bs-interval=10000><span class="sr-only visually-hidden">.</span></li>';
-					$carousel_item[] = '<div class="carousel-item'. (0 !== $k ? '' : ' active'). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. r($v). '">'. $slides_exif_comment. '</div>';
+					$carousel_item[] = '<div class="carousel-item'. (0 !== $k ? '' : ' active'). '"><img class="img-fluid img-thumbnail d-block w-100" src="'. $url. $v. '">'. $slides_exif_comment. '</div>';
 				}
 				$article .=
 				'</ol>'.
@@ -177,7 +177,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 				if ($checklist_arr = !filter_has_var(INPUT_POST, 'checklist') ? '' : filter_input(INPUT_POST, 'checklist', FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_HIGH))
 					file_put_contents($checked, $checklist_arr);
 				$article .= '<section id=checklist></section>';
-				$javascript .= 'checklistSection=document.getElementById("checklist");form=document.createElement("form");form.className="checklist";comment=document.querySelector("article.article").innerHTML.match(/<!--&#10;.*?&#10;-->/g)[0];checklist=comment.replace(/<!--&#10;|&#10;-->/g,"");checklist.split("&#10;&#10;").map(v=>{ol=document.createElement("ol");ol.className="list-group list-group-flush mb-3";form.appendChild(ol);v.split("&#10;").map(w=>{if(w.match(/\<h\d/i))form.insertBefore(document.createRange().createContextualFragment(w),ol);else if(w.length){li=document.createElement("li");li.className="list-group-item list-group-item-action d-flex justify-content-between align-items-start";label=document.createElement("label"),input=document.createElement("input"),text=document.createTextNode(w);label.className="user-select-none";input.type="checkbox";input.className="me-3";label.appendChild(input);label.appendChild(text);li.appendChild(label);ol.appendChild(li)}})});btn=document.createElement("input");btn.type="button";btn.value="'. $btn[1]. '";btn.className="btn btn-primary";btn.id="btn";form.appendChild(btn);checklistSection.innerHTML=form.outerHTML;';
+				$javascript .= 'form=document.createElement("form");form.className="checklist";comment=document.querySelector("article.article").innerHTML.match(/<!--&#10;.*?&#10;-->/g)[0];checklist=comment.replace(/<!--&#10;|&#10;-->/g,"");checklist.split("&#10;&#10;").map(v=>{ol=document.createElement("ol");ol.className="list-group list-group-flush mb-3";form.appendChild(ol);v.split("&#10;").map(w=>{if(w.match(/\<h\d/i))form.insertBefore(document.createRange().createContextualFragment(w),ol);else if(w.length){li=document.createElement("li");li.className="list-group-item list-group-item-action d-flex justify-content-between align-items-start";label=document.createElement("label"),input=document.createElement("input"),text=document.createTextNode(w);label.className="user-select-none";input.type="checkbox";input.className="me-3";label.appendChild(input);label.appendChild(text);li.appendChild(label);ol.appendChild(li)}})});btn=document.createElement("input");btn.type="button";btn.value="'. $btn[1]. '";btn.className="btn btn-primary";btn.id="btn";form.appendChild(btn);checklist.innerHTML=form.outerHTML;';
 				if (is_admin() || (isset($author, $_SESSION['l']) && $author === $_SESSION['l']))
 				{
 					if ($glob_checklist_dir = glob($checklist_dir. '*', GLOB_NOSORT))
@@ -185,16 +185,61 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 						$javascript .= '[';
 						foreach($glob_checklist_dir as $checklists) $l[] = str_getcsv(filter_var(file_get_contents($checklists), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND));
 						for ($i = 0, $c = count($l[0]); $i < $c; ++$i) $javascript .= array_sum(array_column($l, $i)). ',';
-						$javascript .= '].forEach((q,i)=>{spn=document.createElement("span");spn.className="badge bg-primary rounded-pill";text=document.createTextNode(q);spn.appendChild(text);document.querySelectorAll("#checklist li")[i].appendChild(spn)});document.getElementById("btn").value="'. sprintf($checklist_message[2], count($glob_checklist_dir)). '";';
+						$javascript .= '].forEach((q,i)=>{spn=document.createElement("span");spn.className="badge bg-primary rounded-pill";text=document.createTextNode(q);spn.appendChild(text);document.querySelectorAll("#checklist li")[i].appendChild(spn)});btn.value="'. sprintf($checklist_message[2], count($glob_checklist_dir)). '";';
 					}
-					$javascript .= 'document.getElementById("btn").setAttribute("disabled",true);';
+					$javascript .= 'btn.setAttribute("disabled",true);';
 				}
 				else
-					$javascript .= 'document.getElementById("btn").onclick=()=>{let fd=new FormData(),obj=[];chx=document.querySelectorAll("#checklist input[type=checkbox]");chx.forEach((c,i)=>obj[i]=c.checked?1:0);fd.append("checklist",obj);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>checklistSection.innerHTML="<div class=\"alert alert-success\">'. $checklist_message[1]. '<\/div>")};';
+					$javascript .= 'btn.onclick=()=>{let fd=new FormData(),obj=[];chx=document.querySelectorAll("#checklist input[type=checkbox]");chx.forEach((c,i)=>obj[i]=c.checked?1:0);fd.append("checklist",obj);fetch("'. $current_url. '",{method:"POST",cache:"no-cache",body:fd}).then(()=>checklist.innerHTML="<div class=\"alert alert-success\">'. $checklist_message[1]. '<\/div>")};';
 			}
 		}
 		elseif (!isset($_SESSION['l']) && str_contains($article, '<!--&#10;') && str_contains($article, '&#10;-->'))
 			$article .= '<div class="alert alert-info">'. $checklist_message[0]. '</div>';
+		if ($current_article_gz = glob($current_article_dir. '/[1-9][7-9]*.tar.gz'))
+		{
+			`tar -C "$current_article_dir" -xf "$current_article_gz[0]"`;
+			$pd = new PharData($current_article_gz[0]);
+			if (is_dir($lodir = $current_article_dir. '/'. $pd->getBasename()))
+			{
+				$article .=
+				'<h2 class="h4 m-3">'. h($pd->getBasename()). '</h2>'.
+				'<div class="form-check form-switch form-check-reverse">'.
+				'<label class=form-check-label for=verticalPreview>'. $vertical. '</label>'.
+				'<input class=form-check-input type=checkbox id=verticalPreview>'.
+				'</div>'.
+				'<div class="carousel carousel-dark slide" id=slideChapter>'.
+				'<div class=carousel-inner id=chapter>';
+				$glob_lodir = glob($lodir. '/*');
+				natsort($glob_lodir);
+				foreach ($glob_lodir as $lofiles)
+				{
+					$lofile_title = basename($lofiles);
+					if (fnmatch('[a-d]', $lofile_title)) $aside .= '<div id="'. $lofile_title. 'a">'. file_get_contents($lofiles). '</div>';
+					elseif (preg_match('/^(\d+).(.*?)$/', $lofile_title, $chap_title))
+					{
+						$article .=
+						'<section class="carousel-item'. (1 !== (int)$chap_title[1] ? '' : ' active'). ' chapter vertical">'.
+						'<h3 class=chapter-title>'. sprintf($chapter_title, $chap_title[1]). $chap_title[2]. '</h3>'.
+						'<p class=chapter-content>'. file_get_contents($lofiles). '</p>'.
+						'</section>';
+					}
+				}
+				$article .=
+			'</div>'.
+			'<nav class="bg-info-subtle d-flex justify-content-between p-2 w-100">'.
+			'<button class="bg-transparent border border-0 d-flex align-items-center opacity-50 p-0" data-bs-target="#slideChapter" data-bs-slide=prev onclick="chapter.scrollIntoView()" id=prevBtn>'.
+			'<span class=carousel-control-prev-icon aria-hidden=true></span>'.
+			'<span class="d-block text-truncate" id=prevChap style="max-width:15rem"></span>'.
+			'</button>'.
+			'<button class="bg-transparent border border-0 d-flex align-items-center opacity-50 p-0" data-bs-target="#slideChapter" data-bs-slide=next onclick="chapter.scrollIntoView()" id=nextBtn>'.
+			'<span class="d-block text-truncate" id=nextChap style="max-width:15rem"></span>'.
+			'<span class=carousel-control-next-icon aria-hidden=true></span>'.
+			'</button></nav>'.
+			'</div>';
+			$stylesheet .= 'header.sticky-md-top{position:unset}.chapter-title{margin:0;padding:1.5rem}.chapter-content{font-size:large;letter-spacing:.05em;line-height:2;margin:0;padding:1.5rem;word-break:break-word;white-space:pre-wrap}.vertical{column-fill:auto;column-gap:1rem;columns:30rem;font-family:serif;overflow-y:scroll;overscroll-behavior-y:none;writing-mode:vertical-rl}.chapter b{font-weight:unset;text-emphasis-style:dot}.chapter i{font-style:normal;text-combine-upright:all}#aa{color:royalblue;background-color:lightcyan;padding:2em;white-space:pre-wrap}#ba{color:palevioletred;background-color:lavenderblush;padding:2em;white-space:pre-wrap}#ca{color:forestgreen;background-color:honeydew;padding:2em;white-space:pre-wrap}#da{color:goldenrod;background-color:lemonchiffon;padding:2em;white-space:pre-wrap}.carousel-control-next,.carousel-control-prev{width:unset!important}';
+			$javascript .= 'nextChap.innerText=document.querySelector(".carousel-item").nextElementSibling.children[0].innerText,prevBtn.style.visibility="hidden";slideChapter.addEventListener("slid.bs.carousel",sc=>{prevBtn.style.visibility="visible";const prev=sc.relatedTarget.previousElementSibling,next=sc.relatedTarget.nextElementSibling;if(prev)prevBtn.style.visibility="visible",prevChap.innerText=prev.children[0].innerText;else prevBtn.style.visibility="hidden";if(next)nextBtn.style.visibility="visible",nextChap.innerText=next.children[0].innerText;else nextBtn.style.visibility="hidden"});const cci=document.querySelectorAll("#chapter .carousel-item");if("false"===localStorage.getItem("verticalPreview"))verticalPreview.checked=false,cci.forEach(ci=>ci.classList.remove("vertical"));else verticalPreview.checked=true,cci.forEach(ci=>ci.classList.add("vertical"));verticalPreview.onchange=e=>{document.querySelectorAll("#chapter .carousel-item").forEach(ci=>ci.classList.toggle("vertical"));localStorage.setItem(e.target.id,e.target.checked)},document.querySelectorAll(".chapter p").forEach(s=>s.innerHTML=s.innerText.replace(/([｜\|])?(《《([\p{sc=Hira}\p{sc=Kana}\p{sc=Han}ー]+)》》)/gu,(b,b1,b2,b3)=>{if(b1)return b2;else return"<b>"+b3+"<\/b>"}).replace(/[｜\|]([\p{scx=Hira}\p{scx=Kana}\p{scx=Han}]+)《([\p{scx=Hira}\p{scx=Kana}\p{sc=Han}]+)》/gu,"<ruby>$1<rt>$2<\/rt><\/ruby>").replace(/([\p{sc=Han}]+)《([\p{scx=Hira}\p{scx=Kana}]+)》/gu,"<ruby>$1<rt>$2<\/rt><\/ruby>").replace(/[｜\|]([\p{scx=Hira}\p{scx=Kana}\p{scx=Han}]+)/gu,"$1").replace(/(\d{5,})/g,num=>{const numeral='. json_encode($han_num). ',unit='. json_encode($han_unit). ';if(num.length/4>unit.length-3)return num.replace(/¥d/g,s=>numeral[parseInt(s)]);let kn,str="",arr=num.match(/\d{1,4}?(?=(\d{4})*$)/gm);for(i5=0,l5=arr.length-1;i5<=l5;i5++){if(!parseInt(arr[i5]))continue;for(i6=0,l6=arr[i5].length-1;i6<=l6;i6++){kn=parseInt(arr[i5][i6]);if(!kn)continue;if(i6===l6)str+=numeral[kn];else str+=(1<kn?numeral[kn]:"")+unit[l6-i6]}if(i5!==l5)str+=unit[l5-i5+3]}return str}).replace(/(\d{3}\,\d{3}|\d{2,4}|\d\.\d{1,4}|\.\d{1,4}|\d| [A-Za-z] )/g,"<i>$1<\/i>").replace(/(?!<\/?b>|<\/?i>|<\/?rt>|<\/?ruby>)<([^>]+)>/gi,"&lt$1&gt").split("\n").map(line=>{return (line.match(/^\s/)?"":"　")+line}).join("\n"));';
+			}
+		}
 		if ($use_comment && is_dir($comment_dir))
 		{
 			$article .=

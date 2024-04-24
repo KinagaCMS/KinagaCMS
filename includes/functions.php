@@ -291,7 +291,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 	global $url, $source, $classname, $get_categ, $get_title, $index_type, $get_page, $use_thumbnails, $use_categ_thumbnails, $line_breaks, $use_datasrc;
 	if ($extension = get_extension($src))
 	{
-		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg'];
+		$image_extensions = ['.gif', '.jpg', '.jpeg', '.png', '.svg', '.webp'];
 		$video_extensions = ['.mp4', '.ogg', '.webm'];
 		if ($src_scheme = str_contains($src, '://')) $addr = parse_url($src);
 		$data = !$use_datasrc ? '' : 'data-';
@@ -329,7 +329,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				elseif (!$exif_thumbnail)
 					return
 					'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.
-					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). ' href="'. $url. r($src). '">'.
+					'<a data-fancybox=gallery class="d-inline-block mb-2 me-1"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). ' href="'. $url. $src. '">'.
 					'<img class="align-top img-fluid '. $class. '" '. $data. 'src="'. $url. $src. '" alt="'. $alt. '" '. $attr. '>'.
 					'</a>'.
 					'<figcaption class="text-center mb-2 wrap">'. $exif_comment. '</figcaption>'.
@@ -337,7 +337,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				else
 					return
 					'<figure class="d-inline-block m-2">'.
-					'<a data-fancybox=gallery href="'. $url. r($src). '"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). '>'.
+					'<a data-fancybox=gallery href="'. $url. $src. '"'. (!$exif_comment ? '' : ' data-caption="'. $exif_comment. '"'). '>'.
 					($exif_thumbnail && $use_thumbnails ?
 					'<img class="'. $class. ' align-top img-thumbnail" '. $data. 'src="data:'. image_type_to_mime_type(exif_imagetype($src)). ';base64,'. base64_encode($exif_thumbnail). '" alt="'. $alt. '" '. $attr_sm. '>' :
 					$img).

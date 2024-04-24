@@ -134,6 +134,12 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 						}
 					}
 				}
+				if (isset($_FILES['localOutlinerFile']['error'], $_FILES['localOutlinerFile']['name'], $_FILES['localOutlinerFile']['tmp_name'], $_FILES['localOutlinerFile']['type'])
+				&& UPLOAD_ERR_OK === $_FILES['localOutlinerFile']['error'] && 'application/gzip' === $_FILES['localOutlinerFile']['type']
+				&& preg_match('/^1[7-9][0-9]{8}$/', basename($_FILES['localOutlinerFile']['name'], '.tar.gz')))
+				{
+					move_uploaded_file($_FILES['localOutlinerFile']['tmp_name'], $create_article_dir. '/'. basename($_FILES['localOutlinerFile']['name']));
+				}
 				if (filter_has_var(INPUT_POST, 'move-categ') && is_dir($move_article = 'contents/'. filter_input(INPUT_POST, 'move-categ', FILTER_CALLBACK, ['options' => 'strip_tags_basename'])))
 				{
 					if (is_admin() || is_author($current_categ. '/'. $create_article))
@@ -247,12 +253,28 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 			 }
 			 else rmdir($updir);
 		 }
-		$article .=
-		'<textarea class="form-control mb-4" name=login-textarea id=login-textarea placeholder="'. $admin_menus[16]. '" rows=10>'. ($edit_article_login_txt_content ?? ''). '</textarea>'.
+		if ($edit_article_name && $glob_lofile = glob($edit_article_dir. '/[1-9][7-9]*.tar.gz'))
+		{
+			if (is_file($lof = $glob_lofile[0]))
+			{
+				$blof = strip_tags(basename($lof));
+				$article .=
+				'<fieldset class="form-group bg-light px-4 my-4"><h2 class="h5 my-4">'. $btn[4]. '</h2>'.
+				'<div class="form-check my-3">'.
+				'<input class=form-check-input name=remove[] type=checkbox value="'. $lof. '" id="'. $blof. '">'.
+				'<label class=form-check-label for="'. $blof. '">'. $blof. '</label>'.
+				'</div>'.
+				'</fieldset>';
+			}
+		}
+		else
+			$article .=
+			'<div class="input-group my-4"><label class=input-group-text for=localOutlinerFile>localOutliner</label><input type=file class=form-control name=localOutlinerFile id=localOutlinerFile accept=".tar.gz"></div>';
+		$article .= '<textarea class="form-control mb-4" name=login-textarea id=login-textarea placeholder="'. $admin_menus[16]. '" rows=10>'. ($edit_article_login_txt_content ?? ''). '</textarea>'.
 		'<div class=modal-footer><button type=button class="btn btn-secondary" data-bs-dismiss=modal>'. $btn[13]. '</button><input class="btn btn-primary" type=submit value="'. $btn[8]. '"></div>'.
 		'</form></div></div></div></div>';
 		html_assist();
-		$javascript .= 'function replaceChar(str,char="-"){return str.substr(0,str.lastIndexOf(".")).replace(/[@\"#$%&\'()*+.,\/:;><=?\\\[\\\\\]^_`{|}~ ]/g,char)}document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"));previewDiv=document.createElement("div");previewDiv.id="preview";document.getElementById("uploads").parentNode.insertBefore(previewDiv,document.getElementById("uploads").nextElementSibling);document.getElementById("create-images-dir").addEventListener("change",e=>{files=document.getElementById("create-article-files").files;if("background-images"===e.target.value){let a="";for(let v of files)a+="<div class=\"img-"+replaceChar(v.name)+"\"><\/div>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+a}if("tooltip-images"===e.target.value){let b="";for(w of files)b+="<span id=\"img-"+replaceChar(w.name)+"\"><\/span>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+b}});document.getElementById("create-article-files").addEventListener("change",e=>{let preview=document.getElementById("preview"),files=e.target.files;document.getElementById("create-images-dir").dispatchEvent(new Event("change"));function preView(file){const reader=new FileReader();reader.onload=e=>{const image=new Image(),figure=document.createElement("figure");figure.className="figure img-thumbnail mb-3";if(/image/.test(file.type)){image.alt=replaceChar(file.name);image.classList.add("img-fluid");image.src=e.target.result}if(/\.('. (!extension_loaded('imagick') ? '' : 'jpe?g|'). 'png)$/i.test(file.name)){textarea=document.createElement("textarea");textarea.className="form-control";textarea.name="img-"+replaceChar(file.name);textarea.placeholder="'. $placeholder[10]. '";figure.appendChild(image);figure.appendChild(textarea);preview.appendChild(figure)}else if(/video/.test(file.type)||/vtt/.test(file.type)){video=document.createElement("video");video.id="video-"+replaceChar(file.name);video.controls=true;if(/vtt/.test(file.type)){track=document.createElement("track");track.id="track-"+replaceChar(file.name);track.kind="subtitles";track.src=e.target.resultpreview.appendChild(track)}else{source=document.createElement("source");source.src=e.target.result;source.id="#track-"+replaceChar(file.name);video.appendChild(source);figure.appendChild(video);preview.appendChild(figure)}}else{figure.appendChild(image);preview.appendChild(figure)}};reader.readAsDataURL(file)}if(files)[].slice.call(files).sort().forEach(v=>preView(v))});rl=document.getElementById("require-login"),cl=document.getElementById("login-textarea");window.addEventListener("load",loginCheck);rl.addEventListener("change",loginCheck);clone=document.getElementById("h").cloneNode(true);clone.id="ch";clone.classList.add("mb-2");footer.appendChild(clone);cl.parentNode.insertBefore(document.getElementById("ch"),cl);function loginCheck(){if(true!==rl.checked){cl.style.display="none";ch.style.display="none"}else{cl.style.display="block";ch.style.display="block"}}'. (!$edit_article_name ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();').
+		$javascript .= 'function replaceChar(str,char="-"){return str.substr(0,str.lastIndexOf(".")).replace(/[@\"#$%&\'()*+.,\/:;><=?\\\[\\\\\]^_`{|}~ ]/g,char)}document.getElementById("i").parentNode.insertBefore(document.getElementById("h"),document.getElementById("i"));previewDiv=document.createElement("div");previewDiv.id="preview";document.getElementById("uploads").parentNode.insertBefore(previewDiv,document.getElementById("uploads").nextElementSibling);document.getElementById("create-images-dir").addEventListener("change",e=>{files=document.getElementById("create-article-files").files;if("background-images"===e.target.value){let a="";for(let v of files)a+="<div class=\""+replaceChar(v.name)+"\"><\/div>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+a}if("tooltip-images"===e.target.value){let b="";for(w of files)b+="<span id=\""+replaceChar(w.name)+"\"><\/span>\n";document.getElementById("textarea").value=document.getElementById("textarea").value+b}});document.getElementById("create-article-files").addEventListener("change",e=>{let preview=document.getElementById("preview"),files=e.target.files;document.getElementById("create-images-dir").dispatchEvent(new Event("change"));function preView(file){const reader=new FileReader();reader.onload=e=>{const image=new Image(),figure=document.createElement("figure");figure.className="figure img-thumbnail mb-3";if(/image/.test(file.type)){image.alt=replaceChar(file.name);image.classList.add("img-fluid");image.src=e.target.result}if(/\.('. (!extension_loaded('imagick') ? '' : 'jpe?g|'). 'png)$/i.test(file.name)){textarea=document.createElement("textarea");textarea.className="form-control";textarea.name=replaceChar(file.name);textarea.placeholder="'. $placeholder[10]. '";figure.appendChild(image);figure.appendChild(textarea);preview.appendChild(figure)}else if(/video/.test(file.type)||/vtt/.test(file.type)){video=document.createElement("video");video.id="video-"+replaceChar(file.name);video.controls=true;if(/vtt/.test(file.type)){track=document.createElement("track");track.id="track-"+replaceChar(file.name);track.kind="subtitles";track.src=e.target.resultpreview.appendChild(track)}else{source=document.createElement("source");source.src=e.target.result;source.id="#track-"+replaceChar(file.name);video.appendChild(source);figure.appendChild(video);preview.appendChild(figure)}}else{figure.appendChild(image);preview.appendChild(figure)}};reader.readAsDataURL(file)}if(files)[].slice.call(files).sort().forEach(v=>preView(v))});rl=document.getElementById("require-login"),cl=document.getElementById("login-textarea");window.addEventListener("load",loginCheck);rl.addEventListener("change",loginCheck);clone=document.getElementById("h").cloneNode(true);clone.id="ch";clone.classList.add("mb-2");footer.appendChild(clone);cl.parentNode.insertBefore(document.getElementById("ch"),cl);function loginCheck(){if(true!==rl.checked){cl.style.display="none";ch.style.display="none"}else{cl.style.display="block";ch.style.display="block"}}'. (!$edit_article_name ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();').
 		(!$assist_error ? '' : 'new bootstrap.Modal(document.getElementById("kisou")).show();');
 	}
 	if (0 < $categ_contents_number)

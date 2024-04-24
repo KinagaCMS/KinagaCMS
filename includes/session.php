@@ -76,7 +76,7 @@ if (!isset($_SESSION['l'], $_SESSION['n']) && isset($ticket) && is_file($ticket)
 				$userubject = $ticket_subject. ' - '. $site_name;
 				$session_headers = $mime. 'From: '. $from. $n. 'Content-Type: multipart/mixed; boundary="'. $token. '"'. $n. 'Content-Transfer-Encoding: 8bit'. $n;
 				$session_body =
-				'--'. $token. $n.
+				$n. '--'. $token. $n.
 				'Content-Type: text/plain; charset='. $encoding. $n. 'Content-Transfer-Encoding: 8bit'. $n. $n.
 				sprintf($ticket_body, $remote_addr, $session_filename, $session_limit). $n. $n.
 				$separator. $n. $site_name. $n. $url. $n.

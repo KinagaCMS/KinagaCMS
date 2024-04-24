@@ -400,6 +400,12 @@ $checklist_message = [
 	'回答者数：%d'
 ];
 
+#localOutliner viewer
+$chapter_title = '第<i>%d</i>話 ';
+$han_num = ["○","一","二","三","四","五","六","七","八","九"];
+$han_unit = ["零","十","百","千","万","億","兆","京","垓"];
+$vertical = '縦書き';
+
 #/images/index.php
 
 #1ページあたりの表示枚数

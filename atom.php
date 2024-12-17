@@ -46,7 +46,7 @@ if ($atom_files)
 		{
 			if ($glob_atom_imgs = glob($atom_imgs_dir. '/*'))
 				$atom_image = ($size = @getimagesize($glob_atom_imgs[0])) ?
-				'<a href="'. $id. '"><img src="'. $url. r($glob_atom_imgs[0]). '" width="'. (500 < $size[0] ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
+				'<a href="'. $id. '"><img src="'. $url. $glob_atom_imgs[0]. '" width="'. (500 < $size[0] ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
 			else
 				$atom_image = '';
 		}
@@ -56,7 +56,7 @@ if ($atom_files)
 		{
 			if ($glob_atom_background_imgs = glob($atom_background_imgs_dir. '/*'))
 				$atom_background_image = ($size = @getimagesize($glob_atom_background_imgs[0])) ?
-				'<a href="'. $id. '"><img src="'. $url. r($glob_atom_background_imgs[0]). '" width="'. (500 < $size[0] ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
+				'<a href="'. $id. '"><img src="'. $url. $glob_atom_background_imgs[0]. '" width="'. (500 < $size[0] ? 500 : $size[0]). '" alt="'. $atom_link_title. '" /></a>' : '';
 			else
 				$atom_background_image = '';
 		}

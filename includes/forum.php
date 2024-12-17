@@ -149,14 +149,11 @@ if ($forum_topic && false === $fpos)
 				if (is_file($userimg = 'users/'. str_rot13($upuser = basename($v[0])). '/upload/'. $filename = basename($v[1])) && isset($v[2]) && !in_array($filename, $delete_lines, true))
 				{
 					if (!in_array($filename, $upload_time, true) && !in_array($upuser, $upload_user, true)) exit (http_response_code(403));
-					switch ($extension = basename($v[2]))
+					match ($extension = basename($v[2]))
 					{
-						case 'png':
-						case 'gif':
-							$mime = $extension; break;
-						default:
-							$mime = 'jpeg';
-					}
+						'png', 'gif' => $mime = $extension,
+						default => $mime = 'jpeg',
+					};
 					header('Content-Type: image/'. $mime);
 					header('Content-Disposition: filename="'. $filename. '.'. $extension. '"');
 					exit (base64_decode(file_get_contents($userimg)));
@@ -213,12 +210,12 @@ if ($forum_topic && false === $fpos)
 						{
 							if (getimagesize($_FILES['a']['tmp_name']))
 							{
-								switch (exif_imagetype($_FILES['a']['tmp_name']))
+								match (exif_imagetype($_FILES['a']['tmp_name']))
 								{
-									case IMAGETYPE_JPEG: $type = 'jpeg'; break;
-									case IMAGETYPE_PNG: $type = 'png'; break;
-									case IMAGETYPE_GIF: $type = 'gif'; break;
-								}
+									IMAGETYPE_JPEG => $type = 'jpeg',
+									IMAGETYPE_PNG => $type = 'png',
+									IMAGETYPE_GIF => $type = 'gif',
+								};
 								if (isset($type)) file_put_contents($userdir. '/upload/'. $resstime, base64_encode(file_get_contents($_FILES['a']['tmp_name'])), LOCK_EX);
 							}
 						}

@@ -16,7 +16,7 @@ if ($forum_topic && false === $fpos)
 	if (is_file($topic_file = './forum/'. $forum_thread. '/'. $forum_topic))
 	{
 		$topic_lines = array_unique(file($topic_file));
-		$topic_header = str_getcsv($topic_lines[0]);
+		$topic_header = str_getcsv($topic_lines[0], ',', "\"", "\\");
 		$topicer_name = $topic_header[1];
 
 
@@ -80,7 +80,7 @@ if ($forum_topic && false === $fpos)
 			}
 			for ($k=1; $k < $count_lines; ++$k)
 			{
-				$topic_str = str_getcsv($topic_lines[$k]);
+				$topic_str = str_getcsv($topic_lines[$k], ',', "\"", "\\");
 				$first_letter = $topic_str[0][0] ?? '';
 				$upload_time[] = $topic_str[0] ?? '';
 				$upload_user[] = $topic_str[1] ?? '';
@@ -281,7 +281,7 @@ elseif ($forum_thread && false === $fpos)
 				$guest_file = $tmpdir. $unixtime. $delimiter. str_rot13($guest);
 				if (is_file($guest_file) && $now <= $unixtime + $time_limit * 60)
 				{
-					 $guest_content = str_getcsv($guest_str = file_get_contents($guest_file));
+					 $guest_content = str_getcsv($guest_str = file_get_contents($guest_file), ',', "\"", "\\");
 					 if (isset($guest_content[2]) && !is_file($guest_topic = './forum/'. $forum_thread. '/'. $guest_content[2]))
 					 {
 						file_put_contents($guest_topic, $guest_str, LOCK_EX);

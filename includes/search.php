@@ -90,7 +90,7 @@ elseif ($use_forum && false !== $fpos && $fquery)
 			{
 				foreach (file($topics) as $topic_line)
 				{
-					$topic_str = str_getcsv($topic_line);
+					$topic_str = str_getcsv($topic_line, ',', "\"", "\\");
 					if ('#' === $topic_str[0][0]) continue;
 					$topic_contents = html_entity_decode($topic_str[2]);
 					$timestamp = date($time_format, $topic_str[0]);

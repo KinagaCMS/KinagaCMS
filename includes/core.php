@@ -98,7 +98,7 @@ $header .=
 if ($stylesheet) $header .= '<style>'. $stylesheet. '</style>';
 if (is_file($ads_txt = 'ads.txt'))
 {
-	$ads_str = str_getcsv(file($ads_txt)[0]);
+	$ads_str = str_getcsv(file($ads_txt)[0], ',', "\"", "\\");
 	if ('google.com' === $ads_str[0])
 		if (preg_match('/\d+/', $ads_str[1], $ads_num))
 			$header .= '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-'. $ads_num[0]. '" crossorigin="anonymous"></script>';

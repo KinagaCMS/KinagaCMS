@@ -7,7 +7,7 @@ $req = 'cmd=_notify-validate';
 foreach (filter_input_array(INPUT_POST) ?? [] as $k => $v) $req .= '&'. $k. '='. urlencode(stripslashes($v));
 if (filter_has_var(INPUT_POST, 'custom'))
 {
-	[$price, $buyer] = str_getcsv(dec(filter_input(INPUT_POST, 'custom')));
+	[$price, $buyer] = str_getcsv(dec(filter_input(INPUT_POST, 'custom')), ',', "\"", "\\");
 	$buyer_dir = 'users/'. ($user = basename(trim($buyer)));
 	if ('Completed' !== filter_input(INPUT_POST, 'payment_status') && (int)$price !== filter_input(INPUT_POST, 'mc_gross') && !is_dir($buyer_dir)) exit;
 	$item_name = !filter_has_var(INPUT_POST, 'item_name') ? ' ' : trim(dec(filter_input(INPUT_POST, 'item_name')));

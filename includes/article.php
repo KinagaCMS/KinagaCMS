@@ -46,7 +46,28 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 	$article .= '</header>';
 	ob_start();
 	include $current_article;
-	$current_article_content = str_replace($line_breaks, '&#10;', ob_get_clean());
+	$current_article_content = ob_get_clean();
+	if (false !== stripos($current_article_content, '<?xml')) $current_article_content = preg_replace('/<\?xml[^>]*>/i', '', $current_article_content);
+	if (false !== stripos($current_article_content, '<!DOCTYPE')) $current_article_content = preg_replace('/<!DOCTYPE[^>]*>/is', '', $current_article_content);
+	if (false !== stripos($current_article_content, '<html')) $current_article_content = preg_replace(['/<html[^>]*>/is', '/<\/html>/i', '/<body[^>]*>/is', '/<\/body>/i'], '', $current_article_content);
+	if (false !== stripos($current_article_content, '<style'))
+	{
+		if (preg_match_all('/(<style[^>]*>.*?<\/style>)/is', $current_article_content, $current_article_styles) && $current_article_styles[1])
+		{
+			foreach ($current_article_styles[1] as $current_article_style) $header .= $current_article_style;
+			$current_article_content = preg_replace('/(<style[^>]*>.*?<\/style>)/is', '', $current_article_content);
+		}
+	}
+	if (false !== stripos($current_article_content, '<script'))
+	{
+		if (preg_match_all('/(<script[^>]*>.*?<\/script>)/is', $current_article_content, $current_article_scripts) && $current_article_scripts[1])
+		{
+			foreach ($current_article_scripts[1] as $current_article_script) $footer .= $current_article_script;
+			$current_article_content = preg_replace('/(<script[^>]*>.*?<\/script>)/is', '', $current_article_content);
+		}
+	}
+	if (false !== stripos($current_article_content, '<head')) $current_article_content = preg_replace('/<head[^>]*>.*?<\/head>/is', '', $current_article_content);
+	$current_article_content = str_replace($line_breaks, '&#10;', $current_article_content);
 	$header .= '<meta name=description content="'. get_description($current_article_content). '">';
 
 	if (is_file($ticket) && ((is_file($login_txt) && filesize($login_txt)) || (is_file($categ_login_txt) && filesize($categ_login_txt))))
@@ -183,7 +204,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 					if ($glob_checklist_dir = glob($checklist_dir. '*', GLOB_NOSORT))
 					{
 						$javascript .= '[';
-						foreach($glob_checklist_dir as $checklists) $l[] = str_getcsv(filter_var(file_get_contents($checklists), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND));
+						foreach($glob_checklist_dir as $checklists) $l[] = str_getcsv(filter_var(file_get_contents($checklists), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND), ',', "\"", "\\");
 						for ($i = 0, $c = count($l[0]); $i < $c; ++$i) $javascript .= array_sum(array_column($l, $i)). ',';
 						$javascript .= '].forEach((q,i)=>{spn=document.createElement("span");spn.className="badge bg-primary rounded-pill";text=document.createTextNode(q);spn.appendChild(text);document.querySelectorAll("#checklist li")[i].appendChild(spn)});btn.value="'. sprintf($checklist_message[2], count($glob_checklist_dir)). '";';
 					}

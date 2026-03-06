@@ -218,7 +218,7 @@ if (is_dir($current_article_dir = 'contents/'. $categ_name. '/'. $title_name) &&
 			$article .= '<div class="alert alert-info">'. $checklist_message[0]. '</div>';
 		if ($current_article_gz = glob($current_article_dir. '/[1-9][7-9]*.tar.gz'))
 		{
-			`tar -C "$current_article_dir" -xf "$current_article_gz[0]"`;
+			shell_exec("tar -C $current_article_dir -xf $current_article_gz[0]");
 			$pd = new PharData($current_article_gz[0]);
 			if (is_dir($lodir = $current_article_dir. '/'. $pd->getBasename()))
 			{

@@ -371,6 +371,7 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 		elseif (false !== array_search(strtolower($extension), $video_extensions))
 		{
 			$vtt = str_replace($extension, '.vtt', $src);
+			$vtt = !is_file($url. $vtt) ? '' : '<track src="'. $url. $vtt. '" default=default>';
 			if ($get_title || $get_page)
 			{
 				if (false !== $src_scheme)
@@ -389,11 +390,11 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 					'<a href="'. $url. r($src). '" class="sr-only mfp-iframe visually-hidden">video-iframe</a>'.
 					'<video class="align-top img-thumbnail '. $class. '" controls preload=none>'.
 					'<source src="'. $url. $src. '">'.
-					'<track src="'. $url. $vtt. '" default=default>'.
+					$vtt.
 					'</video>';
 			}
 			else
-				return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. $src. '"><track src="'. $url. $vtt. '" default=default></video>';
+				 return '<video class="align-top w-100 '. $class. '" controls preload=none><source src="'. $url. $src. '">'. $vtt. '</video>';
 		}
 	}
 }
@@ -919,8 +920,8 @@ function booking(
 		$javascript .= (isset($_SESSION['l']) ? 'document.querySelectorAll("[contenteditable]").forEach(n=>{new MutationObserver(r=>{n.previousElementSibling.setAttribute("class","i a")}).observe(n,{childList:true})});function a(y,z){const f=document.createElement("form");f.style.display="none";f.method="post";let g=document.createElement("input"),h=document.createElement("textarea");g.name="date",h.name="booking",h.value=y,g.value=z;f.appendChild(g);f.appendChild(h);document.body.appendChild(f);f.submit()}' : ''). 'const t=document.querySelectorAll("td,th"),b=function(e,f=""){for(let j=e.parentNode.parentNode.rows.length;--j>=0;)e.parentNode.parentNode.rows[j].cells[e.cellIndex].style.filter=f;e.parentNode.style.filter= f};for(let i=t.length;--i>=0;){t[i].onmouseover=function(){b(this,"sepia(20%)")};t[i].onmouseout=function(){b(this)}}';
 		if ($g = glob($bookings_dir. '*', GLOB_ONLYDIR+GLOB_NOSORT))
 		{
-			if ($b = array_diff($g, $a)) foreach ($b as $c) if (is_dir($c)) `rm -rf $c`;
-			`find $bookings_dir -type d -empty -delete`;
+			if ($b = array_diff($g, $a)) foreach ($b as $c) if (is_dir($c)) shell_exec('rm -rf '. $c);
+			shell_exec("find $bookings_dir -type d -empty -delete");
 		}
 	}
 }

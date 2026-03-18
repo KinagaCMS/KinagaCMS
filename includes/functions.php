@@ -306,7 +306,17 @@ function img($src, $class='', $show_exif_comment=false, $per=1)
 				if (isset($exif['COMMENT'][0])) $exif_comment = h($exif['COMMENT'][0]);
 				if ('.png' === $lower_ext) $exif_comment = get_png_tEXt($src);
 			}
-			[$width, $height, $type, $attr] = @getimagesize($src);
+			if ('.svg' === $lower_ext)
+			{
+				$svg = simplexml_load_file($src);
+				$attributes = $svg->attributes();
+				$width  = (string)$attributes->width;
+				$height = (string)$attributes->height;
+				$type = 'image/svg+xml';
+				$attr = '';
+			}
+			else
+				[$width, $height, $type, $attr] = @getimagesize($src);
 			if ($exif_thumbnail) [$width_sm, $height_sm, $type_sm, $attr_sm] = getimagesizefromstring($exif_thumbnail);
 			$img = $exif_comment ?
 			'<figure class="align-top img-thumbnail text-center d-inline-block" style="max-width:'. $width. 'px">'.

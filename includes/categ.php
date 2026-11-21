@@ -120,15 +120,19 @@ if (is_dir($current_categ = 'contents/'. $categ_name))
 								$extention = get_extension($uploaded_images);
 								if ($img_comment = filter_input(INPUT_POST, basename($uploaded_images, $extention)))
 								{
-									if ('.png' !== strtolower($extention))
+									if (is_file($uploaded_images))
 									{
-										$im = new Imagick($uploaded_images);
-										$im->stripImage();
-										$im->setImageProperty('comment', $img_comment);
-										$im->writeImage($uploaded_images);
-										$im->clear();
+										$realpath_images = realpath($uploaded_images);
+										if ('.png' !== strtolower($extention))
+										{
+											$im = new Imagick($realpath_images);
+											$im->stripImage();
+											$im->setImageProperty('comment', $img_comment);
+											$im->writeImage($realpath_images);
+											$im->clear();
+										}
+										else put_png_tEXt($uploaded_images, $pngtext, $img_comment, false);
 									}
-									else put_png_tEXt($uploaded_images, $pngtext, $img_comment, false);
 								}
 							}
 						}
